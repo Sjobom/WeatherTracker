@@ -14,6 +14,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -56,6 +59,9 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
     private Marker placeMarker;
     private Circle placeCircle;
+    FrameLayout fram_map = (FrameLayout) findViewById(R.id.fram_map);
+    Button btn_draw_State = (Button) findViewById(R.id.btn_draw_State);
+    Boolean Is_MAP_Moveable = false; // to detect map is movable
 
 
     @Override
@@ -88,11 +94,17 @@ public class MainActivity extends AppCompatActivity
                     if(placeMarker != null){placeMarker.remove();}
                     placeMarker = MainActivity.this.createMarker(latLng);
                 }
-
                 @Override
                 public void onError(Status status) {
                     // TODO: Handle the error.
-                    Log.i("AUTO", "An error occurred: " + status);
+                }
+            });
+            btn_draw_State.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    if (Is_MAP_Moveable != true) {Is_MAP_Moveable = true;}
+                    else {Is_MAP_Moveable = false;}
                 }
             });
         } else {
