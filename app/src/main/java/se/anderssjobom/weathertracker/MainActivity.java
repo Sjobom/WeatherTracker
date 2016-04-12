@@ -26,6 +26,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleApiClient mLocationClient; //För GPS
     private Marker placeMarker;
+    private Circle placeCircle;
 
 
     @Override
@@ -57,8 +60,6 @@ public class MainActivity extends AppCompatActivity
             //Initialisera kartan
             initMap();
             //Initialisera GPS
-            // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
-            // See https://g.co/AppIndexing/AndroidStudio for more information.
             mLocationClient = new GoogleApiClient.Builder(this)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         LatLng latLng;
         int zoomLevel;
         //TODO - Ibland blir currentLocation null, kanske använda annan lösning?
-        if (currentLocation == null) {
+        if (currentLocation != null) {
             latLng = new LatLng(
                     currentLocation.getLatitude(),
                     currentLocation.getLongitude()
@@ -127,7 +128,6 @@ public class MainActivity extends AppCompatActivity
                 if (permissions.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("PERMISSION", "GRANTED");
                     setCurrentLocation();
                 }else{
                     LatLng latLng = new LatLng(62.386504, 16.320447);
@@ -145,72 +145,56 @@ public class MainActivity extends AppCompatActivity
             MapFragment mapFragment =
                     (MapFragment) getFragmentManager().findFragmentById(R.id.map);
             mapFragment.getMapAsync(this); //skapar kartan och anropar onMapReady när kartan är klar
-
-            if (mMap != null){
-                mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-                    @Override
-                    public void onMapLongClick(LatLng latLng) {
-                        Geocoder gc = new Geocoder(MainActivity.this);
-                        List<android.location.Address> list = null;
-                        try {
-                            list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        placeMarker = MainActivity.this.createMarker(latLng, list);
-                    }
-                });
-            }
         }
     }
-
+    // Skapar en generell marker på kartan
     private Marker createMarker(LatLng latlng, List<android.location.Address> address) {
-     /*   if (marker != null){
-            removeEverything();
+        String addr = "";
+        if (!address.isEmpty()){
+            addr = String.valueOf(address.get(0));
         }
-*/       MarkerOptions options = new MarkerOptions()
+        MarkerOptions options = new MarkerOptions()
                               .position(latlng)
-                              .title(String.valueOf(address.get(0)));
-
-
+                              .title(addr);
         return mMap.addMarker(options);
-
     }
-   /* private void removeEverything() {
-        marker.remove();
-        marker = null;
-    }*/
+    //Skapar specifik cirkel utifrån placeMarker och given radie
+    private void createCircle(int rad) {
+        CircleOptions options = new CircleOptions()
+                .center(placeMarker.getPosition())
+                .radius(rad)
+                .fillColor(0x330000FF);
+        if(placeCircle != null){placeCircle.remove();}
+        placeCircle = mMap.addCircle(options);
+    }
+
+    //Körs när mMap har initialierats klart i initMap
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        //Lägger till cirkel och marker vid långklick
+        if (mMap != null){
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    Geocoder gc = new Geocoder(MainActivity.this);
+                    List<android.location.Address> list = null;
+                    try {
+                        list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(placeMarker != null){placeMarker.remove();}
+                    placeMarker = MainActivity.this.createMarker(latLng, list);
+                }
+            });
+        }
     }
 
     // De tre funktionerna nedan krävs för GPS
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if(ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.checkSelfPermission(
-                        this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION},
-                    GPS_ZOOM_PERMISSION_CODE);
-            return;
-        }
-        Location currentLocation = LocationServices.FusedLocationApi
-                .getLastLocation(mLocationClient);
-
-        LatLng latLng = new LatLng(
-                currentLocation.getLatitude(),
-                currentLocation.getLongitude()
-        );
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
-                latLng, 15
-        );
-        mMap.animateCamera(update);
+        setCurrentLocation();
     }
 
     @Override
@@ -223,7 +207,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
+   /* @Override
     public void onStart() {
         super.onStart();
 
@@ -261,5 +245,5 @@ public class MainActivity extends AppCompatActivity
         );
         AppIndex.AppIndexApi.end(mLocationClient, viewAction);
         mLocationClient.disconnect();
-    }
+    }*/
 }
