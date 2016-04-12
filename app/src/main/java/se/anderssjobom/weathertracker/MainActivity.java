@@ -55,6 +55,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    protected void onSaveInstanceState (Bundle outState){
+        //TODO - spara kartans nuvarande position
+    }
+    protected void onRestoreInstanceState (Bundle savedInstanceState) {
+        //TODO - återställ kartans nuvarande position
+    }
+
     public boolean servicesOK() {
         int isAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 
