@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,8 +21,13 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -46,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     GoogleMap mMap; //Kartreferens, initialiseras i initMap
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleApiClient mLocationClient; //För GPS
+    private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
     private Marker placeMarker;
     private Circle placeCircle;
 
@@ -66,6 +74,29 @@ public class MainActivity extends AppCompatActivity
                     .addOnConnectionFailedListener(this)
                     .addApi(AppIndex.API).build();
             mLocationClient.connect();
+            //Initialisera Google Play Services API Client för AutoCompleteLocationSearch
+
+
+            PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                    getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(Place place) {
+                    LatLng latLng = place.getLatLng();
+                    CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
+                            latLng, 12
+                    );
+                    mMap.animateCamera(update);
+                    if(placeMarker != null){placeMarker.remove();}
+                    placeMarker = MainActivity.this.createMarker(latLng);
+                }
+
+                @Override
+                public void onError(Status status) {
+                    // TODO: Handle the error.
+                    Log.i("AUTO", "An error occurred: " + status);
+                }
+            });
         } else {
             setContentView(R.layout.activity_main);
         }
@@ -155,14 +186,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
     // Skapar en generell marker på kartan
-    private Marker createMarker(LatLng latlng, List<android.location.Address> address) {
-        String addr = "";
-        if (!address.isEmpty()){
-            addr = String.valueOf(address.get(0));
-        }
+    private Marker createMarker(LatLng latlng) {
         MarkerOptions options = new MarkerOptions()
-                              .position(latlng)
-                              .title(addr);
+                              .position(latlng);
         return mMap.addMarker(options);
     }
     //Skapar specifik cirkel utifrån placeMarker och given radie
@@ -184,15 +210,8 @@ public class MainActivity extends AppCompatActivity
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLng) {
-                    Geocoder gc = new Geocoder(MainActivity.this);
-                    List<android.location.Address> list = null;
-                    try {
-                        list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                     if(placeMarker != null){placeMarker.remove();}
-                    placeMarker = MainActivity.this.createMarker(latLng, list);
+                    placeMarker = MainActivity.this.createMarker(latLng);
                 }
             });
         }
