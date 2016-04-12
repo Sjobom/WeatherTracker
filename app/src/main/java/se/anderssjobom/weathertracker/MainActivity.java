@@ -74,8 +74,6 @@ public class MainActivity extends AppCompatActivity
                     .addOnConnectionFailedListener(this)
                     .addApi(AppIndex.API).build();
             mLocationClient.connect();
-            //Initialisera Google Play Services API Client för AutoCompleteLocationSearch
-
 
             PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                     getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
