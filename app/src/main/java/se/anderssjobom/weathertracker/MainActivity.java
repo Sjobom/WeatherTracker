@@ -3,7 +3,9 @@ package se.anderssjobom.weathertracker;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -12,9 +14,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,6 +27,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -33,6 +44,8 @@ public class MainActivity extends AppCompatActivity
     GoogleMap mMap; //Kartreferens, initialiseras i initMap
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleApiClient mLocationClient; //För GPS
+    private Marker placeMarker;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +57,13 @@ public class MainActivity extends AppCompatActivity
             //Initialisera kartan
             initMap();
             //Initialisera GPS
+            // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
+            // See https://g.co/AppIndexing/AndroidStudio for more information.
             mLocationClient = new GoogleApiClient.Builder(this)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
-                    .build();
+                    .addApi(AppIndex.API).build();
             mLocationClient.connect();
         } else {
             setContentView(R.layout.activity_main);
@@ -130,8 +145,41 @@ public class MainActivity extends AppCompatActivity
             MapFragment mapFragment =
                     (MapFragment) getFragmentManager().findFragmentById(R.id.map);
             mapFragment.getMapAsync(this); //skapar kartan och anropar onMapReady när kartan är klar
+
+            if (mMap != null){
+                mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+                        Geocoder gc = new Geocoder(MainActivity.this);
+                        List<android.location.Address> list = null;
+                        try {
+                            list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        placeMarker = MainActivity.this.createMarker(latLng, list);
+                    }
+                });
+            }
         }
     }
+
+    private Marker createMarker(LatLng latlng, List<android.location.Address> address) {
+     /*   if (marker != null){
+            removeEverything();
+        }
+*/       MarkerOptions options = new MarkerOptions()
+                              .position(latlng)
+                              .title(String.valueOf(address.get(0)));
+
+
+        return mMap.addMarker(options);
+
+    }
+   /* private void removeEverything() {
+        marker.remove();
+        marker = null;
+    }*/
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -173,5 +221,45 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        mLocationClient.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://se.anderssjobom.weathertracker/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(mLocationClient, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://se.anderssjobom.weathertracker/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(mLocationClient, viewAction);
+        mLocationClient.disconnect();
     }
 }
