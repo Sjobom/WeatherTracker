@@ -3,6 +3,8 @@ package se.anderssjobom.weathertracker;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
@@ -14,6 +16,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -36,14 +39,18 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -59,9 +66,11 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
     private Marker placeMarker;
     private Circle placeCircle;
-    FrameLayout fram_map = (FrameLayout) findViewById(R.id.fram_map);
-    Button btn_draw_State = (Button) findViewById(R.id.btn_draw_State);
-    Boolean Is_MAP_Moveable = false; // to detect map is movable
+    private Polygon placePolygon;
+    private List<LatLng> tempPolygonLatLngs;
+    private FrameLayout fram_map;
+    private Button btn_draw_State;
+    private Boolean Is_MAP_Moveable = false; // to detect map is movable
 
 
     @Override
@@ -73,6 +82,8 @@ public class MainActivity extends AppCompatActivity
             setContentView(R.layout.activity_map);
             //Initialisera kartan
             initMap();
+            //Initialisera ritfunktionen
+            initDrawFrame();
             //Initialisera GPS
             mLocationClient = new GoogleApiClient.Builder(this)
                     .addApi(LocationServices.API)
@@ -99,14 +110,7 @@ public class MainActivity extends AppCompatActivity
                     // TODO: Handle the error.
                 }
             });
-            btn_draw_State.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    if (Is_MAP_Moveable != true) {Is_MAP_Moveable = true;}
-                    else {Is_MAP_Moveable = false;}
-                }
-            });
+
         } else {
             setContentView(R.layout.activity_main);
         }
@@ -225,6 +229,73 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+    }
+
+    private void initDrawFrame(){
+        fram_map = (FrameLayout) findViewById(R.id.fram_map);
+        btn_draw_State = (Button) findViewById(R.id.btn_draw_State);
+        tempPolygonLatLngs = new LinkedList<LatLng>();
+        btn_draw_State.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                if (Is_MAP_Moveable != true) {
+                    Is_MAP_Moveable = true;
+                } else {
+                    Is_MAP_Moveable = false;
+                }
+                fram_map.setOnTouchListener(new View.OnTouchListener() {     @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    float x = event.getX();
+                    float y = event.getY();
+
+                    int x_co = Math.round(x);
+                    int y_co = Math.round(y);
+
+                    Projection projection = mMap.getProjection();
+                    Point x_y_points = new Point(x_co, y_co);
+
+                    LatLng latLng = mMap.getProjection().fromScreenLocation(x_y_points);
+                    double latitude = latLng.latitude;
+
+                    double longitude = latLng.longitude;
+
+                    int eventaction = event.getAction();
+                    switch (eventaction) {
+                        case MotionEvent.ACTION_DOWN:
+                            // finger touches the screen
+                            tempPolygonLatLngs.add(new LatLng(latitude, longitude));
+
+                        case MotionEvent.ACTION_MOVE:
+                            // finger moves on the screen
+                            tempPolygonLatLngs.add(new LatLng(latitude, longitude));
+                            Draw_Map();
+
+                        case MotionEvent.ACTION_UP:
+                            // finger leaves the screen
+                            Draw_Map();
+                            break;
+                    }
+
+                    if (Is_MAP_Moveable == true) {
+                        return true;
+
+                    } else {
+                        return false;
+                    }
+                }
+                });
+            }
+        });
+
+    }
+    public void Draw_Map() {
+        PolygonOptions rectOptions = new PolygonOptions();
+        rectOptions.addAll(tempPolygonLatLngs);
+        rectOptions.strokeColor(Color.BLUE);
+        rectOptions.strokeWidth(5);
+        rectOptions.fillColor(0x330000FF);
+        placePolygon = mMap.addPolygon(rectOptions);
     }
 
     // De tre funktionerna nedan krävs för GPS
