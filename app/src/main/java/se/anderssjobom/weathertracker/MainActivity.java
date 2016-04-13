@@ -5,33 +5,27 @@ import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.location.Geocoder;
 import android.location.Location;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
@@ -47,9 +41,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.IOException;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,11 +60,12 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
     private Marker placeMarker;
     private Circle placeCircle;
+    private Polyline placePolyline;
     private Polygon placePolygon;
-    private List<LatLng> tempPolygonLatLngs;
+    private List<LatLng> tempPolyLatLngs;
     private FrameLayout fram_map;
     private Button btn_draw_State;
-    private Boolean Is_MAP_Moveable = false; // to detect map is movable
+    private Boolean Is_MAP_Moveable = true; // to detect map is movable
 
 
     @Override
@@ -231,74 +226,105 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void initDrawFrame(){
+    private void initDrawFrame() {
         fram_map = (FrameLayout) findViewById(R.id.fram_map);
         btn_draw_State = (Button) findViewById(R.id.btn_draw_State);
-        tempPolygonLatLngs = new LinkedList<LatLng>();
+        tempPolyLatLngs = new LinkedList<LatLng>();
         btn_draw_State.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 if (Is_MAP_Moveable != true) {
                     Is_MAP_Moveable = true;
+
+                    if (!tempPolyLatLngs.isEmpty()){Draw_Polygon();}
+                    if (placePolyline != null) {placePolyline.remove();}
+
+                    fram_map.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            return false;
+                        }
+                    });
                 } else {
                     Is_MAP_Moveable = false;
-                }
-                fram_map.setOnTouchListener(new View.OnTouchListener() {     @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    float x = event.getX();
-                    float y = event.getY();
 
-                    int x_co = Math.round(x);
-                    int y_co = Math.round(y);
-
-                    Projection projection = mMap.getProjection();
-                    Point x_y_points = new Point(x_co, y_co);
-
-                    LatLng latLng = mMap.getProjection().fromScreenLocation(x_y_points);
-                    double latitude = latLng.latitude;
-
-                    double longitude = latLng.longitude;
-
-                    int eventaction = event.getAction();
-                    switch (eventaction) {
-                        case MotionEvent.ACTION_DOWN:
-                            // finger touches the screen
-                            tempPolygonLatLngs.add(new LatLng(latitude, longitude));
-
-                        case MotionEvent.ACTION_MOVE:
-                            // finger moves on the screen
-                            tempPolygonLatLngs.add(new LatLng(latitude, longitude));
-                            Draw_Map();
-
-                        case MotionEvent.ACTION_UP:
-                            // finger leaves the screen
-                            Draw_Map();
-                            break;
+                    if (placePolygon != null) {
+                        placePolygon.remove();
                     }
 
-                    if (Is_MAP_Moveable == true) {
-                        return true;
+                    fram_map.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            float x = event.getX();
+                            float y = event.getY();
 
-                    } else {
-                        return false;
+                            int x_co = Math.round(x);
+                            int y_co = Math.round(y);
+
+                            Projection projection = mMap.getProjection();
+                            Point x_y_points = new Point(x_co, y_co);
+
+                            LatLng latLng = mMap.getProjection().fromScreenLocation(x_y_points);
+                            double latitude = latLng.latitude;
+                            double longitude = latLng.longitude;
+
+                            int eventaction = event.getAction();
+                            switch (eventaction) {
+                                case MotionEvent.ACTION_DOWN:
+                                    // finger touches the screen
+                                    tempPolyLatLngs.add(new LatLng(latitude, longitude));
+
+                                case MotionEvent.ACTION_MOVE:
+                                    // finger moves on the screen
+                                    tempPolyLatLngs.add(new LatLng(latitude, longitude));
+
+                                case MotionEvent.ACTION_UP:
+                                    // finger leaves the screen
+                                    Draw_Polyline();
+                                    break;
+                            }
+
+                            if (Is_MAP_Moveable == false) {
+                                return true;
+
+                            } else {
+                                return false;
+                            }
+                        }
+                    });
+                    if (placePolyline != null) {
+                        placePolyline.remove();
+                        tempPolyLatLngs = new LinkedList<LatLng>();
+
                     }
+
                 }
-                });
             }
         });
-
     }
-    public void Draw_Map() {
+    public void Draw_Polyline() {
+        if (placePolyline != null) {
+            placePolyline.remove();
+        }
+        PolylineOptions rectOptions = new PolylineOptions();
+        rectOptions.addAll(tempPolyLatLngs);
+        rectOptions.color(0xff009688);
+        rectOptions.width(6);
+        placePolyline = mMap.addPolyline(rectOptions);
+    }
+    public void Draw_Polygon() {
+        if (placePolygon != null) {
+            placePolygon.remove();
+        }
         PolygonOptions rectOptions = new PolygonOptions();
-        rectOptions.addAll(tempPolygonLatLngs);
-        rectOptions.strokeColor(Color.BLUE);
-        rectOptions.strokeWidth(5);
-        rectOptions.fillColor(0x330000FF);
+        rectOptions.addAll(tempPolyLatLngs);
+        rectOptions.strokeColor(0xff009688);
+        rectOptions.strokeWidth(6);
+        rectOptions.fillColor(0x1A0000FF);
         placePolygon = mMap.addPolygon(rectOptions);
     }
 
-    // De tre funktionerna nedan krävs för GPS
+    // De tre funktionerna nedan kan användas för GPS
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         setCurrentLocation();
