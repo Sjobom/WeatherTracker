@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -235,93 +236,98 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 if (Is_MAP_Moveable != true) {
                     Is_MAP_Moveable = true;
-
-                    if (!tempPolyLatLngs.isEmpty()){Draw_Polygon();}
+                    btn_draw_State.getBackground().setColorFilter(0xFFD3D3D3, PorterDuff.Mode.MULTIPLY); //Grå knapp
+                    createOnTouchListener(false);
                     if (placePolyline != null) {placePolyline.remove();}
 
-                    fram_map.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            return false;
-                        }
-                    });
                 } else {
                     Is_MAP_Moveable = false;
+                    btn_draw_State.getBackground().setColorFilter(0xFF009688, PorterDuff.Mode.MULTIPLY); //Grön knapp
+                    createOnTouchListener(true);
 
                     if (placePolygon != null) {
                         placePolygon.remove();
                     }
-
-                    fram_map.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            float x = event.getX();
-                            float y = event.getY();
-
-                            int x_co = Math.round(x);
-                            int y_co = Math.round(y);
-
-                            Projection projection = mMap.getProjection();
-                            Point x_y_points = new Point(x_co, y_co);
-
-                            LatLng latLng = mMap.getProjection().fromScreenLocation(x_y_points);
-                            double latitude = latLng.latitude;
-                            double longitude = latLng.longitude;
-
-                            int eventaction = event.getAction();
-                            switch (eventaction) {
-                                case MotionEvent.ACTION_DOWN:
-                                    // finger touches the screen
-                                    tempPolyLatLngs.add(new LatLng(latitude, longitude));
-
-                                case MotionEvent.ACTION_MOVE:
-                                    // finger moves on the screen
-                                    tempPolyLatLngs.add(new LatLng(latitude, longitude));
-
-                                case MotionEvent.ACTION_UP:
-                                    // finger leaves the screen
-                                    Draw_Polyline();
-                                    break;
-                            }
-
-                            if (Is_MAP_Moveable == false) {
-                                return true;
-
-                            } else {
-                                return false;
-                            }
-                        }
-                    });
+                    //Återställ listan
                     if (placePolyline != null) {
                         placePolyline.remove();
                         tempPolyLatLngs = new LinkedList<LatLng>();
-
                     }
-
                 }
             }
         });
     }
     public void Draw_Polyline() {
-        if (placePolyline != null) {
-            placePolyline.remove();
-        }
-        PolylineOptions rectOptions = new PolylineOptions();
-        rectOptions.addAll(tempPolyLatLngs);
-        rectOptions.color(0xff009688);
-        rectOptions.width(6);
-        placePolyline = mMap.addPolyline(rectOptions);
+        if (placePolyline != null) {placePolyline.remove();}
+        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.addAll(tempPolyLatLngs);
+        polylineOptions.color(0xff009688);
+        polylineOptions.width(6);
+        placePolyline = mMap.addPolyline(polylineOptions);
     }
     public void Draw_Polygon() {
-        if (placePolygon != null) {
-            placePolygon.remove();
+        if (placePolygon != null) {placePolygon.remove();}
+        PolygonOptions polygonOptions = new PolygonOptions();
+        polygonOptions.addAll(tempPolyLatLngs);
+        polygonOptions.strokeColor(0xff009688);
+        polygonOptions.strokeWidth(6);
+        polygonOptions.fillColor(0x1A0000FF);
+        placePolygon = mMap.addPolygon(polygonOptions);
+    }
+
+    //Om true - skapar en onTouchListener för framelayouten över kartan
+    //Om false - återställer till en tom onTouchListener för framelayouten över kartan
+    private void createOnTouchListener(boolean state){
+        if(state){
+            fram_map.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    float x = event.getX();
+                    float y = event.getY();
+
+                    int x_co = Math.round(x);
+                    int y_co = Math.round(y);
+
+                    Point x_y_points = new Point(x_co, y_co);
+
+                    LatLng latLng = mMap.getProjection().fromScreenLocation(x_y_points);
+                    double latitude = latLng.latitude;
+                    double longitude = latLng.longitude;
+
+                    int eventaction = event.getAction();
+                    switch (eventaction) {
+                        case MotionEvent.ACTION_DOWN:
+                            // finger touches the screen
+                            tempPolyLatLngs.add(new LatLng(latitude, longitude));
+                            break;
+
+                        case MotionEvent.ACTION_MOVE:
+                            // finger moves on the screen
+                            tempPolyLatLngs.add(new LatLng(latitude, longitude));
+                            Draw_Polyline();
+                            break;
+
+                        case MotionEvent.ACTION_UP:
+                            // finger leaves the screen
+                            if (!tempPolyLatLngs.isEmpty()){Draw_Polygon();}
+                            //Återställ kartrörligheten, onTouchListenern och knappen när användaren släpper fingret
+                            Is_MAP_Moveable = true;
+                            btn_draw_State.getBackground().setColorFilter(0xFFD3D3D3, PorterDuff.Mode.MULTIPLY); //Grå knapp
+                            createOnTouchListener(false);
+                            break;
+                    }
+                    if (Is_MAP_Moveable == false) {return true;}
+                    else {return false;}
+                }
+            });
+        } else{
+            fram_map.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return false;
+                }
+            });
         }
-        PolygonOptions rectOptions = new PolygonOptions();
-        rectOptions.addAll(tempPolyLatLngs);
-        rectOptions.strokeColor(0xff009688);
-        rectOptions.strokeWidth(6);
-        rectOptions.fillColor(0x1A0000FF);
-        placePolygon = mMap.addPolygon(rectOptions);
     }
 
     // De tre funktionerna nedan kan användas för GPS
