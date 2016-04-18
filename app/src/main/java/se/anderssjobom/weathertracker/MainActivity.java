@@ -4,16 +4,17 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -31,6 +32,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -58,13 +61,16 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
     private Marker placeMarker;
     private Circle placeCircle;
-    private Polygon placePolygon;
+    private List<Polygon> placePolygons;
+    private List<Marker> polygonTrashbins;
     private List<Polyline> tempPolylines;
     private LatLng curLatLng;
     private LatLng prevLatLng;
     private FrameLayout fram_map;
-    private Button btn_draw_State;
-    private Boolean Is_MAP_Moveable = true; // to detect map is movable
+    private FloatingActionButton enterDrawStateButton;
+    private FloatingActionButton exitDrawStateButton;
+    private Boolean isMapMoveable = true; // to detect map is movable
+
 
 
     @Override
@@ -215,33 +221,47 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //Lägger till cirkel och marker vid långklick
-        if (mMap != null){
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    if(placeMarker != null){placeMarker.remove();}
-                    placeMarker = MainActivity.this.createMarker(latLng);
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if(polygonTrashbins.contains(marker)){
+                    int index = polygonTrashbins.indexOf(marker);
+                   placePolygons.get(index).remove();
+                    marker.remove();
+                    placePolygons.remove(index);
+                    polygonTrashbins.remove(index);
+                    return true;
+                } else if(marker == marker){
+                    //TODO - implementera hantering av resultat eller väder!
+                    return false;
+                } else {
+                    return false;
                 }
-            });
-        }
+            }
+        });
     }
 
     private void initDrawFrame() {
         fram_map = (FrameLayout) findViewById(R.id.fram_map);
-        btn_draw_State = (Button) findViewById(R.id.btn_draw_State);
+        enterDrawStateButton = (FloatingActionButton) findViewById(R.id.enter_draw_state_button);
+        exitDrawStateButton = (FloatingActionButton) findViewById(R.id.exit_draw_state_button);
         tempPolylines = new ArrayList<Polyline>();
-        btn_draw_State.setOnClickListener(new View.OnClickListener() {
+        placePolygons = new ArrayList<Polygon>();
+        polygonTrashbins = new ArrayList<Marker>();
+        createOnTouchListener();
+        enterDrawStateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Is_MAP_Moveable != true) {
-                    Is_MAP_Moveable = true;
-                    btn_draw_State.getBackground().setColorFilter(0xFFD3D3D3, PorterDuff.Mode.MULTIPLY); //Grå knapp
+                if (isMapMoveable != true) {
+                    isMapMoveable = true;
+                    exitDrawStateButton.hide();
+                    enterDrawStateButton.show();
 
                 } else {
-                    Is_MAP_Moveable = false;
-                    btn_draw_State.getBackground().setColorFilter(0xFF009688, PorterDuff.Mode.MULTIPLY); //Grön knapp
-                    createOnTouchListener();
+                    isMapMoveable = false;
+                    enterDrawStateButton.hide();
+                    exitDrawStateButton.show();
                     //if (placePolygon != null) {placePolygon.remove();} //Ta bort om vi vill ha flera möjliga polygoner!
                     tempPolylines = new ArrayList<Polyline>();
                 }
@@ -268,7 +288,10 @@ public class MainActivity extends AppCompatActivity
         polygonOptions.strokeColor(0xff009688);
         polygonOptions.strokeWidth(7);
         polygonOptions.fillColor(0x1A0000FF);
-        placePolygon = mMap.addPolygon(polygonOptions);
+        placePolygons.add(mMap.addPolygon(polygonOptions));
+        Marker marker = createMarker((LatLng) tempPolyLatLngs.get(0));
+        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_delete_white_green_48px));
+        polygonTrashbins.add(marker);
     }
 
     private void removePolylines(){
@@ -318,11 +341,12 @@ public class MainActivity extends AppCompatActivity
                                 drawPolygon();}
                             removePolylines();
                             //Återställ kartrörligheten, onTouchListenern och knappen när användaren släpper fingret
-                            Is_MAP_Moveable = true;
-                            btn_draw_State.getBackground().setColorFilter(0xFFD3D3D3, PorterDuff.Mode.MULTIPLY); //Grå knapp
+                            isMapMoveable = true;
+                            exitDrawStateButton.hide();
+                            enterDrawStateButton.show();
                             break;
                     }
-                    if (Is_MAP_Moveable == false) {return true;}
+                    if (isMapMoveable == false) {return true;}
                     else {return false;}
                 }
             });
