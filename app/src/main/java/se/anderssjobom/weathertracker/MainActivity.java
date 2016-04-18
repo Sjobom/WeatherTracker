@@ -12,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -155,14 +157,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
     // Skapar en generell marker på kartan
-    private Marker createMarker(LatLng latlng, List<android.location.Address> address) {
-        String addr = "";
-        if (!address.isEmpty()){
-            addr = String.valueOf(address.get(0));
-        }
+    private Marker createMarker(LatLng latlng) {
         MarkerOptions options = new MarkerOptions()
-                              .position(latlng)
-                              .title(addr);
+                              .position(latlng);
+
         return mMap.addMarker(options);
     }
     //Skapar specifik cirkel utifrån placeMarker och given radie
@@ -181,18 +179,50 @@ public class MainActivity extends AppCompatActivity
         mMap = googleMap;
         //Lägger till cirkel och marker vid långklick
         if (mMap != null){
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Override
-                public void onMapClick(LatLng latLng) {
+                public View getInfoWindow(Marker marker) {//Definera markör-fönsters egenskaper, vi returnerar null
+                    return null;                           //eftersom vi nöjer oss med default
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {//Definera innehållet i markör-fönster
+                    View v = getLayoutInflater().inflate(R.layout.info_window, null);
+
+                    TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);//Länka till XML filen info_window
+                    TextView tvLat = (TextView) v.findViewById(R.id.tvLat);
+                    TextView tvLng = (TextView) v.findViewById(R.id.tvLng);
+                    TextView tvSnipp = (TextView) v.findViewById(R.id.tvSnippet);
+
+                    LatLng latLng = marker.getPosition();
                     Geocoder gc = new Geocoder(MainActivity.this);
-                    List<android.location.Address> list = null;
+                    List<android.location.Address> list = null;        //Få namn på område
                     try {
                         list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                    if (list.isEmpty()){   //Ifall vi inte får någon information om området
+                        tvLocal.setText("No information"); //TODO maybe improve this to make it look better
+                        return v;
+                    }
+                    android.location.Address address = list.get(0);
+
+                    tvLocal.setText("You shant escape my chungus");//Vi sätter text som ska förekomma i markör-fönster
+                    tvLat.setText(address.getAddressLine(0)); //Vill vi har mer än 4 linjer av text kan vi ändra det i XML filen
+                    tvLng.setText(address.getLocality());
+                    tvSnipp.setText(address.getCountryName());
+
+                    return v;
+            }
+            });
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
                     if(placeMarker != null){placeMarker.remove();}
-                    placeMarker = MainActivity.this.createMarker(latLng, list);
+                    placeMarker = MainActivity.this.createMarker(latLng);
                 }
             });
         }
