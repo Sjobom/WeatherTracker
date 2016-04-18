@@ -3,7 +3,6 @@ package se.anderssjobom.weathertracker;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.location.Location;
@@ -12,8 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -34,7 +31,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -45,6 +41,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,9 +58,10 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
     private Marker placeMarker;
     private Circle placeCircle;
-    private Polyline placePolyline;
     private Polygon placePolygon;
-    private List<LatLng> tempPolyLatLngs;
+    private List<Polyline> tempPolylines;
+    private LatLng curLatLng;
+    private LatLng prevLatLng;
     private FrameLayout fram_map;
     private Button btn_draw_State;
     private Boolean Is_MAP_Moveable = true; // to detect map is movable
@@ -195,12 +193,14 @@ public class MainActivity extends AppCompatActivity
             mapFragment.getMapAsync(this); //skapar kartan och anropar onMapReady när kartan är klar
         }
     }
+
     // Skapar en generell marker på kartan
     private Marker createMarker(LatLng latlng) {
         MarkerOptions options = new MarkerOptions()
                               .position(latlng);
         return mMap.addMarker(options);
     }
+
     //Skapar specifik cirkel utifrån placeMarker och given radie
     private void createCircle(int rad) {
         CircleOptions options = new CircleOptions()
@@ -230,55 +230,58 @@ public class MainActivity extends AppCompatActivity
     private void initDrawFrame() {
         fram_map = (FrameLayout) findViewById(R.id.fram_map);
         btn_draw_State = (Button) findViewById(R.id.btn_draw_State);
-        tempPolyLatLngs = new LinkedList<LatLng>();
+        tempPolylines = new ArrayList<Polyline>();
         btn_draw_State.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Is_MAP_Moveable != true) {
                     Is_MAP_Moveable = true;
                     btn_draw_State.getBackground().setColorFilter(0xFFD3D3D3, PorterDuff.Mode.MULTIPLY); //Grå knapp
-                    createOnTouchListener(false);
-                    if (placePolyline != null) {placePolyline.remove();}
 
                 } else {
                     Is_MAP_Moveable = false;
                     btn_draw_State.getBackground().setColorFilter(0xFF009688, PorterDuff.Mode.MULTIPLY); //Grön knapp
-                    createOnTouchListener(true);
-
-                    if (placePolygon != null) {
-                        placePolygon.remove();
-                    }
-                    //Återställ listan
-                    if (placePolyline != null) {
-                        placePolyline.remove();
-                        tempPolyLatLngs = new LinkedList<LatLng>();
-                    }
+                    createOnTouchListener();
+                    //if (placePolygon != null) {placePolygon.remove();} //Ta bort om vi vill ha flera möjliga polygoner!
+                    tempPolylines = new ArrayList<Polyline>();
                 }
             }
         });
     }
-    public void Draw_Polyline() {
-        if (placePolyline != null) {placePolyline.remove();}
+
+    public void drawPolyline() {
         PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.addAll(tempPolyLatLngs);
+        if (prevLatLng == null){prevLatLng = curLatLng;}
+        polylineOptions.add(prevLatLng, curLatLng);
         polylineOptions.color(0xff009688);
-        polylineOptions.width(6);
-        placePolyline = mMap.addPolyline(polylineOptions);
+        polylineOptions.width(5);
+        tempPolylines.add(mMap.addPolyline(polylineOptions));
     }
-    public void Draw_Polygon() {
-        if (placePolygon != null) {placePolygon.remove();}
+
+    public void drawPolygon() {
         PolygonOptions polygonOptions = new PolygonOptions();
+        List tempPolyLatLngs = new LinkedList<LatLng>();
+        for (int i = 0; i < tempPolylines.size(); i++){
+            tempPolyLatLngs.add(tempPolylines.get(i).getPoints().get(0));
+        }
         polygonOptions.addAll(tempPolyLatLngs);
         polygonOptions.strokeColor(0xff009688);
-        polygonOptions.strokeWidth(6);
+        polygonOptions.strokeWidth(7);
         polygonOptions.fillColor(0x1A0000FF);
         placePolygon = mMap.addPolygon(polygonOptions);
     }
 
+    private void removePolylines(){
+        if (!tempPolylines.isEmpty()){
+            for (int i = 0; i < tempPolylines.size(); i++){
+                tempPolylines.get(i).remove();
+            }
+        }
+    }
+
     //Om true - skapar en onTouchListener för framelayouten över kartan
     //Om false - återställer till en tom onTouchListener för framelayouten över kartan
-    private void createOnTouchListener(boolean state){
-        if(state){
+    private void createOnTouchListener(){
             fram_map.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -298,36 +301,31 @@ public class MainActivity extends AppCompatActivity
                     switch (eventaction) {
                         case MotionEvent.ACTION_DOWN:
                             // finger touches the screen
-                            tempPolyLatLngs.add(new LatLng(latitude, longitude));
+                            prevLatLng = curLatLng;
+                            curLatLng = new LatLng(latitude, longitude);
                             break;
 
                         case MotionEvent.ACTION_MOVE:
                             // finger moves on the screen
-                            tempPolyLatLngs.add(new LatLng(latitude, longitude));
-                            Draw_Polyline();
+                            prevLatLng = curLatLng;
+                            curLatLng = new LatLng(latitude, longitude);
+                            drawPolyline();
                             break;
 
                         case MotionEvent.ACTION_UP:
                             // finger leaves the screen
-                            if (!tempPolyLatLngs.isEmpty()){Draw_Polygon();}
+                            if (!tempPolylines.isEmpty()){
+                                drawPolygon();}
+                            removePolylines();
                             //Återställ kartrörligheten, onTouchListenern och knappen när användaren släpper fingret
                             Is_MAP_Moveable = true;
                             btn_draw_State.getBackground().setColorFilter(0xFFD3D3D3, PorterDuff.Mode.MULTIPLY); //Grå knapp
-                            createOnTouchListener(false);
                             break;
                     }
                     if (Is_MAP_Moveable == false) {return true;}
                     else {return false;}
                 }
             });
-        } else{
-            fram_map.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return false;
-                }
-            });
-        }
     }
 
     // De tre funktionerna nedan kan användas för GPS
