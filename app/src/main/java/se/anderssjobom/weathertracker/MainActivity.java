@@ -3,6 +3,8 @@ package se.anderssjobom.weathertracker;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -48,7 +50,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class  MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -290,8 +292,17 @@ public class MainActivity extends AppCompatActivity
         polygonOptions.fillColor(0x1A0000FF);
         placePolygons.add(mMap.addPolygon(polygonOptions));
         Marker marker = createMarker((LatLng) tempPolyLatLngs.get(0));
-        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_delete_white_green_48px));
+        marker.setIcon(BitmapDescriptorFactory.fromBitmap
+                (resizeMapIcons("ic_delete_white_green_48px", 300, 300)));
+        marker.setAnchor(0.5f, 0.5f);
         polygonTrashbins.add(marker);
+    }
+
+    public Bitmap resizeMapIcons(String iconName, int width, int height){
+        Bitmap imageBitmap = BitmapFactory.decodeResource
+                (getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
     }
 
     private void removePolylines(){
@@ -302,8 +313,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //Om true - skapar en onTouchListener för framelayouten över kartan
-    //Om false - återställer till en tom onTouchListener för framelayouten över kartan
+    //Skapar en onTouchListener för framelayouten över kartan
     private void createOnTouchListener(){
             fram_map.setOnTouchListener(new View.OnTouchListener() {
                 @Override
