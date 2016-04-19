@@ -2,6 +2,7 @@ package se.anderssjobom.weathertracker;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -116,6 +117,17 @@ public class  MainActivity extends AppCompatActivity
         } else {
             setContentView(R.layout.activity_main);
         }
+        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.menu_button);
+
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     protected void onSaveInstanceState (Bundle outState){

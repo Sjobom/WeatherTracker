@@ -1,0 +1,73 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="se.anderssjobom.weathertracker.MenuActivity"
+    android:background="#2e7993"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="horizontal">
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bada"
+                android:id="@+id/checkBox"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cykla"
+                android:id="@+id/checkBox2"
+                android:layout_below="@+id/checkBox"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="50dp" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Åka Skidor"
+                android:id="@+id/checkBox3"
+                android:layout_below="@+id/checkBox2"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="50dp" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Segla"
+                android:id="@+id/checkBox4"
+                android:layout_below="@+id/checkBox3"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="50dp" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vandra"
+                android:id="@+id/checkBox5"
+                android:layout_below="@+id/checkBox4"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="50dp" />
+
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</RelativeLayout>
