@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,8 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.AppIndex;
@@ -46,6 +49,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -227,14 +231,52 @@ public class  MainActivity extends AppCompatActivity
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if(polygonTrashbins.contains(marker)){
+                if (polygonTrashbins.contains(marker)) {
                     int index = polygonTrashbins.indexOf(marker);
-                   placePolygons.get(index).remove();
+                    placePolygons.get(index).remove();
                     marker.remove();
                     placePolygons.remove(index);
                     polygonTrashbins.remove(index);
                     return true;
-                } else if(marker == marker){
+                } else if (marker == marker) {
+                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                        @Override
+                        public View getInfoWindow(Marker marker) {
+                            return null;
+                        }
+
+                        @Override
+                        public View getInfoContents(Marker marker) {
+                            View v = getLayoutInflater().inflate(R.layout.info_window, null);
+
+                            TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);//Länka till XML filen info_window
+                            TextView tvTemp = (TextView) v.findViewById(R.id.tvTemp);
+                            TextView tvWind = (TextView) v.findViewById(R.id.tvWind);
+                       //     ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
+
+                            LatLng latLng = marker.getPosition();
+                            Geocoder gc = new Geocoder(MainActivity.this);
+                            List<android.location.Address> list = null;        //Få namn på område
+                            try {
+                                list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (list.isEmpty()){   //Ifall vi inte får någon information om området
+                                tvLocal.setText("No information"); //TODO maybe improve this to make it look better
+                                return v;
+                            }
+                            android.location.Address address = list.get(0);
+
+                            tvLocal.setText(address.getLocality());//Vi sätter text som ska förekomma i markör-fönster
+                            tvTemp.setText("Temperature: 5 C"); //Vill vi har mer än 4 linjer av text kan vi ändra det i XML filen
+                            tvWind.setText("WindSpeed: 5 m/s East");
+                          //  tvImage.setImageResource(R.drawable);
+
+                            return v;
+                        }
+                    });
                     //TODO - implementera hantering av resultat eller väder!
                     return false;
                 } else {
@@ -378,3 +420,53 @@ public class  MainActivity extends AppCompatActivity
 
     }
 }
+
+/*if (mMap != null){
+
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Override
+                public View getInfoWindow(Marker marker) {//Definera markör-fönsters egenskaper, vi returnerar null
+                    return null;                           //eftersom vi nöjer oss med default
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {//Definera innehållet i markör-fönster
+                    View v = getLayoutInflater().inflate(R.layout.info_window, null);
+
+                    TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);//Länka till XML filen info_window
+                    TextView tvLat = (TextView) v.findViewById(R.id.tvLat);
+                    TextView tvLng = (TextView) v.findViewById(R.id.tvLng);
+                    TextView tvSnipp = (TextView) v.findViewById(R.id.tvSnippet);
+
+                    LatLng latLng = marker.getPosition();
+                    Geocoder gc = new Geocoder(MainActivity.this);
+                    List<android.location.Address> list = null;        //Få namn på område
+                    try {
+                        list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (list.isEmpty()){   //Ifall vi inte får någon information om området
+                        tvLocal.setText("No information"); //TODO maybe improve this to make it look better
+                        return v;
+                    }
+                    android.location.Address address = list.get(0);
+
+                    tvLocal.setText("You shant escape my chungus");//Vi sätter text som ska förekomma i markör-fönster
+                    tvLat.setText(address.getAddressLine(0)); //Vill vi har mer än 4 linjer av text kan vi ändra det i XML filen
+                    tvLng.setText(address.getLocality());
+                    tvSnipp.setText(address.getCountryName());
+
+                    return v;
+            }
+            });
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    if(placeMarker != null){placeMarker.remove();}
+                    placeMarker = MainActivity.this.createMarker(latLng);
+                }
+            });
+        }*/
+
