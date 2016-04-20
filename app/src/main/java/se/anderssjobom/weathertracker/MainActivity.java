@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void onClick(View v) {//N�r vi klickar p� knappen, g�r den hit
-        view = v;  //Beh�ver detta f�r att senare veta vilken knapp som vi har tryckt n�r vi ska skriva ner datum som anv�ndaren har valt
+    public void onClick(View v) {//När vi klickar på knappen, gör den hit
+        view = v;  //Behöver detta för att senare veta vilken knapp som vi har tryckt när vi ska skriva ner datum som användaren har valt
         showDatePickerDialog();
     }
 
