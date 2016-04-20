@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="se.anderssjobom.weathertracker.MenuActivity"
-    android:background="#2e7993"
+    android:background="#7b7b7b"
     >
 
     <ScrollView
@@ -35,34 +35,49 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="50dp" />
 
-            <CheckBox
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Åka Skidor"
-                android:id="@+id/checkBox3"
-                android:layout_below="@+id/checkBox2"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="50dp" />
+                android:text="Hello Fellow User!"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="114dp"
+                android:id="@+id/textView2" />
+            ​
+            ​
 
-            <CheckBox
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Segla"
-                android:id="@+id/checkBox4"
-                android:layout_below="@+id/checkBox3"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="50dp" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Press the button to proceed!"
+                android:id="@+id/textView"
+                android:layout_below="@+id/textView2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:layout_gravity="center_horizontal" />
 
-            <CheckBox
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vandra"
-                android:id="@+id/checkBox5"
-                android:layout_below="@+id/checkBox4"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="50dp" />
+                android:text="Set start date"
+                android:onClick="onClick"
+                android:id="@+id/DateButton"
+                android:layout_below="@+id/textView"
+                android:layout_toStartOf="@+id/textView2"
+                android:layout_marginTop="118dp" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set end date"
+                android:onClick="onClick"
+                android:id="@+id/DateButton2"
+                android:layout_alignTop="@+id/DateButton"
+                android:layout_toEndOf="@+id/textView2"
+                android:layout_gravity="right" />
 
+            ​
 
 
         </LinearLayout>
