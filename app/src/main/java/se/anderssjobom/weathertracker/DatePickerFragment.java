@@ -25,16 +25,16 @@ public class DatePickerFragment extends DialogFragment
         DatePickerDialog d = new DatePickerDialog(getActivity(), this, year, month, day);   // Skapar en ny instans av DatePickerDialog objekt som ska returneras
         DatePicker dp = d.getDatePicker();   //Skapar en datepicker, som vi beh�ver n�r vi ska s�tta min och max datum
 
-        switch (MenuActivity.view.getId()) {//Kollar vilken knapp vi tryckte p�
+        switch (MainActivity.view.getId()) {//Kollar vilken knapp vi tryckte p�
             case R.id.DateButton:  //Vi tyrckte p� knapp 1
                 dp.setMinDate(c.getTimeInMillis()); //S�tter mindatum som dagens datum
 
-                if(MenuActivity.buttText2 != "default2") { //Om ett datum har valts p� den andra knappen, s� anv�nder vi det datumet som valbara maxdatum
+                if(MainActivity.buttText2 != "default2") { //Om ett datum har valts p� den andra knappen, s� anv�nder vi det datumet som valbara maxdatum
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     Calendar cal = new GregorianCalendar();
 
                     try {
-                        cal.setTime(dateFormat.parse(MenuActivity.buttText2));
+                        cal.setTime(dateFormat.parse(MainActivity.buttText2));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -50,12 +50,12 @@ public class DatePickerFragment extends DialogFragment
             case R.id.DateButton2://Om vi tryckte p� knapp 2
                 dp.setMaxDate(c.getTimeInMillis() + 864000000); //S�tter maxdatum som dagens datum + 10 dagar
 
-                if(MenuActivity.buttText1 != "default1") { //Om ett datum har valts p� den andra knappen, s� anv�nder vi det datumet som valbara mindatum
+                if(MainActivity.buttText1 != "default1") { //Om ett datum har valts p� den andra knappen, s� anv�nder vi det datumet som valbara mindatum
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     Calendar cal = new GregorianCalendar();
 
                     try {
-                        cal.setTime(dateFormat.parse(MenuActivity.buttText1));
+                        cal.setTime(dateFormat.parse(MainActivity.buttText1));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -72,7 +72,7 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {// N�r anv�ndaren har valt datum och tryckt p� OK, kommer denna metod att anropas
-        Button butt = (Button) MenuActivity.view; //Get the button that was pressed
+        Button butt = (Button) MainActivity.view; //Get the button that was pressed
 
         Calendar cal = Calendar.getInstance();      //Skapar ett datumobjekt f�r datumet som anv�ndaren har valt
         cal.set(year, month + 1, day);
@@ -81,10 +81,10 @@ public class DatePickerFragment extends DialogFragment
 
         switch(butt.getId()){  //Vi skriver ner datumet till en global variabel, f�r att kunna begr�nsa datum (se ovan)
             case R.id.DateButton:
-                MenuActivity.buttText1 = Integer.toString(year) + "-" + Integer.toString(month + 1) + "-" + Integer.toString(day);
+                MainActivity.buttText1 = Integer.toString(year) + "-" + Integer.toString(month + 1) + "-" + Integer.toString(day);
                 break;
             case R.id.DateButton2:
-                MenuActivity.buttText2 = Integer.toString(year) + "-" + Integer.toString(month + 1) + "-" + Integer.toString(day);
+                MainActivity.buttText2 = Integer.toString(year) + "-" + Integer.toString(month + 1) + "-" + Integer.toString(day);
                 break;
         }
         butt.setText(df);   //Skriver valt datum p� knappen
