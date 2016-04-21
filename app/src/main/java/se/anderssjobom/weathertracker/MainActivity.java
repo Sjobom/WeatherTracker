@@ -1,22 +1,26 @@
 package se.anderssjobom.weathertracker;
 
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 /**
  * Created by ThimLohse on 2016-04-19.
  */
 public class MainActivity extends AppCompatActivity
 {
+    //public Button button1 = (Button)findViewById(R.id.DateButton);
     public static View view;
-    public static String buttText1 = "default1";
-    public static String buttText2 = "default2";
+    public static String buttText1 = "set start date";
+    public static String buttText2 = "set end date";
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
@@ -48,9 +52,7 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-
-
-    public void onClick(View v) {//När vi klickar på knappen, gör den hit
+    public void showDateFragment(View v) {//När vi klickar på knappen, gör den hit
         view = v;  //Behöver detta för att senare veta vilken knapp som vi har tryckt när vi ska skriva ner datum som användaren har valt
         showDatePickerDialog();
     }
@@ -65,5 +67,22 @@ public class MainActivity extends AppCompatActivity
         newFragment.show(getSupportFragmentManager(), "datePicker"); //Nu visas kalenderfragmentet
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+
+       /* outState.putString("buttText1", buttText1);
+        outState.putString("buttText2", buttText2);
+        */
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        /*
+        buttText1 = savedInstanceState.get("buttText1").toString();
+        buttText2 = savedInstanceState.get("buttText2").toString();
+        */
+    }
 
 }

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="#2e7993"
+    android:background="@color/colorPrimary"
     >
 
     <TextView
@@ -16,5 +16,26 @@
         android:textAllCaps="true"
 
         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+
+        android:id="@+id/Enkel_vy_button1"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/Enkel_vy_button2"
+        />
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button2"
+        android:id="@+id/Enkel_vy_button2"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"/>
+
 
 </RelativeLayout>

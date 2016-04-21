@@ -29,7 +29,7 @@ public class DatePickerFragment extends DialogFragment
             case R.id.DateButton:  //Vi tyrckte på knapp 1
                 dp.setMinDate(c.getTimeInMillis()); //Sätter mindatum som dagens datum
 
-                if(MainActivity.buttText2 != "default2") { //Om ett datum har valts på den andra knappen, så använder vi det datumet som valbara maxdatum
+                if(MainActivity.buttText2 != "set end date") { //Om ett datum har valts på den andra knappen, så använder vi det datumet som valbara maxdatum
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     Calendar cal = new GregorianCalendar();
 
@@ -50,7 +50,7 @@ public class DatePickerFragment extends DialogFragment
             case R.id.DateButton2://Om vi tryckte på knapp 2
                 dp.setMaxDate(c.getTimeInMillis() + 864000000); //Sätter maxdatum som dagens datum + 10 dagar
 
-                if(MainActivity.buttText1 != "default1") { //Om ett datum har valts på den andra knappen, så använder vi det datumet som valbara mindatum
+                if(MainActivity.buttText1 != "set start date") { //Om ett datum har valts på den andra knappen, så använder vi det datumet som valbara mindatum
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     Calendar cal = new GregorianCalendar();
 
@@ -88,5 +88,33 @@ public class DatePickerFragment extends DialogFragment
                 break;
         }
         butt.setText(df);   //Skriver valt datum på knappen
+
+
+
     }
+/*
+    @Override
+    public void onDetach() {
+
+        Button butt = (Button) MainActivity.view;
+        switch(butt.getId()){  //Vi skriver ner datumet till en global variabel, för att kunna begränsa datum (se ovan)
+            case R.id.DateButton:
+                butt.setText(MainActivity.buttText1);
+                break;
+            case R.id.DateButton2:
+                butt.setText(MainActivity.buttText2);
+                break;
+        }
+
+
+        super.onDetach();
+
+
+    }
+*/
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
 }
