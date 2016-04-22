@@ -6,12 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@color/colorPrimaryDark"
-    android:id="@+id/tab_menu"
+    android:background="@color/primary_light"
     >
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/primary_dark"
         android:theme="@style/AppTheme"
         android:id="@+id/appBarLayout"
         >
@@ -25,6 +25,7 @@
             android:id="@+id/tabLayout"
             app:tabMode="fixed"
             app:tabGravity="fill"
+            android:background="@color/primary"
             app:tabSelectedTextColor="#FFFFFF"
             app:tabIndicatorColor="#f7f7f7"
             >

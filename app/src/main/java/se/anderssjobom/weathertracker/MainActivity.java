@@ -12,6 +12,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 
 /**
  * Created by ThimLohse on 2016-04-19.
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity
         viewPagerAdapter.addFragments(new AdvancedFragment(), "Avancerad Vy");
         viewPager.setOffscreenPageLimit(0);
         viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount());
 
                 tabLayout.setupWithViewPager(viewPager);
 
