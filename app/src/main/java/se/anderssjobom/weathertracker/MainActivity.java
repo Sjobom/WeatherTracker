@@ -11,16 +11,22 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Button;
+import android.widget.DatePicker;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by ThimLohse on 2016-04-19.
  */
 public class MainActivity extends AppCompatActivity
 {
-    //public Button button1 = (Button)findViewById(R.id.DateButton);
     public static View view;
-    public static String buttText1 = "set start date";
-    public static String buttText2 = "set end date";
+    public static Calendar buttText1 = GregorianCalendar.getInstance();
+    public static Calendar buttText2 = GregorianCalendar.getInstance();
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
@@ -41,7 +47,9 @@ public class MainActivity extends AppCompatActivity
         viewPagerAdapter.addFragments(new Aktivitet_Fragment(), "Aktiviteter");
         viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy");
         viewPagerAdapter.addFragments(new Datum(), "Avancerad Vy");
+        viewPager.setOffscreenPageLimit(0);
         viewPager.setAdapter(viewPagerAdapter);
+
 
         tabLayout.setupWithViewPager(viewPager);
 
@@ -66,23 +74,4 @@ public class MainActivity extends AppCompatActivity
         DialogFragment newFragment = new DatePickerFragment(); //Nu skapas fragmenterobjektet
         newFragment.show(getSupportFragmentManager(), "datePicker"); //Nu visas kalenderfragmentet
     }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-
-       /* outState.putString("buttText1", buttText1);
-        outState.putString("buttText2", buttText2);
-        */
-        super.onSaveInstanceState(outState, outPersistentState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        /*
-        buttText1 = savedInstanceState.get("buttText1").toString();
-        buttText2 = savedInstanceState.get("buttText2").toString();
-        */
-    }
-
 }

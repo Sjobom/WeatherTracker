@@ -61,7 +61,6 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set start date"
                 android:onClick="showDateFragment"
                 android:id="@+id/DateButton"
                 android:layout_below="@+id/textView"
@@ -71,7 +70,6 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set end date"
                 android:onClick="showDateFragment"
                 android:id="@+id/DateButton2"
                 android:layout_alignTop="@+id/DateButton"

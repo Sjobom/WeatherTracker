@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.text.SimpleDateFormat;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,14 +18,14 @@ import android.widget.Button;
 public class Datum extends Fragment implements View.OnClickListener {
     Button button1;
     Button button2;
+    private boolean isVisible = false;
 
 
     public void onClick(View v) {
 
     }
 
-    public Datum()
-    {
+    public Datum() {
 
     }
     @Override
@@ -34,20 +36,29 @@ public class Datum extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         button1 = (Button)thisView.findViewById(R.id.avancerad_vy_button1);
         button2 = (Button)thisView.findViewById(R.id.avancerad_vy_button2);
+
+        if (!isVisible){
+            someCode();
+        }
         return thisView;
     }
 
-
     @Override
-    public void onStart() {
-
-        button1.setText(MainActivity.buttText1);
-        button2.setText(MainActivity.buttText2);
-        super.onStart();
-
-
-
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getView() != null){
+            isVisible = true;
+            someCode();
+        }
+        else {
+            isVisible = false;
+        }
     }
 
-
+    private void someCode(){
+        String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
+        String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
+        button1.setText(df1);
+        button2.setText(df2);
+    }
 }
