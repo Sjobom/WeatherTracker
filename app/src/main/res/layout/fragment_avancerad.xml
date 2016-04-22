@@ -4,15 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/icons"
-    android:layout_below="@id/appBarLayout">
+    android:paddingTop="50dp">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
         android:layout_alignParentStart="true"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp">
+        android:paddingRight="30dp"
+        android:paddingLeft="30dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -31,15 +31,25 @@
                     android:layout_centerInParent="true"
                     />
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Temperatur"
+                    android:text="Temperatur:"
                     android:id="@+id/temperatur_textview"
-                    android:layout_centerHorizontal="true"
                     android:paddingTop="@dimen/parameter_padding"
                     android:paddingBottom="@dimen/parameter_padding"
-                    android:layout_toLeftOf="@id/temperature_switch"/>
+                    android:layout_alignParentLeft="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/secondary_text"
+                    android:text="av"
+                    android:id="@+id/temperatur_textview_response"
+                    android:paddingLeft="@dimen/parameter_padding"
+                    android:paddingTop="@dimen/parameter_padding"
+                    android:paddingBottom="@dimen/parameter_padding"
+                    android:layout_toRightOf="@id/temperatur_textview"/>
                 <SeekBar
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -64,15 +74,26 @@
                     android:layout_centerInParent="true"
                     />
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Vindstyrka"
+                    android:text="Vindstyrka:"
                     android:id="@+id/wind_strength_textview"
                     android:layout_centerHorizontal="true"
                     android:paddingTop="@dimen/parameter_padding"
                     android:paddingBottom="@dimen/parameter_padding"
-                    android:layout_toLeftOf="@id/wind_strength_switch"/>
+                    android:layout_alignParentLeft="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/secondary_text"
+                    android:text="av"
+                    android:id="@+id/wind_strength_textview_response"
+                    android:paddingLeft="@dimen/parameter_padding"
+                    android:paddingTop="@dimen/parameter_padding"
+                    android:paddingBottom="@dimen/parameter_padding"
+                    android:layout_toRightOf="@id/wind_strength_textview"/>
                 <SeekBar
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -96,15 +117,26 @@
                     android:layout_centerInParent="true"
                     />
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Molnighet"
+                    android:text="Molnighet:"
                     android:id="@+id/cloud_cover_textview"
                     android:layout_centerHorizontal="true"
                     android:paddingTop="@dimen/parameter_padding"
                     android:paddingBottom="@dimen/parameter_padding"
-                    android:layout_toLeftOf="@id/cloud_cover_switch"/>
+                    android:layout_alignParentLeft="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/secondary_text"
+                    android:text="av"
+                    android:id="@+id/cloud_cover_textview_response"
+                    android:paddingLeft="@dimen/parameter_padding"
+                    android:paddingTop="@dimen/parameter_padding"
+                    android:paddingBottom="@dimen/parameter_padding"
+                    android:layout_toRightOf="@id/cloud_cover_textview"/>
                 <SeekBar
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -132,20 +164,32 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Vindriktning"
+                    android:text="Vindriktning:"
                     android:id="@+id/wind_direction_textview"
                     android:layout_centerHorizontal="true"
                     android:paddingTop="@dimen/parameter_padding"
                     android:paddingBottom="@dimen/parameter_padding"
                     android:layout_alignParentLeft="true"
-                    android:paddingRight="20dp"
                     />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/secondary_text"
+                    android:text="av"
+                    android:id="@+id/wind_direction_textview_response"
+                    android:paddingLeft="@dimen/parameter_padding"
+                    android:paddingTop="@dimen/parameter_padding"
+                    android:paddingBottom="@dimen/parameter_padding"
+                    android:layout_toRightOf="@id/wind_direction_textview"/>
                 <EditText
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:hint="från"
                     android:id="@+id/wind_direction_from_edittext"
-                    android:layout_toRightOf="@id/wind_direction_textview"
+                    android:inputType="number"
+                    android:layout_below="@id/wind_direction_textview"
                     />
                 <EditText
                     android:layout_width="70dp"
@@ -153,6 +197,8 @@
                     android:hint="till"
                     android:layout_toRightOf="@+id/wind_direction_from_edittext"
                     android:id="@+id/wind_direction_to_edittext"
+                    android:inputType="number"
+                    android:layout_below="@id/wind_direction_textview"
                     />
 
 
@@ -167,24 +213,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start"
-                    android:id="@+id/start_date_button"
+                    android:id="@+id/start_date_button_advanced"
                     />
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Slut"
-                    android:id="@+id/end_date_button"
-                    android:layout_toRightOf="@id/start_date_button"/>
+                    android:id="@+id/end_date_button_advanced"
+                    android:layout_toRightOf="@id/start_date_button_advanced"/>
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/start_date_button"
+                    android:layout_below="@id/start_date_button_advanced"
                     android:text="Välj område"
                     android:layout_centerInParent="true"
-                    android:id="@+id/go_to_map_button"
+                    android:id="@+id/go_to_map_button_advanced"
                     />
 
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
+
 </RelativeLayout>
