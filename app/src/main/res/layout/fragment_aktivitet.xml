@@ -4,96 +4,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@color/icons"
+    android:background="#FFFFFF"
+    android:paddingTop="60dp"
     >
 
-    <ScrollView
+
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="horizontal">
+        android:layout_height="wrap_content"
+        android:id="@+id/recycler_view"
+        android:scrollbars="vertical"
+        >
 
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColorHighlight="@color/colorAccent"
-                android:text="Bada"
-                android:id="@+id/checkBox"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true" />
-
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cykla"
-                android:id="@+id/checkBox2"
-                android:layout_below="@+id/checkBox"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="50dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hello Fellow User!"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="114dp"
-                android:id="@+id/textView2" />
-            ​
-            ​
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Press the button to proceed!"
-                android:id="@+id/textView"
-                android:layout_below="@+id/textView2"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="40dp"
-                android:layout_gravity="center_horizontal" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Set start date"
-                android:onClick="showDateFragment"
-                android:id="@+id/DateButton"
-                android:layout_below="@+id/textView"
-                android:layout_toStartOf="@+id/textView2"
-                android:layout_marginTop="118dp" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Set end date"
-                android:onClick="showDateFragment"
-                android:id="@+id/DateButton2"
-                android:layout_alignTop="@+id/DateButton"
-                android:layout_toEndOf="@+id/textView2"
-                android:layout_gravity="right" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Map"
-
-                android:onClick="showMap"
-                android:layout_below="@+id/DateButton"
-                android:id="@+id/button_map"
-                android:layout_marginTop="15dp" />
-
-            ​
+    </android.support.v7.widget.RecyclerView>
 
 
-        </LinearLayout>
-    </ScrollView>
+    <Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:hint="Start"
+    android:onClick="showDateFragment"
+    android:id="@+id/DateButton"
+    android:layout_marginStart="120dp"
+    android:layout_below="@+id/recycler_view"
+    />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Slut"
+        android:onClick="showDateFragment"
+        android:id="@+id/DateButton2"
+        android:layout_toEndOf="@+id/DateButton"
+        android:layout_below="@+id/recycler_view"
+        />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Välj Område"
+        android:onClick="showMap"
+        android:id="@+id/button_map"
+        android:layout_below="@+id/DateButton"
+        android:layout_centerHorizontal="true"
+
+         />
 
 
 </RelativeLayout>
