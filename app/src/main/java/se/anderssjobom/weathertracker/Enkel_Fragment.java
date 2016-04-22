@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SeekBar;
 
 
 /**
@@ -19,6 +20,7 @@ public class Enkel_Fragment extends Fragment implements View.OnClickListener {
 
     Button button1;
     Button button2;
+    SeekBar sunSeekBar;
 
     public void onClick(View v) {
 
@@ -33,14 +35,19 @@ public class Enkel_Fragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View thisView = inflater.inflate(R.layout.fragment_enkel, container, false);
 
+
+
         // Inflate the layout for this fragment
         button1 = (Button)thisView.findViewById(R.id.Enkel_vy_button1);
         button2 = (Button)thisView.findViewById(R.id.Enkel_vy_button2);
         return thisView;
     }
 
+
     @Override
     public void onStart() {
+
+
 
         button1.setText(MainActivity.buttText1);
         button2.setText(MainActivity.buttText2);
