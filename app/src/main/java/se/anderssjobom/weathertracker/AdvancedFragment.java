@@ -13,6 +13,8 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,6 +22,7 @@ import android.widget.TextView;
 public class AdvancedFragment extends Fragment implements View.OnClickListener {
     Button start_date_button;
     Button end_date_button;
+    private boolean isVisible = false;
 
 
     public void onClick(View v) {
@@ -44,9 +47,9 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
         initSeekbars(thisView);
         initSwitches(thisView);
 
-
-
-
+        if (!isVisible){
+            someCode();
+        }
 
         // Inflate the layout for this fragment
         return thisView;
@@ -190,5 +193,24 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getView() != null){
+            isVisible = true;
+            someCode();
+        }
+        else {
+            isVisible = false;
+        }
+    }
+
+    private void someCode(){
+        String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
+        String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
+        start_date_button.setText(df1);
+        end_date_button.setText(df2);
     }
 }
