@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Button;
@@ -25,8 +24,8 @@ import java.util.GregorianCalendar;
 public class MainActivity extends AppCompatActivity
 {
     public static View view;
-    public static Calendar buttText1 = GregorianCalendar.getInstance();
-    public static Calendar buttText2 = GregorianCalendar.getInstance();
+    public static String buttText1 = "set start date";
+    public static String buttText2 = "set end date";
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
@@ -37,8 +36,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        toolbar = (Toolbar) findViewById(R.id.toolBar);
-        setSupportActionBar(toolbar);
+       /* toolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);*/
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -46,8 +45,7 @@ public class MainActivity extends AppCompatActivity
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragments(new Aktivitet_Fragment(), "Aktiviteter");
         viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy");
-        viewPagerAdapter.addFragments(new Datum(), "Avancerad Vy");
-        viewPager.setOffscreenPageLimit(0);
+        viewPagerAdapter.addFragments(new AdvancedFragment(), "Avancerad Vy");
         viewPager.setAdapter(viewPagerAdapter);
 
 
@@ -74,4 +72,23 @@ public class MainActivity extends AppCompatActivity
         DialogFragment newFragment = new DatePickerFragment(); //Nu skapas fragmenterobjektet
         newFragment.show(getSupportFragmentManager(), "datePicker"); //Nu visas kalenderfragmentet
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+
+       /* outState.putString("buttText1", buttText1);
+        outState.putString("buttText2", buttText2);
+        */
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        /*
+        buttText1 = savedInstanceState.get("buttText1").toString();
+        buttText2 = savedInstanceState.get("buttText2").toString();
+        */
+    }
+
 }
