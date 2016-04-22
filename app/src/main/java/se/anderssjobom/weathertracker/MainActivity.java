@@ -1,22 +1,17 @@
 package se.anderssjobom.weathertracker;
 
+import android.app.DialogFragment;
 import android.content.Intent;
-import android.os.PersistableBundle;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Button;
-import android.widget.DatePicker;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import static android.support.v4.app.ActivityCompat.startActivity;
 
 /**
  * Created by ThimLohse on 2016-04-19.
@@ -24,20 +19,20 @@ import java.util.GregorianCalendar;
 public class MainActivity extends AppCompatActivity
 {
     public static View view;
-    public static String buttText1 = "set start date";
-    public static String buttText2 = "set end date";
+    public static Calendar buttText1 = GregorianCalendar.getInstance();
+    public static Calendar buttText2 = GregorianCalendar.getInstance();
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
 
-    @Override
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-       /* toolbar = (Toolbar) findViewById(R.id.toolBar);
-        setSupportActionBar(toolbar);*/
+                toolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -46,16 +41,12 @@ public class MainActivity extends AppCompatActivity
         viewPagerAdapter.addFragments(new Aktivitet_Fragment(), "Aktiviteter");
         viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy");
         viewPagerAdapter.addFragments(new AdvancedFragment(), "Avancerad Vy");
+        viewPager.setOffscreenPageLimit(0);
         viewPager.setAdapter(viewPagerAdapter);
 
+                tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.setupWithViewPager(viewPager);
-
-        viewPager.setPageTransformer(true,new ZoomOutPageTransformer());
-
-
-
-
+                viewPager.setPageTransformer(true,new ZoomOutPageTransformer());
 
     }
     public void showDateFragment(View v) {//När vi klickar på knappen, gör den hit
@@ -63,32 +54,14 @@ public class MainActivity extends AppCompatActivity
         showDatePickerDialog();
     }
 
-    public void showMap(View v){
+            public void showMap(View v){
         Intent intent = new Intent(MainActivity.this, MapActivity.class);
         startActivity(intent);
     }
 
     public void showDatePickerDialog() {
-        DialogFragment newFragment = new DatePickerFragment(); //Nu skapas fragmenterobjektet
+        android.support.v4.app.DialogFragment newFragment = new DatePickerFragment(); //Nu skapas fragmenterobjektet
         newFragment.show(getSupportFragmentManager(), "datePicker"); //Nu visas kalenderfragmentet
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-
-       /* outState.putString("buttText1", buttText1);
-        outState.putString("buttText2", buttText2);
-        */
-        super.onSaveInstanceState(outState, outPersistentState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        /*
-        buttText1 = savedInstanceState.get("buttText1").toString();
-        buttText2 = savedInstanceState.get("buttText2").toString();
-        */
     }
 
 }
