@@ -8,9 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 /**
  * Created by ThimLohse on 2016-04-19.
@@ -31,8 +29,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        toolbar = (Toolbar) findViewById(R.id.toolBar);
-        setSupportActionBar(toolbar);
+       /* toolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);*/
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -40,7 +38,7 @@ public class MainActivity extends AppCompatActivity
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragments(new Aktivitet_Fragment(), "Aktiviteter");
         viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy");
-        viewPagerAdapter.addFragments(new Datum(), "Avancerad Vy");
+        viewPagerAdapter.addFragments(new AdvancedFragment(), "Avancerad Vy");
         viewPager.setAdapter(viewPagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);
