@@ -4,62 +4,154 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@color/icons"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+
     >
 
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Temperatur: "
+                android:gravity="left"
+                android:id="@+id/tempTextView"
+                android:layout_alignParentTop="true"
+
+                android:layout_marginTop="120dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="vald temp"
+                android:id="@+id/tempSelectText"
+                android:layout_above="@+id/tempSeekBar"
+                android:layout_toEndOf="@+id/tempTextView" />
+
+            <SeekBar
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:id="@+id/tempSeekBar"
+                android:layout_below="@+id/tempTextView"
+                android:layout_alignParentStart="true"
+
+                android:layout_alignParentEnd="true"
+                android:padding="10px" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Molnighet: "
+                android:gravity="left"
+                android:id="@+id/cloudTextView"
+                android:layout_below="@+id/tempSeekBar"
+                android:layout_alignStart="@+id/tempSeekBar" />
+            <SeekBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cloudSeekBar"
+
+                android:layout_below="@+id/cloudTextView"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:padding="10dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Vind: "
+                android:gravity="center"
+                android:id="@+id/windTextView"
+                android:layout_below="@+id/cloudSeekBar"
+                android:layout_alignStart="@+id/windSeekBar" />
+            <SeekBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/windSeekBar"
+
+                android:layout_below="@+id/windTextView"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:padding="10dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Nederbörd"
+                android:gravity="left"
+                android:id="@+id/nederTextView"
+                android:layout_below="@+id/windSeekBar"
+                android:paddingTop="20dp" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:id="@+id/switch1"
+                android:layout_alignParentBottom="true"
+                android:layout_alignEnd="@+id/windSeekBar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Inget"
+                android:id="@+id/cloudSelectText"
+                android:layout_above="@+id/cloudSeekBar"
+                android:layout_toEndOf="@+id/nederTextView" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Av"
+                android:id="@+id/windSelectText"
+                android:layout_above="@+id/windSeekBar"
+                android:layout_toEndOf="@+id/windTextView" />
+
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start date"
-
-        android:id="@+id/Enkel_vy_button1"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
-
+        android:text="Start"
+        android:id="@+id/enkel_kalender_start"
+        android:layout_below="@+id/scrollView"
+        android:layout_alignStart="@+id/scrollView"
+        android:layout_marginStart="62dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="End date"
-        android:id="@+id/Enkel_vy_button2"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:text="Slut"
+        android:id="@+id/enkel_kalender_slut"
+        android:layout_below="@+id/scrollView"
+        android:layout_toEndOf="@+id/enkel_kalender_start" />
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Vind"
-        android:gravity="center"
-        android:id="@+id/windTextView"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="120dp" />
-
-    <SeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/windSeekBar"
-        android:layout_below="@+id/windTextView"
-        android:layout_alignParentStart="true"
-
-        android:layout_alignParentEnd="true" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Regn"
-        android:gravity="center"
-        android:id="@+id/rainTextView"
-        android:layout_below="@+id/windSeekBar"
-        android:layout_alignStart="@+id/windTextView" />
-    <SeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/rainSeekBar"
-
-        android:layout_below="@+id/rainTextView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:text="Välj område"
+        android:id="@+id/button3"
+        android:layout_below="@+id/enkel_kalender_start"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
