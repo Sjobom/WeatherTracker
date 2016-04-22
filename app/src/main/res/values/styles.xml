@@ -9,16 +9,16 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="FloatingMenuButton" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">#FBB829</item>
+    <style name="FloatingDoneButton" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="FloatingDrawButton" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">#1b9847</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="FloatingExitButton" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">#e52618</item>
+        <item name="colorAccent">@color/colorExit</item>
     </style>
 
 </resources>

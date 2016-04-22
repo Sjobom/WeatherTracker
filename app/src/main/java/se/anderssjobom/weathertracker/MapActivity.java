@@ -1,6 +1,9 @@
 package se.anderssjobom.weathertracker;
 
 import android.Manifest;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,9 +18,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +43,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -57,6 +65,7 @@ public class MapActivity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener,
         ActivityCompat.OnRequestPermissionsResultCallback{
 
+    private String LOG = "MapActivity";
     private static final int GPS_ZOOM_PERMISSION_CODE = 1; //Application specific request code to match with a result reported to onRequestPermissionsResult(int, String[], int[]).
     GoogleMap mMap; //Kartreferens, initialiseras i initMap
     private static final int ERROR_DIALOG_REQUEST = 9001;
@@ -72,14 +81,14 @@ public class MapActivity extends AppCompatActivity
     private FrameLayout fram_map;
     private FloatingActionButton enterDrawStateButton;
     private FloatingActionButton exitDrawStateButton;
+    private FloatingActionButton doneButton;
     private Boolean isMapMoveable = true; // to detect map is movable
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(LOG, "onCreate");
 
         if (servicesOK()) {
             setContentView(R.layout.activity_map);
@@ -88,37 +97,27 @@ public class MapActivity extends AppCompatActivity
             //Initialisera ritfunktionen
             initDrawFrame();
             //Initialisera GPS
-            mLocationClient = new GoogleApiClient.Builder(this)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(AppIndex.API).build();
-            mLocationClient.connect();
+            if (savedInstanceState == null) {
+                Log.d(LOG, "NULL");
+                mLocationClient = new GoogleApiClient.Builder(this)
+                        .addApi(LocationServices.API)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(AppIndex.API).build();
+                mLocationClient.connect();
+                //Initialisera sökfunktionen
+                initSearch();
+            } else{
+                Log.d(LOG, Thread.currentThread().getStackTrace().toString());
+                String s = savedInstanceState.getString("STRING");
+                Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+                CameraPosition position = savedInstanceState.getParcelable("MAP_POSITION");
+                CameraUpdate update = CameraUpdateFactory.newCameraPosition(position);
+                mMap.moveCamera(update);
+            }
 
-            PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                    getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(Place place) {
-                    LatLng latLng = place.getLatLng();
-                    CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
-                            latLng, 12
-                    );
-                    mMap.animateCamera(update);
-                    if(placeMarker != null){placeMarker.remove();}
-                    placeMarker = MapActivity.this.createMarker(latLng);
-                }
-                @Override
-                public void onError(Status status) {
-                    // TODO: Handle the error.
-                }
-            });
-
-        } else {
-            setContentView(R.layout.activity_main);
         }
-        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.menu_button);
-
+        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.done_button);
         button.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -130,8 +129,48 @@ public class MapActivity extends AppCompatActivity
         });
     }
 
-    protected void onSaveInstanceState (Bundle outState){
-        //TODO - spara kartans nuvarande position
+    @Override
+    protected void onStart() {
+        Log.d(LOG, "onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(LOG, "onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(LOG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(LOG, "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(LOG, "onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.d(LOG, "onRestart");
+        super.onRestart();
+    }
+
+    @Override
+    protected void onSaveInstanceState (Bundle savedInstanceState){
+        savedInstanceState.putString("STRING", "test");
+        savedInstanceState.putParcelable("MAP_POSITION", mMap.getCameraPosition());
+        super.onSaveInstanceState(savedInstanceState);
+        Log.d("onSaveInstanceState", "SAVED THE STATE");
     }
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
         //TODO - återställ kartans nuvarande position
@@ -184,7 +223,7 @@ public class MapActivity extends AppCompatActivity
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
                 latLng, zoomLevel
         );
-        mMap.animateCamera(update);
+        mMap.moveCamera(update);
     }
 
     @Override
@@ -200,7 +239,7 @@ public class MapActivity extends AppCompatActivity
                     CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
                             latLng, 5
                     );
-                    mMap.animateCamera(update);
+                    mMap.moveCamera(update);
                 }
             }
         }
@@ -245,6 +284,9 @@ public class MapActivity extends AppCompatActivity
                     marker.remove();
                     placePolygons.remove(index);
                     polygonTrashbins.remove(index);
+                    if(placePolygons.isEmpty()){
+                        doneButton.setVisibility(View.INVISIBLE);
+                    }
                     return true;
                 } else if (marker == marker) {
                     mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
@@ -298,6 +340,7 @@ public class MapActivity extends AppCompatActivity
         fram_map = (FrameLayout) findViewById(R.id.fram_map);
         enterDrawStateButton = (FloatingActionButton) findViewById(R.id.enter_draw_state_button);
         exitDrawStateButton = (FloatingActionButton) findViewById(R.id.exit_draw_state_button);
+        doneButton = (FloatingActionButton) findViewById(R.id.done_button);
         tempPolylines = new ArrayList<Polyline>();
         placePolygons = new ArrayList<Polygon>();
         polygonTrashbins = new ArrayList<Marker>();
@@ -305,18 +348,40 @@ public class MapActivity extends AppCompatActivity
         enterDrawStateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isMapMoveable != true) {
-                    isMapMoveable = true;
-                    exitDrawStateButton.hide();
-                    enterDrawStateButton.show();
-
-                } else {
                     isMapMoveable = false;
                     enterDrawStateButton.hide();
                     exitDrawStateButton.show();
-                    //if (placePolygon != null) {placePolygon.remove();} //Ta bort om vi vill ha flera möjliga polygoner!
                     tempPolylines = new ArrayList<Polyline>();
-                }
+            }
+        });
+        exitDrawStateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isMapMoveable = true;
+                exitDrawStateButton.hide();
+                enterDrawStateButton.show();
+                tempPolylines = null;
+            }
+        });
+    }
+
+    private void initSearch(){
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                LatLng latLng = place.getLatLng();
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
+                        latLng, 12
+                );
+                mMap.animateCamera(update);
+                if(placeMarker != null){placeMarker.remove();}
+                placeMarker = MapActivity.this.createMarker(latLng);
+            }
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
             }
         });
     }
@@ -346,6 +411,9 @@ public class MapActivity extends AppCompatActivity
                 (resizeMapIcons("ic_delete_white_green_48px", 300, 300)));
         marker.setAnchor(0.5f, 0.5f);
         polygonTrashbins.add(marker);
+        if (placePolygons.size() == 1){
+            doneButton.setVisibility(View.VISIBLE);
+        }
     }
 
     public Bitmap resizeMapIcons(String iconName, int width, int height){

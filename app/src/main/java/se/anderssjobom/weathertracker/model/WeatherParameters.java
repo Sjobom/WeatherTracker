@@ -3,7 +3,7 @@ package se.anderssjobom.weathertracker.model;
 /**
  * Created by ander on 20/04/2016.
  */
-public class WeatherPoint {
+public class WeatherParameters {
     private double temperature;
     private double windSpeed;
     private int windDirection; //grader 0-360
