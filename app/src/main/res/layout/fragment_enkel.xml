@@ -3,18 +3,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="#2e7993"
+    android:background="@color/icons"
     >
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Enkel Vy"
-        android:gravity="center"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:textAllCaps="true"
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start date"
 
-        />
+        android:id="@+id/Enkel_vy_button1"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End date"
+        android:id="@+id/Enkel_vy_button2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Vind"
+        android:gravity="center"
+        android:id="@+id/windTextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp" />
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/windSeekBar"
+        android:layout_below="@+id/windTextView"
+        android:layout_alignParentStart="true"
+
+        android:layout_alignParentEnd="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Regn"
+        android:gravity="center"
+        android:id="@+id/rainTextView"
+        android:layout_below="@+id/windSeekBar"
+        android:layout_alignStart="@+id/windTextView" />
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rainSeekBar"
+
+        android:layout_below="@+id/rainTextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
 
 </RelativeLayout>

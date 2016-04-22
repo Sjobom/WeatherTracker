@@ -1,13 +1,23 @@
 package se.anderssjobom.weathertracker;
 
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Button;
+import android.widget.DatePicker;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by ThimLohse on 2016-04-19.
@@ -15,8 +25,8 @@ import android.view.View;
 public class MainActivity extends AppCompatActivity
 {
     public static View view;
-    public static String buttText1 = "default1";
-    public static String buttText2 = "default2";
+    public static Calendar buttText1 = GregorianCalendar.getInstance();
+    public static Calendar buttText2 = GregorianCalendar.getInstance();
     Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
@@ -37,7 +47,9 @@ public class MainActivity extends AppCompatActivity
         viewPagerAdapter.addFragments(new Aktivitet_Fragment(), "Aktiviteter");
         viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy");
         viewPagerAdapter.addFragments(new Datum(), "Avancerad Vy");
+        viewPager.setOffscreenPageLimit(0);
         viewPager.setAdapter(viewPagerAdapter);
+
 
         tabLayout.setupWithViewPager(viewPager);
 
@@ -48,9 +60,7 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-
-
-    public void onClick(View v) {//När vi klickar på knappen, gör den hit
+    public void showDateFragment(View v) {//När vi klickar på knappen, gör den hit
         view = v;  //Behöver detta för att senare veta vilken knapp som vi har tryckt när vi ska skriva ner datum som användaren har valt
         showDatePickerDialog();
     }
@@ -64,6 +74,4 @@ public class MainActivity extends AppCompatActivity
         DialogFragment newFragment = new DatePickerFragment(); //Nu skapas fragmenterobjektet
         newFragment.show(getSupportFragmentManager(), "datePicker"); //Nu visas kalenderfragmentet
     }
-
-
 }

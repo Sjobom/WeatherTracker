@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="#7b7b7b"
+    android:background="@color/icons"
     >
 
     <ScrollView
@@ -21,6 +21,7 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColorHighlight="@color/colorAccent"
                 android:text="Bada"
                 android:id="@+id/checkBox"
                 android:layout_alignParentTop="true"
@@ -60,8 +61,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set start date"
-                android:onClick="onClick"
+                android:onClick="showDateFragment"
                 android:id="@+id/DateButton"
                 android:layout_below="@+id/textView"
                 android:layout_toStartOf="@+id/textView2"
@@ -70,8 +70,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set end date"
-                android:onClick="onClick"
+                android:onClick="showDateFragment"
                 android:id="@+id/DateButton2"
                 android:layout_alignTop="@+id/DateButton"
                 android:layout_toEndOf="@+id/textView2"
@@ -81,6 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Map"
+
                 android:onClick="showMap"
                 android:layout_below="@+id/DateButton"
                 android:id="@+id/button_map"

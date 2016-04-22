@@ -24,69 +24,29 @@ public class DatePickerFragment extends DialogFragment
 
         DatePickerDialog d = new DatePickerDialog(getActivity(), this, year, month, day);   // Skapar en ny instans av DatePickerDialog objekt som ska returneras
         DatePicker dp = d.getDatePicker();   //Skapar en datepicker, som vi behöver när vi ska sätta min och max datum
+        long currentDate = c.getTimeInMillis();
 
-        switch (MainActivity.view.getId()) {//Kollar vilken knapp vi tryckte på
-            case R.id.DateButton:  //Vi tyrckte på knapp 1
-                dp.setMinDate(c.getTimeInMillis()); //Sätter mindatum som dagens datum
-
-                if(MainActivity.buttText2 != "default2") { //Om ett datum har valts på den andra knappen, så använder vi det datumet som valbara maxdatum
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    Calendar cal = new GregorianCalendar();
-
-                    try {
-                        cal.setTime(dateFormat.parse(MainActivity.buttText2));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    dp.setMaxDate(cal.getTimeInMillis());
-
-                }
-                else{//Är det inget datum på det andra knappen så sätter vi maxDate till 10 dagar framåt
-                    dp.setMaxDate(c.getTimeInMillis() + 864000000); //10 dagar = 864000000 ms (seriously...)
-                }
-
-                break;
-
-            case R.id.DateButton2://Om vi tryckte på knapp 2
-                dp.setMaxDate(c.getTimeInMillis() + 864000000); //Sätter maxdatum som dagens datum + 10 dagar
-
-                if(MainActivity.buttText1 != "default1") { //Om ett datum har valts på den andra knappen, så använder vi det datumet som valbara mindatum
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    Calendar cal = new GregorianCalendar();
-
-                    try {
-                        cal.setTime(dateFormat.parse(MainActivity.buttText1));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    dp.setMinDate(cal.getTimeInMillis());
-
-                }
-                else{//Är det inget datum på det andra knappen så sätter vi minDate till dagens datum
-                    dp.setMinDate(c.getTimeInMillis());
-                }
-
-                break;
-        }
+        dp.setMinDate(currentDate);  //Sätt mindatum till nuvarande datum
+        dp.setMaxDate(currentDate + 864000000); //Sätt maxdatum till 10 dagar framåt
         return d;
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {// När användaren har valt datum och tryckt på OK, kommer denna metod att anropas
-        Button butt = (Button) MainActivity.view; //Get the button that was pressed
+        Button butt = (Button) MainActivity.view; //Hämtar knappen som användaren tryckte på
 
-        Calendar cal = Calendar.getInstance();      //Skapar ett datumobjekt för datumet som användaren har valt
-        cal.set(year, month + 1, day);
+        Calendar cal = new GregorianCalendar();      //Skapar ett datumobjekt för datumet som användaren har valt
+        cal.set(year, month, day);
 
         String df = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());//Formatet för datum blir yyyy-MM-dd
-
         switch(butt.getId()){  //Vi skriver ner datumet till en global variabel, för att kunna begränsa datum (se ovan)
             case R.id.DateButton:
-                MainActivity.buttText1 = Integer.toString(year) + "-" + Integer.toString(month + 1) + "-" + Integer.toString(day);
-                break;
+                MainActivity.buttText1.set(year, month, day); //Beroende på vad för knapp som användaren tryckte på så sätts det nya datumet till
+                break;                                        //en ny variabel
             case R.id.DateButton2:
-                MainActivity.buttText2 = Integer.toString(year) + "-" + Integer.toString(month + 1) + "-" + Integer.toString(day);
+                MainActivity.buttText2.set(year, month, day);
                 break;
         }
         butt.setText(df);   //Skriver valt datum på knappen
     }
+
 }
