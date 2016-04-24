@@ -101,8 +101,8 @@
                 android:layout_height="wrap_content"
 
                 android:id="@+id/switch1"
-                android:layout_alignParentBottom="true"
-                android:layout_alignEnd="@+id/windSeekBar" />
+                android:layout_above="@+id/relativeLayout"
+                android:layout_alignParentEnd="true" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -122,36 +122,43 @@
                 android:layout_above="@+id/windSeekBar"
                 android:layout_toEndOf="@+id/windTextView" />
 
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/nederTextView"
+                android:id="@+id/relativeLayout"
+                android:paddingTop="@dimen/parameter_container_padding">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Start"
+                        android:id="@+id/start_date_button_simple"
+                        android:onClick="showDateFragment"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Slut"
+                        android:id="@+id/end_date_button_simple"
+                        android:layout_toRightOf="@id/start_date_button_simple"
+                        android:onClick="showDateFragment"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Välj område"
+                    android:id="@+id/go_to_map_button_simple"
+                    android:layout_below="@+id/start_date_button_simple"
+                    android:onClick="showMap"
+                    android:layout_centerInParent="true" />
+            </RelativeLayout>
+
+
 
         </RelativeLayout>
 
 
     </ScrollView>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/enkel_kalender_start"
-        android:layout_below="@+id/scrollView"
-        android:layout_alignStart="@+id/scrollView"
-        android:layout_marginStart="62dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Slut"
-        android:id="@+id/enkel_kalender_slut"
-        android:layout_below="@+id/scrollView"
-        android:layout_toEndOf="@+id/enkel_kalender_start" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Välj område"
-        android:id="@+id/button3"
-        android:layout_below="@+id/enkel_kalender_start"
-        android:layout_centerHorizontal="true" />
-
 
 </RelativeLayout>

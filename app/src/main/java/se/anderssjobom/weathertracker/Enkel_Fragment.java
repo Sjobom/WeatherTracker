@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,11 +23,12 @@ import android.widget.TextView;
  */
 public class Enkel_Fragment extends Fragment implements View.OnClickListener {
 
-    Button button1;
-    Button button2;
+    Button start_date_button;
+    Button end_date_button;
     SeekBar tempSeekBar;
     SeekBar cloudSeekBar;
     SeekBar windSeekBar;
+    private boolean isVisible = false;
 
     public void onClick(View v) {
 
@@ -39,6 +42,9 @@ public class Enkel_Fragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View thisView = inflater.inflate(R.layout.fragment_enkel, container, false);
+
+        start_date_button = (Button) thisView.findViewById(R.id.start_date_button_simple);
+        end_date_button = (Button) thisView.findViewById(R.id.end_date_button_simple);
 
         tempSeekBar = (SeekBar) thisView.findViewById(R.id.tempSeekBar);
         tempSeekBar.setMax(2);
@@ -138,5 +144,27 @@ public class Enkel_Fragment extends Fragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
     }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getView() != null){
+            isVisible = true;
+            someCode();
+        }
+        else {
+            isVisible = false;
+        }
+    }
+
+    private void someCode(){
+        String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
+        String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
+        start_date_button.setText(df1);
+        end_date_button.setText(df2);
+    }
 }
+
+
 

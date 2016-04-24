@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
         showDatePickerDialog();
     }
 
-            public void showMap(View v){
+    public void showMap(View v){
         Intent intent = new Intent(MainActivity.this, MapActivity.class);
         startActivity(intent);
     }

@@ -34,8 +34,10 @@ public class Aktivitet_Fragment extends Fragment implements View.OnClickListener
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     String[] a_name;
+/*
     int[] img_res = {R.drawable.ic_swim_black_48dp, R.drawable.bike_black, R.drawable.sail,R.drawable.hike};
     ArrayList<DataProvider> arrayList = new ArrayList<DataProvider>();
+*/
 
 
     private boolean isVisible = false;
@@ -54,7 +56,7 @@ public class Aktivitet_Fragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         View thisView = inflater.inflate(R.layout.fragment_aktivitet, container, false);
 
-        recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
+     /*   recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
         a_name = getResources().getStringArray(R.array.activity_name);
         int i = 0;
         for(String name : a_name)
@@ -69,7 +71,7 @@ public class Aktivitet_Fragment extends Fragment implements View.OnClickListener
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
-
+*/
         // Inflate the layout for this fragment
         button1 = (Button)thisView.findViewById(R.id.DateButton);
         button2 = (Button)thisView.findViewById(R.id.DateButton2);
