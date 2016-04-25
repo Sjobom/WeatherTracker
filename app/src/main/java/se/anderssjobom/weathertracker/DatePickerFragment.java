@@ -39,9 +39,9 @@ public class DatePickerFragment extends DialogFragment
 
         String df = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());//Formatet för datum blir yyyy-MM-dd
         int temp = butt.getId();
-        if (temp == R.id.DateButton || temp == R.id.start_date_button_advanced){
+        if (temp == R.id.DateButton || temp == R.id.start_date_button_advanced || temp == R.id.start_date_button_simple){
             MainActivity.buttText1.set(year, month, day);
-        } else if (temp == R.id.DateButton2 || temp == R.id.end_date_button_advanced) {
+        } else if (temp == R.id.DateButton2 || temp == R.id.end_date_button_advanced || temp == R.id.end_date_button_simple) {
             MainActivity.buttText2.set(year, month, day);
         }
    /*     switch(butt.getId()){  //Vi skriver ner datumet till en global variabel, för att kunna begränsa datum (se ovan)
