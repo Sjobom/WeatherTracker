@@ -16,4 +16,8 @@
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+    <color name="colorDone">#1B9847</color>
+    <color name="colorExit">#e23a2e</color>
+    <!--colorControlHighlight är färgen för ripple-effekt-->
+    <color name="colorControlHighlight">#727272</color>
 </resources>
