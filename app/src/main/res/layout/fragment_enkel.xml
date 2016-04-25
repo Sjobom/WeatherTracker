@@ -35,6 +35,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="vald temp"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/tempSelectText"
                 android:layout_above="@+id/tempSeekBar"
                 android:layout_toEndOf="@+id/tempTextView" />
@@ -109,6 +110,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Inget"
+                android:textColor="@color/secondary_text"
                 android:id="@+id/cloudSelectText"
                 android:layout_above="@+id/cloudSeekBar"
                 android:layout_toEndOf="@+id/nederTextView" />
@@ -119,6 +121,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Av"
                 android:id="@+id/windSelectText"
+                android:textColor="@color/secondary_text"
                 android:layout_above="@+id/windSeekBar"
                 android:layout_toEndOf="@+id/windTextView" />
 

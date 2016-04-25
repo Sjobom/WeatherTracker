@@ -171,18 +171,6 @@
                     android:paddingBottom="@dimen/parameter_padding"
                     android:layout_alignParentLeft="true"
                     />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/secondary_text"
-                    android:text="av"
-                    android:id="@+id/wind_direction_textview_response"
-                    android:paddingLeft="@dimen/parameter_padding"
-                    android:paddingTop="@dimen/parameter_padding"
-                    android:paddingBottom="@dimen/parameter_padding"
-                    android:layout_toRightOf="@id/wind_direction_textview"/>
                 <EditText
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
