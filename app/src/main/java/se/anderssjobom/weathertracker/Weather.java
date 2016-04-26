@@ -29,7 +29,7 @@ public class Weather {
 
     }
 
-    class WebTask extends AsyncTask<String, String, String> {
+    static class WebTask extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute(){
@@ -45,7 +45,8 @@ public class Weather {
 
         @Override
         protected void onPostExecute(String result){
-            Log.d("MAIN.onPostExecute", result);
+
+            //Log.d("MAIN.onPostExecute", result);
         }
     }
 

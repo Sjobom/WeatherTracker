@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -81,6 +82,7 @@ public class MapActivity extends AppCompatActivity
     private Boolean isMapMoveable = true; // to detect map is movable
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +123,20 @@ public class MapActivity extends AppCompatActivity
 
                 Intent intent = new Intent(MapActivity.this, MainActivity.class);
                 startActivity(intent);
+                List<AsyncTask<String, String, String>> asyncWebTasks = new ArrayList<AsyncTask<String, String, String>>();
+                AsyncTask<String, String, String> asyncWebTask1 = new Weather.WebTask().execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/58.59/lon/16.18/data.json");
+                AsyncTask<String, String, String> asyncWebTask2 = new Weather.WebTask().execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/67.89/lon/16.18/data.json");
+                asyncWebTasks.add(asyncWebTask1);
+                asyncWebTasks.add(asyncWebTask2);
+                int i = 0;
+                for (int i = 0;i<2;i++){
+                    if(asyncWebTasks.get(i).getStatus() == AsyncTask.Status.FINISHED){
+                        i++;
+                        asyncWebTasks
+
+                    }
+                }
+
             }
         });
     }
@@ -517,6 +533,8 @@ public class MapActivity extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+
 }
 
 /*if (mMap != null){
