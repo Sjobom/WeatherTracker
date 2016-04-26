@@ -281,7 +281,7 @@ public class MapActivity extends AppCompatActivity
                     placePolygons.remove(index);
                     polygonTrashbins.remove(index);
                     if(placePolygons.isEmpty()){
-                        doneButton.setVisibility(View.INVISIBLE);
+                        doneButton.hide();
                     }
                     return true;
                 } else if (marker == marker) {
@@ -434,7 +434,7 @@ public class MapActivity extends AppCompatActivity
         marker.setAnchor(0.5f, 0.5f);
         polygonTrashbins.add(marker);
         if (placePolygons.size() == 1){
-            doneButton.setVisibility(View.VISIBLE);
+            doneButton.show();
         }
     }
 
