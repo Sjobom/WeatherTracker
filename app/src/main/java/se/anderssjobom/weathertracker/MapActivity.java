@@ -190,10 +190,6 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState (Bundle savedInstanceState){
-        savedInstanceState.putString("STRING", "test");
-        savedInstanceState.putParcelable("MAP_POSITION", mMap.getCameraPosition());
-        super.onSaveInstanceState(savedInstanceState);
-        Log.d("onSaveInstanceState", "SAVED THE STATE");
     }
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
         //TODO - återställ kartans nuvarande position
