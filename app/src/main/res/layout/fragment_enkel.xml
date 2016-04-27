@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@color/icons"
-    android:paddingLeft="30dp"
-    android:paddingRight="30dp"
+    android:paddingTop="30dp"
 
     >
 
@@ -13,10 +12,15 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView">
+        android:id="@+id/scrollView"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:layout_alignParentStart="true">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingTop="@dimen/parameter_container_padding"
+            android:paddingBottom="@dimen/parameter_container_padding"
 
             >
 
@@ -29,7 +33,7 @@
                 android:id="@+id/tempTextView"
                 android:layout_alignParentTop="true"
 
-                android:layout_marginTop="120dp" />
+                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

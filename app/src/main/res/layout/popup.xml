@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:id="@+id/popupView">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Start"
+            android:onClick="showDateFragment"
+            android:id="@+id/DateButton"
+            android:layout_marginStart="120dp"
+            android:layout_below="@+id/recycler_view"
+
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Slut"
+            android:onClick="showDateFragment"
+            android:id="@+id/DateButton2"
+            android:layout_toEndOf="@+id/DateButton"
+            android:layout_below="@+id/recycler_view"
+
+            />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Välj Område"
+            android:onClick="showMap"
+            android:id="@+id/button_map"
+            android:layout_below="@+id/DateButton"
+            android:layout_centerHorizontal="true"
+
+
+            />
+
+
+
+</RelativeLayout>

@@ -25,7 +25,7 @@ public class Enkel_Fragment extends Fragment implements View.OnClickListener {
 
     Button start_date_button;
     Button end_date_button;
-    SeekBar tempSeekBar;
+    public static SeekBar tempSeekBar;
     SeekBar cloudSeekBar;
     SeekBar windSeekBar;
     private boolean isVisible = false;

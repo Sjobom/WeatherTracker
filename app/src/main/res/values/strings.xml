@@ -6,7 +6,12 @@
         <item>"Cykla"</item>
         <item>"Segla"</item>
         <item>"Vandra"</item>
+        <item>"Hästridning</item>
+        <item>"Potatis"</item>
+        <item>"Löpning"</item>
+        <item>"Löning"</item>
     </string-array>
+
 
 
 </resources>
