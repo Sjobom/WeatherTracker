@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="105dp"
+    android:background="#FFFFFF"
+
+
+    >
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="100dp"
+        android:id="@+id/activity_image"
+        android:layout_alignParentLeft="true"
+        android:layout_toRightOf="@+id/activity_name"
+        android:padding="4dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/bike_black"
+
+
+        />
+
+    <TextView
+        android:layout_width="170dp"
+        android:layout_height="100dp"
+        android:id="@+id/activity_name"
+        android:text="Cykla"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:textStyle="bold"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent"
+        android:layout_below="@+id/activity_name"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="3dp"
+
+        >
+    </View>
+
+</RelativeLayout>

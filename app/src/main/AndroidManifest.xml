@@ -27,10 +27,9 @@
             android:value="@integer/google_play_services_version"/>
 
         <activity android:name=".MapActivity"
+            android:screenOrientation="portrait"
             android:label=".MapActivity"
-
             android:parentActivityName=".MainActivity">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapActivity" />

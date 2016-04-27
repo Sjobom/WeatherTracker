@@ -9,16 +9,19 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +40,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -49,8 +53,12 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import se.anderssjobom.weathertracker.model.WeatherParameters;
 
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -58,6 +66,7 @@ public class MapActivity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener,
         ActivityCompat.OnRequestPermissionsResultCallback{
 
+    private String LOG = "MapActivity";
     private static final int GPS_ZOOM_PERMISSION_CODE = 1; //Application specific request code to match with a result reported to onRequestPermissionsResult(int, String[], int[]).
     GoogleMap mMap; //Kartreferens, initialiseras i initMap
     private static final int ERROR_DIALOG_REQUEST = 9001;
@@ -73,14 +82,16 @@ public class MapActivity extends AppCompatActivity
     private FrameLayout fram_map;
     private FloatingActionButton enterDrawStateButton;
     private FloatingActionButton exitDrawStateButton;
+    private FloatingActionButton doneButton;
     private Boolean isMapMoveable = true; // to detect map is movable
-
+    private ArrayList<Marker> markers = new ArrayList<Marker>(3);
+    private boolean onResultScreen = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(LOG, "onCreate");
 
         if (servicesOK()) {
             setContentView(R.layout.activity_map);
@@ -89,50 +100,99 @@ public class MapActivity extends AppCompatActivity
             //Initialisera ritfunktionen
             initDrawFrame();
             //Initialisera GPS
-            mLocationClient = new GoogleApiClient.Builder(this)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(AppIndex.API).build();
-            mLocationClient.connect();
+            if (savedInstanceState == null) {
+                Log.d(LOG, "NULL");
+                mLocationClient = new GoogleApiClient.Builder(this)
+                        .addApi(LocationServices.API)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(AppIndex.API).build();
+                mLocationClient.connect();
+                //Initialisera sökfunktionen
+                initSearch();
+            } else{
+                Log.d(LOG, Thread.currentThread().getStackTrace().toString());
+                String s = savedInstanceState.getString("STRING");
+                Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+                CameraPosition position = savedInstanceState.getParcelable("MAP_POSITION");
+                CameraUpdate update = CameraUpdateFactory.newCameraPosition(position);
+                mMap.moveCamera(update);
+            }
 
-            PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                    getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(Place place) {
-                    LatLng latLng = place.getLatLng();
-                    CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
-                            latLng, 12
-                    );
-                    mMap.animateCamera(update);
-                    if(placeMarker != null){placeMarker.remove();}
-                    placeMarker = MapActivity.this.createMarker(latLng);
-                }
-                @Override
-                public void onError(Status status) {
-                    // TODO: Handle the error.
-                }
-            });
-
-        } else {
-            setContentView(R.layout.activity_main);
         }
-        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.menu_button);
-
+        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.done_button);
         button.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(MapActivity.this, MainActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(MapActivity.this, MainActivity.class);
+                //startActivity(intent);
+                AtomicInteger workCounter = new AtomicInteger(3);
+                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/58.59/lon/16.18/data.json");
+                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
+                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
+
+                doneButton.hide();
+                enterDrawStateButton.hide();
+                exitDrawStateButton.hide();
+                findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
+
+                for (Polygon poly: placePolygons){
+                    poly.setVisible(false);
+                }
+                for (Marker marker : polygonTrashbins){
+                    marker.setVisible(false);
+                }
+
+                placeResultMarkers(new LatLng(58.59, 16.18),
+                                   new LatLng(59.59, 16.18),
+                                   new LatLng(60.59, 16.18));
+
+                onResultScreen = true;
+
             }
         });
+}
+
+    @Override
+    protected void onStart() {
+        Log.d(LOG, "onStart");
+        super.onStart();
     }
 
-    protected void onSaveInstanceState (Bundle outState){
-        //TODO - spara kartans nuvarande position
+    @Override
+    protected void onResume() {
+        Log.d(LOG, "onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(LOG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(LOG, "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(LOG, "onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.d(LOG, "onRestart");
+        super.onRestart();
+    }
+
+    @Override
+    protected void onSaveInstanceState (Bundle savedInstanceState){
     }
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
         //TODO - återställ kartans nuvarande position
@@ -185,7 +245,7 @@ public class MapActivity extends AppCompatActivity
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
                 latLng, zoomLevel
         );
-        mMap.animateCamera(update);
+        mMap.moveCamera(update);
     }
 
     @Override
@@ -201,7 +261,7 @@ public class MapActivity extends AppCompatActivity
                     CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
                             latLng, 5
                     );
-                    mMap.animateCamera(update);
+                    mMap.moveCamera(update);
                 }
             }
         }
@@ -246,6 +306,9 @@ public class MapActivity extends AppCompatActivity
                     marker.remove();
                     placePolygons.remove(index);
                     polygonTrashbins.remove(index);
+                    if(placePolygons.isEmpty()){
+                        doneButton.setVisibility(View.INVISIBLE);
+                    }
                     return true;
                 } else if (marker == marker) {
                     mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
@@ -306,13 +369,14 @@ public class MapActivity extends AppCompatActivity
                                     break;
                             }
                             tvLocal.setText(address.getLocality());//Vi sätter text som ska förekomma i markör-fönster
-                            tvTemp.setText("Temperature: 5°C");
+                            tvTemp.setText("Temperature: 5 C"); //Vill vi har mer än 4 linjer av text kan vi ändra det i XML filen
                             tvWind.setText("WindSpeed: 5 m/s East");
 
                             return v;
                         }
                     });
-                    return false;//???
+                    //TODO - implementera hantering av resultat eller väder!
+                    return false;
                 } else {
                     return false;
                 }
@@ -324,6 +388,7 @@ public class MapActivity extends AppCompatActivity
         fram_map = (FrameLayout) findViewById(R.id.fram_map);
         enterDrawStateButton = (FloatingActionButton) findViewById(R.id.enter_draw_state_button);
         exitDrawStateButton = (FloatingActionButton) findViewById(R.id.exit_draw_state_button);
+        doneButton = (FloatingActionButton) findViewById(R.id.done_button);
         tempPolylines = new ArrayList<Polyline>();
         placePolygons = new ArrayList<Polygon>();
         polygonTrashbins = new ArrayList<Marker>();
@@ -331,18 +396,40 @@ public class MapActivity extends AppCompatActivity
         enterDrawStateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isMapMoveable != true) {
-                    isMapMoveable = true;
-                    exitDrawStateButton.hide();
-                    enterDrawStateButton.show();
-
-                } else {
                     isMapMoveable = false;
                     enterDrawStateButton.hide();
                     exitDrawStateButton.show();
-                    //if (placePolygon != null) {placePolygon.remove();} //Ta bort om vi vill ha flera möjliga polygoner!
                     tempPolylines = new ArrayList<Polyline>();
-                }
+            }
+        });
+        exitDrawStateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isMapMoveable = true;
+                exitDrawStateButton.hide();
+                enterDrawStateButton.show();
+                tempPolylines = null;
+            }
+        });
+    }
+
+    private void initSearch(){
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                LatLng latLng = place.getLatLng();
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(
+                        latLng, 12
+                );
+                mMap.animateCamera(update);
+                /*if(placeMarker != null){placeMarker.remove();}
+                placeMarker = MapActivity.this.createMarker(latLng);*/
+            }
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
             }
         });
     }
@@ -372,6 +459,14 @@ public class MapActivity extends AppCompatActivity
                 (resizeMapIcons("ic_delete_white_green_48px", 300, 300)));
         marker.setAnchor(0.5f, 0.5f);
         polygonTrashbins.add(marker);
+        if (placePolygons.size() == 1){
+            doneButton.setVisibility(View.VISIBLE);
+        }
+        List<LatLng> list = Weather.findWeather(new WeatherParameters(), placePolygons,
+                GregorianCalendar.getInstance(), GregorianCalendar.getInstance());
+        for(int i = 0; i < list.size(); i++){
+            createMarker(list.get(i));
+        }
     }
 
     public Bitmap resizeMapIcons(String iconName, int width, int height){
@@ -453,4 +548,40 @@ public class MapActivity extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    void placeResultMarkers(LatLng latlng1, LatLng latlng2, LatLng latlng3) {
+        Marker marker1 = createMarker(latlng1);
+        Marker marker2 = createMarker(latlng2);
+        Marker marker3 = createMarker(latlng3);
+        markers.add(marker1);
+        markers.add(marker2);
+        markers.add(marker3);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!onResultScreen){
+            super.onBackPressed();
+        } else {
+            doneButton.show();
+            enterDrawStateButton.show();
+            findViewById(R.id.card_view).setVisibility(View.VISIBLE);
+
+
+            for (Polygon poly : placePolygons) {
+                poly.setVisible(true);
+            }
+            for (Marker trashCon : polygonTrashbins) {
+                trashCon.setVisible(true);
+            }
+            for (Marker marker : markers) {
+                marker.remove();
+            }
+            onResultScreen = false;
+        }
+
+    }
+
+
 }

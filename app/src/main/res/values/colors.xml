@@ -4,9 +4,6 @@
     <color name="colorPrimaryDark">#1976D2</color>
     <color name="colorPrimaryLight">#BBDEFB</color>
     <color name="colorAccent">#FF9800</color>
-    <color name="accentRippleMenu">#fbd529</color>
-    <color name="accentRippleDraw">#1b9847</color>
-    <color name="accentRippleExit">#e25e2e</color>
 
     <color name="primary">#2196F3</color>
     <color name="primary_dark">#1976D2</color>
@@ -16,4 +13,8 @@
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+    <color name="colorDone">#1B9847</color>
+    <color name="colorExit">#e23a2e</color>
+    <!--colorControlHighlight är färgen för ripple-effekt-->
+    <color name="colorControlHighlight">#727272</color>
 </resources>

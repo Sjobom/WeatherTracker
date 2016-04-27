@@ -38,14 +38,24 @@ public class DatePickerFragment extends DialogFragment
         cal.set(year, month, day);
 
         String df = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());//Formatet för datum blir yyyy-MM-dd
-        switch(butt.getId()){  //Vi skriver ner datumet till en global variabel, för att kunna begränsa datum (se ovan)
+        int temp = butt.getId();
+        if (temp == R.id.DateButton || temp == R.id.start_date_button_advanced || temp == R.id.start_date_button_simple){
+            MainActivity.buttText1.set(year, month, day);
+        } else if (temp == R.id.DateButton2 || temp == R.id.end_date_button_advanced || temp == R.id.end_date_button_simple) {
+            MainActivity.buttText2.set(year, month, day);
+        }
+   /*     switch(butt.getId()){  //Vi skriver ner datumet till en global variabel, för att kunna begränsa datum (se ovan)
             case R.id.DateButton:
                 MainActivity.buttText1.set(year, month, day); //Beroende på vad för knapp som användaren tryckte på så sätts det nya datumet till
                 break;                                        //en ny variabel
-            case R.id.DateButton2:
+            case R.id.DateButton2 || R.id.start_date_button_advanced:
                 MainActivity.buttText2.set(year, month, day);
                 break;
-        }
+            case R.id.start_date_button_advanced:
+                MainActivity.buttText1.set(year, month, day);
+                break;
+
+        }*/
         butt.setText(df);   //Skriver valt datum på knappen
     }
 
