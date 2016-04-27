@@ -52,8 +52,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
+
+import se.anderssjobom.weathertracker.model.WeatherParameters;
 
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -435,6 +438,11 @@ public class MapActivity extends AppCompatActivity
         polygonTrashbins.add(marker);
         if (placePolygons.size() == 1){
             doneButton.setVisibility(View.VISIBLE);
+        }
+        List<LatLng> list = Weather.findWeather(new WeatherParameters(), placePolygons,
+                GregorianCalendar.getInstance(), GregorianCalendar.getInstance());
+        for(int i = 0; i < list.size(); i++){
+            createMarker(list.get(i));
         }
     }
 
