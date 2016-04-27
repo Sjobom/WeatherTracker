@@ -424,8 +424,8 @@ public class MapActivity extends AppCompatActivity
                         latLng, 12
                 );
                 mMap.animateCamera(update);
-                if(placeMarker != null){placeMarker.remove();}
-                placeMarker = MapActivity.this.createMarker(latLng);
+                /*if(placeMarker != null){placeMarker.remove();}
+                placeMarker = MapActivity.this.createMarker(latLng);*/
             }
             @Override
             public void onError(Status status) {
