@@ -133,6 +133,7 @@ public class MapActivity extends AppCompatActivity
                 doneButton.hide();
                 enterDrawStateButton.hide();
                 exitDrawStateButton.hide();
+                findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
 
                 for (Polygon poly: placePolygons){
                     poly.setVisible(false);
@@ -561,6 +562,7 @@ public class MapActivity extends AppCompatActivity
         } else {
             doneButton.show();
             enterDrawStateButton.show();
+            findViewById(R.id.card_view).setVisibility(View.VISIBLE);
 
 
             for (Polygon poly : placePolygons) {
@@ -579,53 +581,3 @@ public class MapActivity extends AppCompatActivity
 
 
 }
-
-/*if (mMap != null){
-
-            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                @Override
-                public View getInfoWindow(Marker marker) {//Definera markör-fönsters egenskaper, vi returnerar null
-                    return null;                           //eftersom vi nöjer oss med default
-                }
-
-                @Override
-                public View getInfoContents(Marker marker) {//Definera innehållet i markör-fönster
-                    View v = getLayoutInflater().inflate(R.layout.info_window, null);
-
-                    TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);//Länka till XML filen info_window
-                    TextView tvLat = (TextView) v.findViewById(R.id.tvLat);
-                    TextView tvLng = (TextView) v.findViewById(R.id.tvLng);
-                    TextView tvSnipp = (TextView) v.findViewById(R.id.tvSnippet);
-
-                    LatLng latLng = marker.getPosition();
-                    Geocoder gc = new Geocoder(MapActivity.this);
-                    List<android.location.Address> list = null;        //Få namn på område
-                    try {
-                        list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (list.isEmpty()){   //Ifall vi inte får någon information om området
-                        tvLocal.setText("No information"); //TODO maybe improve this to make it look better
-                        return v;
-                    }
-                    android.location.Address address = list.get(0);
-
-                    tvLocal.setText("You shant escape my chungus");//Vi sätter text som ska förekomma i markör-fönster
-                    tvLat.setText(address.getAddressLine(0)); //Vill vi har mer än 4 linjer av text kan vi ändra det i XML filen
-                    tvLng.setText(address.getLocality());
-                    tvSnipp.setText(address.getCountryName());
-
-                    return v;
-            }
-            });
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    if(placeMarker != null){placeMarker.remove();}
-                    placeMarker = MapActivity.this.createMarker(latLng);
-                }
-            });
-        }*/
-
