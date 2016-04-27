@@ -45,9 +45,6 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
        final DataProvider dataProvider = arrayList.get(position);
         holder.Im_Activity.setImageResource(dataProvider.getImg_res());
         holder.Tx_Activity.setText(dataProvider.getA_name());
-
-
-
     }
 
     @Override

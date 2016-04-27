@@ -34,23 +34,26 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-                toolbar = (Toolbar) findViewById(R.id.toolBar);
+            toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
 
+
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+            //Lägger till fragment
         viewPagerAdapter.addFragments(new Aktivitet_Fragment(), "Aktiviteter");
         viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy");
         viewPagerAdapter.addFragments(new AdvancedFragment(), "Avancerad Vy");
-        viewPager.setOffscreenPageLimit(0);
+
+            //Väljer vilken Adapter vår viewPager ska följa
         viewPager.setAdapter(viewPagerAdapter);
+            //Sätter antal fragment viewPager håller "levande"
         viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount());
 
-                tabLayout.setupWithViewPager(viewPager);
-
-                viewPager.setPageTransformer(true,new ZoomOutPageTransformer());
+        tabLayout.setupWithViewPager(viewPager);
 
     }
     public void showDateFragment(View v) {//När vi klickar på knappen, gör den hit
