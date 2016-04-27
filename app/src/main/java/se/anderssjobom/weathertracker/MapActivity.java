@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -80,7 +81,8 @@ public class MapActivity extends AppCompatActivity
     private FloatingActionButton exitDrawStateButton;
     private FloatingActionButton doneButton;
     private Boolean isMapMoveable = true; // to detect map is movable
-
+    private ArrayList<Marker> markers = new ArrayList<Marker>(3);
+    private boolean onResultScreen = false;
 
 
     @Override
@@ -121,25 +123,33 @@ public class MapActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(MapActivity.this, MainActivity.class);
-                startActivity(intent);
-                List<AsyncTask<String, String, String>> asyncWebTasks = new ArrayList<AsyncTask<String, String, String>>();
-                AsyncTask<String, String, String> asyncWebTask1 = new Weather.WebTask().execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/58.59/lon/16.18/data.json");
-                AsyncTask<String, String, String> asyncWebTask2 = new Weather.WebTask().execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/67.89/lon/16.18/data.json");
-                asyncWebTasks.add(asyncWebTask1);
-                asyncWebTasks.add(asyncWebTask2);
-                int i = 0;
-                for (int i = 0;i<2;i++){
-                    if(asyncWebTasks.get(i).getStatus() == AsyncTask.Status.FINISHED){
-                        i++;
-                        asyncWebTasks
+                //Intent intent = new Intent(MapActivity.this, MainActivity.class);
+                //startActivity(intent);
+                AtomicInteger workCounter = new AtomicInteger(3);
+                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/58.59/lon/16.18/data.json");
+                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
+                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
 
-                    }
+                doneButton.hide();
+                enterDrawStateButton.hide();
+                exitDrawStateButton.hide();
+
+                for (Polygon poly: placePolygons){
+                    poly.setVisible(false);
                 }
+                for (Marker marker : polygonTrashbins){
+                    marker.setVisible(false);
+                }
+
+                placeResultMarkers(new LatLng(58.59, 16.18),
+                                   new LatLng(59.59, 16.18),
+                                   new LatLng(60.59, 16.18));
+
+                onResultScreen = true;
 
             }
         });
-    }
+}
 
     @Override
     protected void onStart() {
@@ -531,6 +541,39 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    void placeResultMarkers(LatLng latlng1, LatLng latlng2, LatLng latlng3) {
+        Marker marker1 = createMarker(latlng1);
+        Marker marker2 = createMarker(latlng2);
+        Marker marker3 = createMarker(latlng3);
+        markers.add(marker1);
+        markers.add(marker2);
+        markers.add(marker3);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!onResultScreen){
+            super.onBackPressed();
+        } else {
+            doneButton.show();
+            enterDrawStateButton.show();
+
+
+            for (Polygon poly : placePolygons) {
+                poly.setVisible(true);
+            }
+            for (Marker trashCon : polygonTrashbins) {
+                trashCon.setVisible(true);
+            }
+            for (Marker marker : markers) {
+                marker.remove();
+            }
+            onResultScreen = false;
+        }
 
     }
 

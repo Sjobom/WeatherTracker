@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.Polygon;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import se.anderssjobom.weathertracker.model.WeatherParameters;
 
@@ -30,6 +31,11 @@ public class Weather {
     }
 
     static class WebTask extends AsyncTask<String, String, String> {
+        private final AtomicInteger workCounter;
+
+        public WebTask(AtomicInteger workCounter){
+            this.workCounter = workCounter;
+        }
 
         @Override
         protected void onPreExecute(){
@@ -45,7 +51,14 @@ public class Weather {
 
         @Override
         protected void onPostExecute(String result){
+            int tasksLeft = this.workCounter.decrementAndGet();
 
+            if (tasksLeft == 0){
+                Log.d("Counting", "Done");
+            }
+            else {
+                Log.d("Counting", Integer.toString(tasksLeft));
+            }
             //Log.d("MAIN.onPostExecute", result);
         }
     }
