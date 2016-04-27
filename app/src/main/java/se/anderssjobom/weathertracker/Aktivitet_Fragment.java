@@ -35,7 +35,7 @@ public class Aktivitet_Fragment extends Fragment implements View.OnClickListener
     private RecyclerView.LayoutManager layoutManager;
     String[] a_name;
 
-  //  int[] img_res = {R.drawable.ic_swim_black_48dp, R.drawable.bike_black, R.drawable.sail,R.drawable.hike};
+    int[] img_res = {R.drawable.ic_swim_black_48dp, R.drawable.bike_black, R.drawable.sail,R.drawable.hike};
     ArrayList<DataProvider> arrayList = new ArrayList<DataProvider>();
 
 
