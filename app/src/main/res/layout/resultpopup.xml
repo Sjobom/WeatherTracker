@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Lista"
+
+        android:id="@+id/DateButton"
+
+        android:gravity="center"
+        android:height="@dimen/place_autocomplete_prediction_height"
+        android:layout_marginStart="97dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:background="@android:drawable/ic_menu_mapmode" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Karta"
+        android:id="@+id/DateButton2"
+        android:height="@dimen/place_autocomplete_prediction_height"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/DateButton"
+        android:background="@android:drawable/ic_menu_agenda" />
+
+
+
+</RelativeLayout>

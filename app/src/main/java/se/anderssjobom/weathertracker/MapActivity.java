@@ -14,13 +14,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,12 +89,14 @@ public class MapActivity extends AppCompatActivity
     private Boolean isMapMoveable = true; // to detect map is movable
     private ArrayList<Marker> markers = new ArrayList<Marker>(3);
     private boolean onResultScreen = false;
+    private PopupWindow resultPopup;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG, "onCreate");
+
 
         if (servicesOK()) {
             setContentView(R.layout.activity_map);
@@ -150,6 +155,12 @@ public class MapActivity extends AppCompatActivity
                                    new LatLng(60.59, 16.18));
 
                 onResultScreen = true;
+                View popView = View.inflate(v.getContext(), R.layout.resultpopup,null);
+                resultPopup = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT,false);
+                resultPopup.setAnimationStyle(android.R.style.Animation_InputMethod);
+                resultPopup.showAtLocation(popView, Gravity.TOP,0,0);
+
+
 
             }
         });

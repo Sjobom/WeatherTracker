@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity
     public static View view;
     public static Calendar buttText1 = GregorianCalendar.getInstance();
     public static Calendar buttText2 = GregorianCalendar.getInstance();
-    Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
@@ -34,8 +33,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-            toolbar = (Toolbar) findViewById(R.id.toolBar);
-        setSupportActionBar(toolbar);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
