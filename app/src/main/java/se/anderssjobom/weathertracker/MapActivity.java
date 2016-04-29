@@ -137,10 +137,6 @@ public class MapActivity extends Fragment //TODO
 
                 //Intent intent = new Intent(MapActivity.this, MainActivity.class);
                 //startActivity(intent);
-                AtomicInteger workCounter = new AtomicInteger(3);
-                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/58.59/lon/16.18/data.json");
-                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
-                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
 
                 doneButton.hide();
                 enterDrawStateButton.hide();
@@ -155,18 +151,19 @@ public class MapActivity extends Fragment //TODO
                 for (Marker marker : polygonTrashbins){
                     marker.setVisible(false);
                 }
-
-                placeResultMarkers(new LatLng(58.59, 16.18),
-                        new LatLng(59.59, 16.18),
-                        new LatLng(60.59, 16.18));
-
                onResultScreen = true;
-                View popView = View.inflate(v.getContext(), R.layout.resultpopup,null);
-               /* resultPopup = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
-                resultPopup.setAnimationStyle(android.R.style.Animation_InputMethod);
-                resultPopup.showAtLocation(popView, Gravity.TOP,0,0);*/
+ //               View popView = View.inflate(v.getContext(), R.layout.resultpopup,null);
 
+                ProgressBar pb = (ProgressBar) getActivity().findViewById(R.id.weatherSearchProgressBar);
 
+                Map<String, Object> parametersToUseList = new HashMap<String, Object>();
+
+                parametersToUseList.put("temperature", 10.0);
+                parametersToUseList.put("windSpeed", 20.0);
+                parametersToUseList.put("cloudCover", 8);
+
+                new Weather(pb, mMap).findWeather(parametersToUseList, placePolygons,
+                        MainActivity.buttText1, MainActivity.buttText2);
 
             }
         });
@@ -247,45 +244,6 @@ public class MapActivity extends Fragment //TODO
         });
 }*/
 
-    @Override
-    protected void onStart() {
-        Log.d(LOG, "onStart");
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(LOG, "onResume");
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(LOG, "onPause");
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(LOG, "onStop");
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d(LOG, "onDestroy");
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onRestart() {
-        Log.d(LOG, "onRestart");
-        super.onRestart();
-    }
-
-    @Override
-    protected void onSaveInstanceState (Bundle savedInstanceState){
-    }
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
         //TODO - återställ kartans nuvarande position
     }

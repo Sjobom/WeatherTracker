@@ -28,6 +28,7 @@ import java.util.List;
  */
 public class MapHolder extends AppCompatActivity {
 
+    private String LOG = "MapActivity";
     public static View view;
     public static TabLayout tabLayout;
     ViewPager viewPager;
@@ -64,6 +65,42 @@ public class MapHolder extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(viewPager);
 
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(LOG, "onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(LOG, "onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(LOG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(LOG, "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(LOG, "onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.d(LOG, "onRestart");
+        super.onRestart();
     }
 
 

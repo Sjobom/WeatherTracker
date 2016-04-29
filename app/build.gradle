@@ -28,7 +28,7 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.android.support:recyclerview-v7:23.0.+'
     compile 'com.google.maps.android:android-maps-utils:0.4+'
-    compile 'net.danlew:android.joda:2.9.3'.+'
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.android.support:support-v13:+'
+    compile 'net.danlew:android.joda:2.9.3'
 }
