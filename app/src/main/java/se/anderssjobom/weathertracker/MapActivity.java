@@ -78,7 +78,7 @@ public class MapActivity extends Fragment //TODO
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleApiClient mLocationClient; //För GPS
     private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
-    private Marker placeMarker;
+    private List<Marker> topResultMarkers;
     private Circle placeCircle;
     public static List<Polygon> placePolygons;
     public static List<Marker> polygonTrashbins;
@@ -162,9 +162,8 @@ public class MapActivity extends Fragment //TODO
                 parametersToUseList.put("windSpeed", 20.0);
                 parametersToUseList.put("cloudCover", 8);
 
-                new Weather(pb, mMap).findWeather(parametersToUseList, placePolygons,
+                new Weather(pb, mMap, (OnAnalysisReadyCallback) getActivity()).findWeather(parametersToUseList, placePolygons,
                         MainActivity.buttText1, MainActivity.buttText2);
-
             }
         });
 
@@ -329,16 +328,6 @@ public class MapActivity extends Fragment //TODO
         MarkerOptions options = new MarkerOptions()
                               .position(latlng);
         return mMap.addMarker(options);
-    }
-
-    //Skapar specifik cirkel utifrån placeMarker och given radie
-    private void createCircle(int rad) {
-        CircleOptions options = new CircleOptions()
-                .center(placeMarker.getPosition())
-                .radius(rad)
-                .fillColor(0x330000FF);
-        if(placeCircle != null){placeCircle.remove();}
-        placeCircle = mMap.addCircle(options);
     }
 
     //Körs när mMap har initialierats klart i initMap
@@ -592,13 +581,20 @@ public class MapActivity extends Fragment //TODO
 
     }
 
-    void placeResultMarkers(LatLng latlng1, LatLng latlng2, LatLng latlng3) {
-        Marker marker1 = createMarker(latlng1);
-        Marker marker2 = createMarker(latlng2);
-        Marker marker3 = createMarker(latlng3);
-        markers.add(marker1);
-        markers.add(marker2);
-        markers.add(marker3);
+    public void createTopMarkers(List<WeatherParameters> resultList){
+        if(topResultMarkers == null){
+            topResultMarkers = new ArrayList<>();
+        }
+        if(topResultMarkers != null) {
+            for (int i = 0; i < topResultMarkers.size(); i++) {
+                topResultMarkers.get(i).remove();
+            }
+            topResultMarkers.clear();
+        }
 
+        for(int i = 0; i < 3; i++){
+            topResultMarkers.add(createMarker(resultList.get(i).getLatLng()));
+        }
     }
+
 }

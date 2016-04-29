@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import se.anderssjobom.weathertracker.model.WeatherParameters;
+
 /**
  * Created by Rami on 2016-04-28.
  */
-public class MapHolder extends AppCompatActivity {
+public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallback {
 
     private String LOG = "MapActivity";
     public static View view;
@@ -34,6 +36,8 @@ public class MapHolder extends AppCompatActivity {
     ViewPager viewPager;
     ViewPagerMapAdapter viewPagerMapAdapter;
     HashMap<String, Object> parametersToUseList;
+    List<WeatherParameters> resultList;
+    MapActivity mapActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +57,8 @@ public class MapHolder extends AppCompatActivity {
         viewPagerMapAdapter = new ViewPagerMapAdapter(getFragmentManager());
 
         //Lägger till fragment
-        viewPagerMapAdapter.addFragments(new MapActivity(), "Karta");
+        mapActivity = new MapActivity();
+        viewPagerMapAdapter.addFragments(mapActivity, "Karta");
         viewPagerMapAdapter.addFragments(new ListFragment(), "Lista");
 
         //viewPagerMapAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy"); //Make room for table
@@ -103,6 +108,10 @@ public class MapHolder extends AppCompatActivity {
         super.onRestart();
     }
 
+    public void onResult(List<WeatherParameters> resultList){
+        this.resultList = resultList;
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -130,6 +139,12 @@ public class MapHolder extends AppCompatActivity {
             MapActivity.onResultScreen = false;
         }
 
+    }
+
+    @Override
+    public void onAnalysisReady(List<WeatherParameters> resultList) {
+        this.resultList = resultList;
+        mapActivity.createTopMarkers(resultList);
     }
 }
 

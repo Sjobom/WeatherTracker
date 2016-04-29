@@ -1,5 +1,6 @@
 package se.anderssjobom.weathertracker;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Pair;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
@@ -40,11 +42,13 @@ public class Weather {
     private Map<String, Object> parametersToUseMap;
     private LocalDate start;
     private LocalDate end;
+    private OnAnalysisReadyCallback callback;
 
 
-    public Weather(ProgressBar pb, GoogleMap map){
+    public Weather(ProgressBar pb, GoogleMap map, OnAnalysisReadyCallback callback){
         this.map = map;
         this.pb = pb;
+        this.callback = callback;
     }
 
     public void findWeather(Map<String,Object> parametersToUseMap, List<Polygon> pList, Calendar startDate, Calendar endDate){
@@ -236,6 +240,7 @@ public class Weather {
                     }
                 }
             }
+            //Skapa lista alla platser och dagar
             List<WeatherParameters> rList = new ArrayList<>();
             for (int day = 0; day < days; day++){
                 rList.add(tempQueues[day].poll());
@@ -243,20 +248,22 @@ public class Weather {
                 rList.add(tempQueues[day].poll());
             }
 
+
             Collections.sort(rList, new pointComparator());
             Log.d("rList:", rList.toString());
             Log.d("rList size:", Integer.toString(rList.size()));
 
-            for(int i = 0; i < 3; i++){
+         /*   for(int i = 0; i < 3; i++){
                 options = new MarkerOptions()
                         .position(rList.get(i).getLatLng());
                 map.addMarker(options);
-            }
-
-
-
+            }*/
 
             jsonList = null; //Ta bort referensen för GarbageCollector
+
+        callback.onAnalysisReady(rList);
+
+
         }catch (JSONException e) {
             e.printStackTrace();
         }
