@@ -1,47 +1,109 @@
 package se.anderssjobom.weathertracker.model;
 
+import android.util.Log;
+import android.util.Pair;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by ander on 20/04/2016.
  */
 public class WeatherParameters {
+    private JSONObject data;
+    private int point;
+    private LatLng latLng;
 
+    public WeatherParameters(JSONObject data, LatLng latLng, Map<String,Object> parametersToUseMap) throws JSONException {
+        Log.d("CONSTRUCTOR","");
+        this.data = data;
+        this.latLng = latLng;
+        this.point = calculatePoints(parametersToUseMap);
+    }
+
+    //DO NOT USE REGULARLY!
     public WeatherParameters(){
-
-    }
-    private double temperature;
-    private double windSpeed;
-    private int windDirection; //grader 0-360
-    private int totalCloudCover; //åttondelar 1-8
-
-    public double getTemperature() {
-        return temperature;
+        point = -1;
     }
 
-    public void setTemperature(double temperature) {
-        this.temperature = temperature;
+    public int getPoint() {
+        return point;
     }
 
-    public double getWindSpeed() {
-        return windSpeed;
+    public double getTemperature() throws JSONException {
+        return (double) data.getJSONArray("parameters").getJSONObject(1).getJSONArray("values").get(0);
     }
 
-    public void setWindSpeed(double windSpeed) {
-        this.windSpeed = windSpeed;
+    public LocalDate getDate() throws JSONException {
+        //KAN VARA FELAKTIG KONSTRUKTION!!
+        return new LocalDate(data.getString("validTime"));
     }
 
-    public int getWindDirection() {
-        return windDirection;
+    public int getCloudCover() throws JSONException {
+        return (int) data.getJSONArray("parameters").getJSONObject(7).getJSONArray("values").get(0);
     }
 
-    public void setWindDirection(int windDirection) {
-        this.windDirection = windDirection;
+    public double getWindspeed() throws JSONException {
+        return (double) data.getJSONArray("parameters").getJSONObject(4).getJSONArray("values").get(0);
     }
 
-    public int getTotalCloudCover() {
-        return totalCloudCover;
+    public int getWindDirection() throws JSONException {
+        return (int) data.getJSONArray("parameters").getJSONObject(3).getJSONArray("values").get(0);
     }
 
-    public void setTotalCloudCover(int totalCloudCover) {
-        this.totalCloudCover = totalCloudCover;
+    public LatLng getLatLng() {
+        return latLng;
+    }
+
+    private int calculatePoints(Map<String,Object> parametersToUseMap) throws JSONException {
+        int point = 0;
+
+        if(parametersToUseMap.get("temperature") != null){
+            point += pointFormula((( (double) parametersToUseMap.get("temperature"))), getTemperature(), 40);
+        }
+
+        if(parametersToUseMap.get("windSpeed") != null){
+            point += pointFormula((( (double) parametersToUseMap.get("windSpeed"))), getTemperature(), 20);
+        }
+
+        if(parametersToUseMap.get("cloudCover") != null){
+            point += pointFormula((( (int) parametersToUseMap.get("cloudCover"))), getTemperature(), 9);
+        }
+
+        return point;
+    }
+
+    private int pointFormula(double requested, double found, int parameterDelta){
+        return (int) ( (1 - ( Math.abs((requested - found)) / parameterDelta ) ) * 1000 );
+    }
+
+
+    private int pointFormula(int requested, int found, int parameterDelta){
+        return ( (1 - ( Math.abs((requested - found)) / parameterDelta ) ) * 1000 );
+    }
+
+    public int compareTo(WeatherParameters wp){
+        if(wp.getPoint() > getPoint()){
+            return 1;
+        } else if (wp.getPoint() < getPoint()){
+            return -1;
+        }
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "[WeatherParameters, Point: " + point + "]";
     }
 }
+

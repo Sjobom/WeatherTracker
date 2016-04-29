@@ -2,25 +2,61 @@ package se.anderssjobom.weathertracker;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.util.Pair;
+import android.view.View;
+import android.widget.ProgressBar;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.maps.android.PolyUtil;
 
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import se.anderssjobom.weathertracker.model.WeatherParameters;
 
-/**
- * Created by ander on 20/04/2016.
- */
 public class Weather {
 
-    public static List<LatLng> findWeather(WeatherParameters wp, List<Polygon> pList, Calendar startDate, Calendar endDate){
+    private List<JSONObject> jsonList;
+    private ProgressBar pb;
+    private GoogleMap map;
+    private Map<String, Object> parametersToUseMap;
+    private LocalDate start;
+    private LocalDate end;
+
+
+    public Weather(ProgressBar pb, GoogleMap map){
+        this.map = map;
+        this.pb = pb;
+    }
+
+    public void findWeather(Map<String,Object> parametersToUseMap, List<Polygon> pList, Calendar startDate, Calendar endDate){
+
+        this.parametersToUseMap = parametersToUseMap;
+
+        start = new LocalDate(startDate);
+        end = new LocalDate(endDate);
+
+        jsonList = new ArrayList<>();
+
+        pb.setVisibility(View.VISIBLE);
 
         List<LatLng> poly = pList.get(0).getPoints();
         LatLng tempLatLng = poly.get(0);
@@ -63,7 +99,6 @@ public class Weather {
         }
 
 
-
         List <LatLng> pointsInPolygon = new ArrayList<>();
 
         for (Double i = minLat; i <= maxLat; i += deltaLat ){
@@ -74,12 +109,30 @@ public class Weather {
                 }
             }
         }
+
+        String uri;
+        Double lon, lat;
+        final AtomicInteger workCounter = new AtomicInteger(pointsInPolygon.size());
+        DecimalFormat df = new DecimalFormat("#.####");
+
+        for (int i = 0; i < pointsInPolygon.size(); i++){
+            tempLatLng = pointsInPolygon.get(i);
+            lon = Double.valueOf(df.format(tempLatLng.longitude));
+            lat = Double.valueOf(df.format(tempLatLng.latitude));
+
+
+            uri = "http://opendata-download-metfcst.smhi.se/api/category/pmp2g/version/2/" +
+                    "geotype/point/lon/" + lon + "/lat/" + lat + "/data.json";
+            new Weather.WebTask(workCounter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, uri);
+        }
+
         Log.d("Weather, querys: ", Integer.toString(pointsInPolygon.size()));
-        return pointsInPolygon;
+
     }
 
 
-    static class WebTask extends AsyncTask<String, String, String> {
+     class WebTask extends AsyncTask<String, String, JSONObject> {
+
         private final AtomicInteger workCounter;
 
         public WebTask(AtomicInteger workCounter){
@@ -88,29 +141,195 @@ public class Weather {
 
         @Override
         protected void onPreExecute(){
-
+            Log.d("PreExecute", "!");
         }
 
         @Override
-        protected String doInBackground(String... params) {
-
+        protected JSONObject doInBackground(String... params) {
             String content = HttpManager.getData(params[0]);
-            return content;
+            JSONObject obj = null;
+            try {
+                obj = new JSONObject(content);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return obj;
         }
 
         @Override
-        protected void onPostExecute(String result){
-            int tasksLeft = this.workCounter.decrementAndGet();
+        protected void onPostExecute(JSONObject obj){
 
+            jsonList.add(obj);
+
+            int tasksLeft = this.workCounter.decrementAndGet();
             if (tasksLeft == 0){
-                Log.d("Counting", "Done");
+                Log.d("Fetching", "Done");
+                //TODO - skapa tråd för analys!
+                analyseResults();
+                pb.setVisibility(View.INVISIBLE);
             }
             else {
                 Log.d("Counting", Integer.toString(tasksLeft));
             }
-            //Log.d("MAIN.onPostExecute", result);
+
+        }
+
+
+    }
+
+
+    private void analyseResults() {
+        JSONObject obj;
+        JSONArray timeSeries;
+        JSONArray ar;
+        WeatherParameters tempWeather;
+        MarkerOptions options;
+        String strDate;
+        String tempDate;
+        LatLng tempLatLng;
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("y-MM-d");
+
+        int days = Days.daysBetween(start, end).getDays() + 1;
+
+        PriorityQueue<WeatherParameters>[] tempQueues = new PriorityQueue[days+1];
+
+        for (int i = 0; i < days; i++) {
+            tempQueues[i] = new PriorityQueue<>(3, new pointReverseComparator());
+            tempQueues[i].offer(new WeatherParameters());
+            tempQueues[i].offer(new WeatherParameters());
+            tempQueues[i].offer(new WeatherParameters());
+        }
+
+        try {
+            //Kolla varje hämtat JSON-objekt (Position)
+            for (int i = 0; i < jsonList.size(); i++) {
+                obj = jsonList.get(i);
+                ar = obj.getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
+                tempLatLng = new LatLng(ar.getDouble(1),ar.getDouble(0));
+                timeSeries = obj.getJSONArray("timeSeries");
+
+                //Kolla varje tidspunkt på positionen
+                for (int j = 0; j < timeSeries.length(); j++) {
+                    obj = timeSeries.getJSONObject(j);
+                    strDate = obj.getString("validTime");
+                    tempDate = (strDate.split("T")[0]);
+
+                    //Gäller tidspunkten för kl 12?
+                    if (strDate.contains("T12:00:00Z")) {
+
+                        for (int curDay = 0; curDay < days; curDay++) {
+                            //Är tempDate med i det sökta intervallet?
+                            if (fmt.print(start.plusDays(curDay)).equals(tempDate)) {
+                                tempWeather = new WeatherParameters(obj, tempLatLng, parametersToUseMap);
+                                Log.d(" " + tempDate, tempWeather.toString());
+                                //TODO - skicka med vilka parametrar som poängen ska skapas utifrån till wp-konstruktorn!
+                                //Är tempDates poäng bättre än någon av de tre nuvarande på tempDates dags templista?
+
+                                tempQueues[curDay].offer(tempWeather);
+
+                                if(tempQueues[curDay].size() > 3){
+                                    tempQueues[curDay].poll();
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            List<WeatherParameters> rList = new ArrayList<>();
+            for (int day = 0; day < days; day++){
+                rList.add(tempQueues[day].poll());
+                rList.add(tempQueues[day].poll());
+                rList.add(tempQueues[day].poll());
+            }
+
+            Collections.sort(rList, new pointComparator());
+            Log.d("rList:", rList.toString());
+            Log.d("rList size:", Integer.toString(rList.size()));
+
+            for(int i = 0; i < 3; i++){
+                options = new MarkerOptions()
+                        .position(rList.get(i).getLatLng());
+                map.addMarker(options);
+            }
+
+
+
+
+            jsonList = null; //Ta bort referensen för GarbageCollector
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public class pointReverseComparator implements Comparator<WeatherParameters>{
+
+        @Override
+        public int compare(WeatherParameters lhs, WeatherParameters rhs) {
+            if(lhs.getPoint() < rhs.getPoint()){
+                return -1;
+            }else if (lhs.getPoint() > rhs.getPoint()){
+                return 1;
+            }
+            return 0;
+        }
+    }
+
+    public class pointComparator implements Comparator<WeatherParameters>{
+
+        @Override
+        public int compare(WeatherParameters lhs, WeatherParameters rhs) {
+            if(lhs.getPoint() < rhs.getPoint()){
+                return 1;
+            }else if (lhs.getPoint() > rhs.getPoint()){
+                return -1;
+            }
+            return 0;
         }
     }
 
 
+
+
+        // SKRIVER UT SMHIs koordinater
+            /* for (int i = 0; i < jsonList.size(); i++){
+                obj = jsonList.get(i);
+                try {
+                    ar = (JSONArray) obj.getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
+                    lon = ar.getDouble(0);
+                    lat = ar.getDouble(1);
+                    options = new MarkerOptions()
+                            .position(new LatLng(lat,lon));
+                    map.addMarker(options);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }*/
+
 }
+
+
+
+/*    static class AnalysisTask extends AsyncTask<JSONObject, String, List<WeatherParameters>{
+
+        private final AtomicInteger workCounter;
+
+        public AnalysisTask(AtomicInteger workCounter){
+            this.workCounter = workCounter;
+        }
+
+        @Override
+        protected List<WeatherParameters> doInBackground(JSONObject... params) {
+            int tasksLeft = this.workCounter.decrementAndGet();
+
+            if (tasksLeft == 0){
+                Log.d("Fetching", "Done");
+
+            }
+            else {
+                Log.d("Counting", Integer.toString(tasksLeft));
+            }
+            return ;
+        }
+    }*/

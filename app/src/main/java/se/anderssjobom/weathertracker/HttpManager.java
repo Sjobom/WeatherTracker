@@ -1,14 +1,13 @@
 package se.anderssjobom.weathertracker;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by ander on 20/04/2016.
- */
 public class HttpManager {
 
     public static String getData(String uri){
@@ -22,6 +21,7 @@ public class HttpManager {
 
             StringBuilder sb = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
 
             String line;
             while((line = reader.readLine()) != null){

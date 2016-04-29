@@ -17,10 +17,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,8 +56,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import se.anderssjobom.weathertracker.model.WeatherParameters;
@@ -67,7 +71,7 @@ public class MapActivity extends AppCompatActivity
         ActivityCompat.OnRequestPermissionsResultCallback{
 
     private String LOG = "MapActivity";
-    private static final int GPS_ZOOM_PERMISSION_CODE = 1; //Application specific request code to match with a result reported to onRequestPermissionsResult(int, String[], int[]).
+    private static final int GPS_ZOOM_PERMISSION_CODE = 1; //Application specific request code tmapo match with a result reported to onRequestPermissionsResult(int, String[], int[]).
     GoogleMap mMap; //Kartreferens, initialiseras i initMap
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleApiClient mLocationClient; //För GPS
@@ -93,6 +97,8 @@ public class MapActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Log.d(LOG, "onCreate");
 
+
+
         if (servicesOK()) {
             setContentView(R.layout.activity_map);
             //Initialisera kartan
@@ -100,7 +106,7 @@ public class MapActivity extends AppCompatActivity
             //Initialisera ritfunktionen
             initDrawFrame();
             //Initialisera GPS
-            if (savedInstanceState == null) {
+            //if (savedInstanceState == null) {
                 Log.d(LOG, "NULL");
                 mLocationClient = new GoogleApiClient.Builder(this)
                         .addApi(LocationServices.API)
@@ -110,14 +116,14 @@ public class MapActivity extends AppCompatActivity
                 mLocationClient.connect();
                 //Initialisera sökfunktionen
                 initSearch();
-            } else{
+/*            } else{
                 Log.d(LOG, Thread.currentThread().getStackTrace().toString());
                 String s = savedInstanceState.getString("STRING");
                 Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
                 CameraPosition position = savedInstanceState.getParcelable("MAP_POSITION");
                 CameraUpdate update = CameraUpdateFactory.newCameraPosition(position);
                 mMap.moveCamera(update);
-            }
+            }*/
 
         }
         FloatingActionButton button = (FloatingActionButton) findViewById(R.id.done_button);
@@ -128,11 +134,6 @@ public class MapActivity extends AppCompatActivity
 
                 //Intent intent = new Intent(MapActivity.this, MainActivity.class);
                 //startActivity(intent);
-                AtomicInteger workCounter = new AtomicInteger(3);
-                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/58.59/lon/16.18/data.json");
-                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
-                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
-
                 doneButton.hide();
                 enterDrawStateButton.hide();
                 exitDrawStateButton.hide();
@@ -145,11 +146,19 @@ public class MapActivity extends AppCompatActivity
                     marker.setVisible(false);
                 }
 
-                placeResultMarkers(new LatLng(58.59, 16.18),
-                                   new LatLng(59.59, 16.18),
-                                   new LatLng(60.59, 16.18));
-
                 onResultScreen = true;
+
+                ProgressBar pb = (ProgressBar) findViewById(R.id.weatherSearchProgressBar);
+                pb.setVisibility(View.INVISIBLE);
+
+                Map<String, Object> parametersToUseList = new HashMap<String, Object>();
+
+                parametersToUseList.put("temperature", 10.0);
+                parametersToUseList.put("windSpeed", 20.0);
+                parametersToUseList.put("cloudCover", 8);
+
+                new Weather(pb, mMap).findWeather(parametersToUseList, placePolygons,
+                        MainActivity.buttText1, MainActivity.buttText2);
 
             }
         });
@@ -276,7 +285,7 @@ public class MapActivity extends AppCompatActivity
     }
 
     // Skapar en generell marker på kartan
-    private Marker createMarker(LatLng latlng) {
+    public Marker createMarker(LatLng latlng) {
         MarkerOptions options = new MarkerOptions()
                               .position(latlng);
         return mMap.addMarker(options);
@@ -461,11 +470,6 @@ public class MapActivity extends AppCompatActivity
         polygonTrashbins.add(marker);
         if (placePolygons.size() == 1){
             doneButton.setVisibility(View.VISIBLE);
-        }
-        List<LatLng> list = Weather.findWeather(new WeatherParameters(), placePolygons,
-                GregorianCalendar.getInstance(), GregorianCalendar.getInstance());
-        for(int i = 0; i < list.size(); i++){
-            createMarker(list.get(i));
         }
     }
 
