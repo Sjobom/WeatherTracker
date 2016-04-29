@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:hint="Lista"
 
-        android:id="@+id/DateButton"
+        android:id="@+id/Mapbutton"
 
         android:gravity="center"
         android:height="@dimen/place_autocomplete_prediction_height"
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Karta"
-        android:id="@+id/DateButton2"
+        android:id="@+id/Tablebutton"
         android:height="@dimen/place_autocomplete_prediction_height"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/DateButton"

@@ -7,6 +7,7 @@ import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +16,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 /**
  * A simple {@link Fragment} subclass.
  *
  */
-public class Enkel_Fragment extends Fragment implements View.OnClickListener {
+public class Enkel_Fragment extends Fragment{
 
     Button start_date_button;
     Button end_date_button;
@@ -30,9 +32,6 @@ public class Enkel_Fragment extends Fragment implements View.OnClickListener {
     SeekBar windSeekBar;
     private boolean isVisible = false;
 
-    public void onClick(View v) {
-
-    }
     public Enkel_Fragment() {
         // Required empty public constructor
     }
@@ -151,15 +150,18 @@ public class Enkel_Fragment extends Fragment implements View.OnClickListener {
         super.setUserVisibleHint(isVisibleToUser);
         if (getView() != null){
             isVisible = true;
-            someCode();
+            writeDate();
         }
         else {
             isVisible = false;
         }
     }
 
-    private void someCode(){
+    private void writeDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
+        Log.d("Toime", sdf.format(MainActivity.buttText1.getTime()));
+        Log.d("Toime", Long.toString(MainActivity.buttText1.getTimeInMillis()));
         String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
         start_date_button.setText(df1);
         end_date_button.setText(df2);

@@ -28,11 +28,10 @@ public class MainActivity extends AppCompatActivity
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
 
-        @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -40,14 +39,14 @@ public class MainActivity extends AppCompatActivity
 
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-            //Lägger till fragment
+        //Lägger till fragment
         viewPagerAdapter.addFragments(new Aktivitet_Fragment(), "Aktiviteter");
         viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy");
         viewPagerAdapter.addFragments(new AdvancedFragment(), "Avancerad Vy");
 
-            //Väljer vilken Adapter vår viewPager ska följa
+        //Väljer vilken Adapter vår viewPager ska följa
         viewPager.setAdapter(viewPagerAdapter);
-            //Sätter antal fragment viewPager håller "levande"
+        //Sätter antal fragment viewPager håller "levande"
         viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount());
 
         tabLayout.setupWithViewPager(viewPager);
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showMap(View v){
-        Intent intent = new Intent(MainActivity.this, MapActivity.class);
+        Intent intent = new Intent(MainActivity.this, MapHolder.class);
         startActivity(intent);
     }
 

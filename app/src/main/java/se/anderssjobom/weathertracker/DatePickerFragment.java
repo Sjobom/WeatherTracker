@@ -41,8 +41,20 @@ public class DatePickerFragment extends DialogFragment
         int temp = butt.getId();
         if (temp == R.id.DateButton || temp == R.id.start_date_button_advanced || temp == R.id.start_date_button_simple){
             MainActivity.buttText1.set(year, month, day);
+            MainActivity.buttText1.clear(Calendar.HOUR_OF_DAY);
+            MainActivity.buttText1.clear(Calendar.MINUTE);
+            MainActivity.buttText1.clear(Calendar.SECOND);
+            MainActivity.buttText1.clear(Calendar.MILLISECOND);
+           /* MainActivity.buttText1.set(Calendar.HOUR_OF_DAY, 0);
+            MainActivity.buttText1.set(Calendar.MINUTE, 0);
+            MainActivity.buttText1.set(Calendar.SECOND, 0);
+            MainActivity.buttText1.set(Calendar.MILLISECOND, 0);*/
         } else if (temp == R.id.DateButton2 || temp == R.id.end_date_button_advanced || temp == R.id.end_date_button_simple) {
             MainActivity.buttText2.set(year, month, day);
+            MainActivity.buttText2.set(Calendar.HOUR_OF_DAY, 0);
+            MainActivity.buttText2.set(Calendar.MINUTE, 0);
+            MainActivity.buttText2.set(Calendar.SECOND, 0);
+            MainActivity.buttText2.set(Calendar.MILLISECOND, 0);
         }
    /*     switch(butt.getId()){  //Vi skriver ner datumet till en global variabel, för att kunna begränsa datum (se ovan)
             case R.id.DateButton:

@@ -48,7 +48,7 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
         initSwitches(thisView);
 
         if (!isVisible){
-            someCode();
+            writeDate();
         }
 
         // Inflate the layout for this fragment
@@ -200,14 +200,14 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
         super.setUserVisibleHint(isVisibleToUser);
         if (getView() != null){
             isVisible = true;
-            someCode();
+            writeDate();
         }
         else {
             isVisible = false;
         }
     }
 
-    private void someCode(){
+    private void writeDate(){
         String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
         String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
         start_date_button.setText(df1);
