@@ -2,20 +2,25 @@ package se.anderssjobom.weathertracker;
 
 import android.app.*;
 import android.app.ListFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.google.android.gms.common.api.BooleanResult;
+import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -24,29 +29,21 @@ import java.util.List;
 public class MapHolder extends AppCompatActivity {
 
     public static View view;
-    public static List<Polygon> placePolygons;
-    public static List<Marker> polygonTrashbins;
-    public static List<Polyline> tempPolylines;
-    public static LatLng curLatLng;
-    public static LatLng prevLatLng;
-    public static FrameLayout fram_map;
-    public static FloatingActionButton enterDrawStateButton;
-    public static FloatingActionButton exitDrawStateButton;
-    public static FloatingActionButton doneButton;
-    public static Boolean isMapMoveable = true; // to detect map is movable
-    public static ArrayList<Marker> markers = new ArrayList<Marker>(3);
-    public static boolean onResultScreen = false;
-
-
-
-
     public static TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerMapAdapter viewPagerMapAdapter;
+    HashMap<String, Object> parametersToUseList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        parametersToUseList = (HashMap<String, Object>) intent.getSerializableExtra("map");
+
+        if (parametersToUseList.containsKey("cloudCover")) {
+            Log.d("TaaAAG", parametersToUseList.get("cloudCover").toString());
+        }
+
         setContentView(R.layout.activity_menu);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
@@ -72,24 +69,28 @@ public class MapHolder extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!onResultScreen){
+        if (!MapActivity.onResultScreen){
             super.onBackPressed();
         } else {
-            doneButton.show();  //TODO look at what happens when you press back button, also could i use tablout isvisible as a reference?
-            enterDrawStateButton.show();
+            Log.d("Onlist" , "onList");
+            TabLayout.Tab tab = tabLayout.getTabAt(0);
+            tab.select();
+            Log.d("Onlist", "NOT");
+            MapActivity.doneButton.show();  //TODO look at what happens when you press back button, also could i use tablout isvisible as a reference?
+            MapActivity.enterDrawStateButton.show();
             findViewById(R.id.card_view).setVisibility(View.VISIBLE);
-            //resultPopup.dismiss();
+            tabLayout.setVisibility(View.GONE);
 
-            for (Polygon poly : placePolygons) {
+            for (Polygon poly : MapActivity.placePolygons) {
                 poly.setVisible(true);
             }
-            for (Marker trashCon : polygonTrashbins) {
+            for (Marker trashCon : MapActivity.polygonTrashbins) {
                 trashCon.setVisible(true);
             }
-            for (Marker marker : markers) {
+            for (Marker marker : MapActivity.markers) {
                 marker.remove();
             }
-            onResultScreen = false;
+            MapActivity.onResultScreen = false;
         }
 
     }

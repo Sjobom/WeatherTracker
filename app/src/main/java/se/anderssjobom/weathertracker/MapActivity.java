@@ -84,18 +84,18 @@ public class MapActivity extends Fragment //TODO
     private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
     private Marker placeMarker;
     private Circle placeCircle;
-    private List<Polygon> placePolygons;
-    private List<Marker> polygonTrashbins;
+    public static List<Polygon> placePolygons;
+    public static List<Marker> polygonTrashbins;
     private List<Polyline> tempPolylines;
     private LatLng curLatLng;
     private LatLng prevLatLng;
     private FrameLayout fram_map;
-    private FloatingActionButton enterDrawStateButton;
+    public static FloatingActionButton enterDrawStateButton;
     private FloatingActionButton exitDrawStateButton;
-    private FloatingActionButton doneButton;
+    public static FloatingActionButton doneButton;
     private Boolean isMapMoveable = true; // to detect map is movable
-    private ArrayList<Marker> markers = new ArrayList<Marker>(3);
-    private boolean onResultScreen = false;
+    public static ArrayList<Marker> markers = new ArrayList<Marker>(3);
+    public static boolean onResultScreen = false;
     private View thisView;
   //  private PopupWindow resultPopup;
 
@@ -152,7 +152,6 @@ public class MapActivity extends Fragment //TODO
                 thisView.findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
 
                 MapHolder.tabLayout.setVisibility(View.VISIBLE); //TODO Maybe set global variable to visibility?
-                MapHolder.tabLayout.getVisibility();
 
                 for (Polygon poly: placePolygons){
                     poly.setVisible(false);
@@ -411,7 +410,7 @@ public class MapActivity extends Fragment //TODO
                         doneButton.setVisibility(View.INVISIBLE);
                     }
                     return true;
-                } else if (marker == marker) {
+                } else if (true) {
                     mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                         @Override
                         public View getInfoWindow(Marker marker) {
@@ -429,7 +428,7 @@ public class MapActivity extends Fragment //TODO
                             ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
 
                             LatLng latLng = marker.getPosition();         //Vi tar markörerns koordinater och använder geocoder för att få
-                            Geocoder gc = new Geocoder(MapHolder.view.getContext()); //namnet på staden som markören pekar på
+                            Geocoder gc = new Geocoder(getActivity()); //namnet på staden som markören pekar på
                             List<android.location.Address> list = null;        //Få namn på område
                             try {
                                 list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
@@ -653,13 +652,9 @@ public class MapActivity extends Fragment //TODO
         Marker marker1 = createMarker(latlng1);
         Marker marker2 = createMarker(latlng2);
         Marker marker3 = createMarker(latlng3);
-        MapHolder.markers.add(marker1);
-        MapHolder.markers.add(marker2);
-        MapHolder.markers.add(marker3);
+        markers.add(marker1);
+        markers.add(marker2);
+        markers.add(marker3);
 
     }
-
-
-
-
 }

@@ -10,11 +10,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.SeekBar;
 
 /**
  * Created by ThimLohse on 2016-04-19.
@@ -57,8 +60,31 @@ public class MainActivity extends AppCompatActivity
         showDatePickerDialog();
     }
 
-    public void showMap(View v){
+    public void showMap(View v){ //TODO Make different cases depending on which of the tab buttons user pressed
+        HashMap<String, Object> parametersToUseList = new HashMap<String, Object>();
+        switch(v.getId()){
+            case R.id.button_map:
+                break;
+            case R.id.go_to_map_button_simple:
+                SeekBar seekTemp = (SeekBar) findViewById(R.id.tempSeekBar);
+                SeekBar seekCloud = (SeekBar) findViewById(R.id.cloudSeekBar);
+                SeekBar seekWind = (SeekBar) findViewById(R.id.windSeekBar);
+                parametersToUseList.put("temperature", seekTemp.getProgress());
+                parametersToUseList.put("windSpeed", seekCloud.getProgress());
+                parametersToUseList.put("cloudCover", seekWind.getProgress());
+                break;
+            case R.id.go_to_map_button_advanced:
+                SeekBar seekadvTemp = (SeekBar) findViewById(R.id.temperature_seekbar);
+                SeekBar seekadvCloud = (SeekBar) findViewById(R.id.cloud_cover_seekbar);
+                SeekBar seekadvWind = (SeekBar) findViewById(R.id.wind_strength_seekbar);
+                parametersToUseList.put("temperature", seekadvTemp.getProgress());
+                parametersToUseList.put("cloudCover", seekadvCloud.getProgress());
+                parametersToUseList.put("windSpeed", seekadvWind.getProgress());
+                break;
+        }
+
         Intent intent = new Intent(MainActivity.this, MapHolder.class);
+        intent.putExtra("map", parametersToUseList);
         startActivity(intent);
     }
 
