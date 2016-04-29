@@ -10,11 +10,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.SeekBar;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -26,19 +29,15 @@ public class MainActivity extends AppCompatActivity
     public static View view;
     public static Calendar buttText1 = GregorianCalendar.getInstance();
     public static Calendar buttText2 = GregorianCalendar.getInstance();
-    Toolbar toolbar;
     TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
 
-        @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         JodaTimeAndroid.init(this); //Importerat tidsbibliotek!
-
-        toolbar = (Toolbar) findViewById(R.id.toolBar);
-        setSupportActionBar(toolbar);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -46,14 +45,14 @@ public class MainActivity extends AppCompatActivity
 
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-            //Lägger till fragment
+        //Lägger till fragment
         viewPagerAdapter.addFragments(new Aktivitet_Fragment(), "Aktiviteter");
         viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy");
         viewPagerAdapter.addFragments(new AdvancedFragment(), "Avancerad Vy");
 
-            //Väljer vilken Adapter vår viewPager ska följa
+        //Väljer vilken Adapter vår viewPager ska följa
         viewPager.setAdapter(viewPagerAdapter);
-            //Sätter antal fragment viewPager håller "levande"
+        //Sätter antal fragment viewPager håller "levande"
         viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount());
 
         tabLayout.setupWithViewPager(viewPager);
@@ -64,8 +63,31 @@ public class MainActivity extends AppCompatActivity
         showDatePickerDialog();
     }
 
-    public void showMap(View v){
-        Intent intent = new Intent(MainActivity.this, MapActivity.class);
+    public void showMap(View v){ //TODO Make different cases depending on which of the tab buttons user pressed
+        HashMap<String, Object> parametersToUseList = new HashMap<String, Object>();
+        switch(v.getId()){
+            case R.id.button_map:
+                break;
+            case R.id.go_to_map_button_simple:
+                SeekBar seekTemp = (SeekBar) findViewById(R.id.tempSeekBar);
+                SeekBar seekCloud = (SeekBar) findViewById(R.id.cloudSeekBar);
+                SeekBar seekWind = (SeekBar) findViewById(R.id.windSeekBar);
+                parametersToUseList.put("temperature", seekTemp.getProgress());
+                parametersToUseList.put("windSpeed", seekCloud.getProgress());
+                parametersToUseList.put("cloudCover", seekWind.getProgress());
+                break;
+            case R.id.go_to_map_button_advanced:
+                SeekBar seekadvTemp = (SeekBar) findViewById(R.id.temperature_seekbar);
+                SeekBar seekadvCloud = (SeekBar) findViewById(R.id.cloud_cover_seekbar);
+                SeekBar seekadvWind = (SeekBar) findViewById(R.id.wind_strength_seekbar);
+                parametersToUseList.put("temperature", seekadvTemp.getProgress());
+                parametersToUseList.put("cloudCover", seekadvCloud.getProgress());
+                parametersToUseList.put("windSpeed", seekadvWind.getProgress());
+                break;
+        }
+
+        Intent intent = new Intent(MainActivity.this, MapHolder.class);
+        intent.putExtra("map", parametersToUseList);
         startActivity(intent);
     }
 

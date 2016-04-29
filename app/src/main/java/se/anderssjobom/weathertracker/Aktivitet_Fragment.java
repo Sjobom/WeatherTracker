@@ -21,6 +21,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 /**
@@ -47,6 +48,7 @@ public class Aktivitet_Fragment extends Fragment implements View.OnClickListener
         // Required empty public constructor
     }
 
+
     public void onClick(View v) {
 
     }
@@ -61,8 +63,8 @@ public class Aktivitet_Fragment extends Fragment implements View.OnClickListener
         int i = 0;
         for(String name : a_name)
         {
-      //      DataProvider dataProvider = new DataProvider(img_res[i],name);
-      //      arrayList.add(dataProvider);
+            DataProvider dataProvider = new DataProvider(img_res[i],name);
+            arrayList.add(dataProvider);
             i++;
         }
 
@@ -77,30 +79,34 @@ public class Aktivitet_Fragment extends Fragment implements View.OnClickListener
         button2 = (Button)thisView.findViewById(R.id.DateButton2);
 
         if (!isVisible){
-            someCode();
+            writeDate();
         }
 
         return thisView;
 
     }
 
-
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (getView() != null){
             isVisible = true;
-            someCode();
+            writeDate();
         }
         else {
             isVisible = false;
         }
     }
 
-    private void someCode(){
+    private void writeDate(){
         String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
-        String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
+        String df2;
+        if (MainActivity.buttText2 == null){
+            df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
+        }
+        else {
+            df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
+        }
         button1.setText(df1);
         button2.setText(df2);
     }

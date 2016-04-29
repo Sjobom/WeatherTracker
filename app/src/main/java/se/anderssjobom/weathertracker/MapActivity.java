@@ -2,6 +2,7 @@ package se.anderssjobom.weathertracker;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,9 +18,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -64,7 +66,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import se.anderssjobom.weathertracker.model.WeatherParameters;
 
-public class MapActivity extends AppCompatActivity
+public class MapActivity extends Fragment //TODO
         implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -78,26 +80,106 @@ public class MapActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
     private Marker placeMarker;
     private Circle placeCircle;
-    private List<Polygon> placePolygons;
-    private List<Marker> polygonTrashbins;
+    public static List<Polygon> placePolygons;
+    public static List<Marker> polygonTrashbins;
     private List<Polyline> tempPolylines;
     private LatLng curLatLng;
     private LatLng prevLatLng;
     private FrameLayout fram_map;
-    private FloatingActionButton enterDrawStateButton;
+    public static FloatingActionButton enterDrawStateButton;
     private FloatingActionButton exitDrawStateButton;
-    private FloatingActionButton doneButton;
+    public static FloatingActionButton doneButton;
     private Boolean isMapMoveable = true; // to detect map is movable
-    private ArrayList<Marker> markers = new ArrayList<Marker>(3);
-    private boolean onResultScreen = false;
+    public static ArrayList<Marker> markers = new ArrayList<Marker>(3);
+    public static boolean onResultScreen = false;
+    private View thisView;
+  //  private PopupWindow resultPopup;
 
 
+    public MapActivity(){
+        //Required empty constructor
+    }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState){
+    //    if (servicesOK()) {
+            thisView = inflater.inflate(R.layout.activity_map, container, false);
+            //Initialisera kartan
+            initMap();
+            //Initialisera ritfunktionen
+            initDrawFrame();
+            //Initialisera GPS
+            if (savedInstanceState == null) {
+                Log.d(LOG, "NULL");
+                mLocationClient = new GoogleApiClient.Builder(getActivity())
+                        .addApi(LocationServices.API)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(AppIndex.API).build();
+                mLocationClient.connect();
+                //Initialisera sökfunktionen
+                initSearch();
+   /*      //   } else{
+                Log.d(LOG, Thread.currentThread().getStackTrace().toString());
+                String s = savedInstanceState.getString("STRING");
+                //Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+                CameraPosition position = savedInstanceState.getParcelable("MAP_POSITION");
+                CameraUpdate update = CameraUpdateFactory.newCameraPosition(position);
+                mMap.moveCamera(update);
+         //   }*/
+
+        }
+        FloatingActionButton button = (FloatingActionButton) thisView.findViewById(R.id.done_button);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                //Intent intent = new Intent(MapActivity.this, MainActivity.class);
+                //startActivity(intent);
+                AtomicInteger workCounter = new AtomicInteger(3);
+                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/58.59/lon/16.18/data.json");
+                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
+                new Weather.WebTask(workCounter).execute("http://opendata-download-metfcst.smhi.se/api/category/pmp1.5g/version/1/geopoint/lat/68.59/lon/16.18/data.json");
+
+                doneButton.hide();
+                enterDrawStateButton.hide();
+                exitDrawStateButton.hide();
+                thisView.findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
+
+                MapHolder.tabLayout.setVisibility(View.VISIBLE); //TODO Maybe set global variable to visibility?
+
+                for (Polygon poly: placePolygons){
+                    poly.setVisible(false);
+                }
+                for (Marker marker : polygonTrashbins){
+                    marker.setVisible(false);
+                }
+
+                placeResultMarkers(new LatLng(58.59, 16.18),
+                        new LatLng(59.59, 16.18),
+                        new LatLng(60.59, 16.18));
+
+               onResultScreen = true;
+                View popView = View.inflate(v.getContext(), R.layout.resultpopup,null);
+               /* resultPopup = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
+                resultPopup.setAnimationStyle(android.R.style.Animation_InputMethod);
+                resultPopup.showAtLocation(popView, Gravity.TOP,0,0);*/
+
+
+
+            }
+        });
+
+
+        return thisView;
+    }
+
+/*    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Log.d(LOG, "onCreate");
-
-
 
         if (servicesOK()) {
             setContentView(R.layout.activity_map);
@@ -106,7 +188,7 @@ public class MapActivity extends AppCompatActivity
             //Initialisera ritfunktionen
             initDrawFrame();
             //Initialisera GPS
-            //if (savedInstanceState == null) {
+            if (savedInstanceState == null) {
                 Log.d(LOG, "NULL");
                 mLocationClient = new GoogleApiClient.Builder(this)
                         .addApi(LocationServices.API)
@@ -116,14 +198,14 @@ public class MapActivity extends AppCompatActivity
                 mLocationClient.connect();
                 //Initialisera sökfunktionen
                 initSearch();
-/*            } else{
+            } else{
                 Log.d(LOG, Thread.currentThread().getStackTrace().toString());
                 String s = savedInstanceState.getString("STRING");
                 Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
                 CameraPosition position = savedInstanceState.getParcelable("MAP_POSITION");
                 CameraUpdate update = CameraUpdateFactory.newCameraPosition(position);
                 mMap.moveCamera(update);
-            }*/
+            }
 
         }
         FloatingActionButton button = (FloatingActionButton) findViewById(R.id.done_button);
@@ -134,6 +216,7 @@ public class MapActivity extends AppCompatActivity
 
                 //Intent intent = new Intent(MapActivity.this, MainActivity.class);
                 //startActivity(intent);
+
                 doneButton.hide();
                 enterDrawStateButton.hide();
                 exitDrawStateButton.hide();
@@ -162,7 +245,7 @@ public class MapActivity extends AppCompatActivity
 
             }
         });
-}
+}*/
 
     @Override
     protected void onStart() {
@@ -208,16 +291,16 @@ public class MapActivity extends AppCompatActivity
     }
 
     public boolean servicesOK() {
-        int isAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        int isAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(MapHolder.view.getContext()); //TODO
 
         if (isAvailable == ConnectionResult.SUCCESS) {
             return true;
         } else if (GooglePlayServicesUtil.isUserRecoverableError(isAvailable)) {
             Dialog dialog =
-                    GooglePlayServicesUtil.getErrorDialog(isAvailable, this, ERROR_DIALOG_REQUEST);
+                    GooglePlayServicesUtil.getErrorDialog(isAvailable, super.getActivity(), ERROR_DIALOG_REQUEST); //TODO
             dialog.show();
         } else {
-            Toast.makeText(this, "Can't connect to mapping service", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MapHolder.view.getContext(), "Can't connect to mapping service", Toast.LENGTH_SHORT).show();
         }
 
         return false;
@@ -225,12 +308,12 @@ public class MapActivity extends AppCompatActivity
 
     public void setCurrentLocation() {
         if(ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION)
+                super.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(
-                        this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        super.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(super.getActivity(), //TODO
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION},
                     GPS_ZOOM_PERMISSION_CODE);
@@ -278,8 +361,7 @@ public class MapActivity extends AppCompatActivity
 
     private void initMap(){
         if (mMap == null){
-            MapFragment mapFragment =
-                    (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+            MapFragment mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map); //TODO
             mapFragment.getMapAsync(this); //skapar kartan och anropar onMapReady när kartan är klar
         }
     }
@@ -319,7 +401,7 @@ public class MapActivity extends AppCompatActivity
                         doneButton.setVisibility(View.INVISIBLE);
                     }
                     return true;
-                } else if (marker == marker) {
+                } else if (true) {
                     mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                         @Override
                         public View getInfoWindow(Marker marker) {
@@ -328,7 +410,7 @@ public class MapActivity extends AppCompatActivity
 
                         @Override
                         public View getInfoContents(Marker marker) {
-                            View v = getLayoutInflater().inflate(R.layout.info_window, null);
+                            View v = getActivity().getLayoutInflater().inflate(R.layout.info_window, null); //TODO
 
                             String weather = "Sunny";
                             TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);//Länka till XML filen info_window
@@ -337,7 +419,7 @@ public class MapActivity extends AppCompatActivity
                             ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
 
                             LatLng latLng = marker.getPosition();         //Vi tar markörerns koordinater och använder geocoder för att få
-                            Geocoder gc = new Geocoder(MapActivity.this); //namnet på staden som markören pekar på
+                            Geocoder gc = new Geocoder(getActivity()); //namnet på staden som markören pekar på
                             List<android.location.Address> list = null;        //Få namn på område
                             try {
                                 list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
@@ -394,10 +476,10 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void initDrawFrame() {
-        fram_map = (FrameLayout) findViewById(R.id.fram_map);
-        enterDrawStateButton = (FloatingActionButton) findViewById(R.id.enter_draw_state_button);
-        exitDrawStateButton = (FloatingActionButton) findViewById(R.id.exit_draw_state_button);
-        doneButton = (FloatingActionButton) findViewById(R.id.done_button);
+        fram_map = (FrameLayout) thisView.findViewById(R.id.fram_map);
+        enterDrawStateButton = (FloatingActionButton) thisView.findViewById(R.id.enter_draw_state_button);
+        exitDrawStateButton = (FloatingActionButton) thisView.findViewById(R.id.exit_draw_state_button);
+        doneButton = (FloatingActionButton) thisView.findViewById(R.id.done_button);
         tempPolylines = new ArrayList<Polyline>();
         placePolygons = new ArrayList<Polygon>();
         polygonTrashbins = new ArrayList<Marker>();
@@ -423,8 +505,7 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void initSearch(){
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -475,7 +556,7 @@ public class MapActivity extends AppCompatActivity
 
     public Bitmap resizeMapIcons(String iconName, int width, int height){
         Bitmap imageBitmap = BitmapFactory.decodeResource
-                (getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
+                (getResources(),getResources().getIdentifier(iconName, "drawable", getActivity().getPackageName())); //TODO
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
         return resizedBitmap;
     }
@@ -562,30 +643,4 @@ public class MapActivity extends AppCompatActivity
         markers.add(marker3);
 
     }
-
-    @Override
-    public void onBackPressed() {
-        if (!onResultScreen){
-            super.onBackPressed();
-        } else {
-            doneButton.show();
-            enterDrawStateButton.show();
-            findViewById(R.id.card_view).setVisibility(View.VISIBLE);
-
-
-            for (Polygon poly : placePolygons) {
-                poly.setVisible(true);
-            }
-            for (Marker trashCon : polygonTrashbins) {
-                trashCon.setVisible(true);
-            }
-            for (Marker marker : markers) {
-                marker.remove();
-            }
-            onResultScreen = false;
-        }
-
-    }
-
-
 }
