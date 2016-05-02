@@ -117,13 +117,12 @@ public class Weather {
         String uri;
         Double lon, lat;
         final AtomicInteger workCounter = new AtomicInteger(pointsInPolygon.size());
-        DecimalFormat df = new DecimalFormat("#.####");
+        DecimalFormat df = new DecimalFormat("#.######");
 
         for (int i = 0; i < pointsInPolygon.size(); i++){
             tempLatLng = pointsInPolygon.get(i);
             lon = Double.valueOf(df.format(tempLatLng.longitude));
             lat = Double.valueOf(df.format(tempLatLng.latitude));
-
 
             uri = "http://opendata-download-metfcst.smhi.se/api/category/pmp2g/version/2/" +
                     "geotype/point/lon/" + lon + "/lat/" + lat + "/data.json";
@@ -145,7 +144,6 @@ public class Weather {
 
         @Override
         protected void onPreExecute(){
-            Log.d("PreExecute", "!");
         }
 
         @Override
@@ -175,10 +173,7 @@ public class Weather {
             else {
                 Log.d("Counting", Integer.toString(tasksLeft));
             }
-
         }
-
-
     }
 
 
@@ -187,11 +182,10 @@ public class Weather {
         JSONArray timeSeries;
         JSONArray ar;
         WeatherParameters tempWeather;
-        MarkerOptions options;
         String strDate;
         String tempDate;
         LatLng tempLatLng;
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("y-MM-d");
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("y-MM-dd");
 
         int days = Days.daysBetween(start, end).getDays() + 1;
 
@@ -252,12 +246,6 @@ public class Weather {
             Collections.sort(rList, new pointComparator());
             Log.d("rList:", rList.toString());
             Log.d("rList size:", Integer.toString(rList.size()));
-
-         /*   for(int i = 0; i < 3; i++){
-                options = new MarkerOptions()
-                        .position(rList.get(i).getLatLng());
-                map.addMarker(options);
-            }*/
 
             jsonList = null; //Ta bort referensen för GarbageCollector
 

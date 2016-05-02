@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity
                 SeekBar seekadvTemp = (SeekBar) findViewById(R.id.temperature_seekbar);
                 SeekBar seekadvCloud = (SeekBar) findViewById(R.id.cloud_cover_seekbar);
                 SeekBar seekadvWind = (SeekBar) findViewById(R.id.wind_strength_seekbar);
-                parametersToUseList.put("temperature", seekadvTemp.getProgress());
+                parametersToUseList.put("temperature", (seekadvTemp.getProgress() - 31));
                 parametersToUseList.put("cloudCover", seekadvCloud.getProgress());
                 parametersToUseList.put("windSpeed", seekadvWind.getProgress());
                 break;

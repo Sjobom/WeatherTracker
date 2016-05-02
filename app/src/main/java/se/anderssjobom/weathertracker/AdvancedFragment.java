@@ -65,7 +65,7 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
 
     private void initSeekbars(View thisView){
         SeekBar tempSeekBar = (SeekBar) thisView.findViewById(R.id.temperature_seekbar);
-        tempSeekBar.setMax(14);
+        tempSeekBar.setMax(62);
         tempSeekBar.incrementProgressBy(1);
         tempSeekBar.setEnabled(false);
         tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -75,11 +75,11 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
                 TextView tempText = (TextView) seekBar.getRootView().findViewById(R.id.temperatur_textview_response);
                 if (progress == 0) {
                     tempText.setText("minimal");
-                } else if(progress == 14){
+                } else if(progress == 62){
                     tempText.setText("maximal");
                 }
                 else {
-                    tempText.setText(Integer.toString((progress - 7) * 5) + "°C");
+                    tempText.setText(Integer.toString(progress - 31) + "°C");
                 }
             }
             @Override
@@ -91,7 +91,7 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
         });
 
         tempSeekBar = (SeekBar) thisView.findViewById(R.id.wind_strength_seekbar);
-        tempSeekBar.setMax(6);
+        tempSeekBar.setMax(20);
         tempSeekBar.incrementProgressBy(1);
         tempSeekBar.setEnabled(false);
         tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -102,7 +102,7 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
                 if (progress == 6) {
                     windText.setText("maximal");
                 } else {
-                    windText.setText(Integer.toString(progress * 5) + " m/s");
+                    windText.setText(Integer.toString(progress) + " m/s");
                 }
             }
             @Override
@@ -114,7 +114,7 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
         });
 
         tempSeekBar = (SeekBar) thisView.findViewById(R.id.cloud_cover_seekbar);
-        tempSeekBar.setMax(3);
+        tempSeekBar.setMax(8);
         tempSeekBar.incrementProgressBy(1);
         tempSeekBar.setEnabled(false);
         tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -122,20 +122,8 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 TextView cloudText = (TextView) seekBar.getRootView().findViewById(R.id.cloud_cover_textview_response);
-                switch (progress){
-                    case 0:
-                        cloudText.setText("NEIN");
-                        break;
-                    case 1:
-                        cloudText.setText("Lite");
-                        break;
-                    case 2:
-                        cloudText.setText("Mellan");
-                        break;
-                    case 3:
-                        cloudText.setText("Mycket");
-                        break;
-                }
+                double result = progress * 12.5;
+                cloudText.setText(Double.toString(result) + "%");
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {

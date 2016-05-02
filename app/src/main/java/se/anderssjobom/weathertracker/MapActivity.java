@@ -156,13 +156,10 @@ public class MapActivity extends Fragment //TODO
 
                 ProgressBar pb = (ProgressBar) getActivity().findViewById(R.id.weatherSearchProgressBar);
 
-                Map<String, Object> parametersToUseList = new HashMap<String, Object>();
+                Log.d("PARAMETERSTOUSE", MapHolder.parametersToUse.toString());
 
-                parametersToUseList.put("temperature", 10.0);
-                parametersToUseList.put("windSpeed", 20.0);
-                parametersToUseList.put("cloudCover", 8);
 
-                new Weather(pb, mMap, (OnAnalysisReadyCallback) getActivity()).findWeather(parametersToUseList, placePolygons,
+                new Weather(pb, mMap, (OnAnalysisReadyCallback) getActivity()).findWeather(MapHolder.parametersToUse, placePolygons,
                         MainActivity.buttText1, MainActivity.buttText2);
             }
         });
@@ -230,13 +227,13 @@ public class MapActivity extends Fragment //TODO
                 ProgressBar pb = (ProgressBar) findViewById(R.id.weatherSearchProgressBar);
                 pb.setVisibility(View.INVISIBLE);
 
-                Map<String, Object> parametersToUseList = new HashMap<String, Object>();
+                Map<String, Object> parametersToUse = new HashMap<String, Object>();
 
-                parametersToUseList.put("temperature", 10.0);
-                parametersToUseList.put("windSpeed", 20.0);
-                parametersToUseList.put("cloudCover", 8);
+                parametersToUse.put("temperature", 10.0);
+                parametersToUse.put("windSpeed", 20.0);
+                parametersToUse.put("cloudCover", 8);
 
-                new Weather(pb, mMap).findWeather(parametersToUseList, placePolygons,
+                new Weather(pb, mMap).findWeather(parametersToUse, placePolygons,
                         MainActivity.buttText1, MainActivity.buttText2);
 
             }

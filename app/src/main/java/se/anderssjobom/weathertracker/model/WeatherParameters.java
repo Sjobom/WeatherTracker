@@ -25,7 +25,6 @@ public class WeatherParameters {
     private LatLng latLng;
 
     public WeatherParameters(JSONObject data, LatLng latLng, Map<String,Object> parametersToUseMap) throws JSONException {
-        Log.d("CONSTRUCTOR","");
         this.data = data;
         this.latLng = latLng;
         this.point = calculatePoints(parametersToUseMap);
@@ -67,17 +66,20 @@ public class WeatherParameters {
 
     private int calculatePoints(Map<String,Object> parametersToUseMap) throws JSONException {
         int point = 0;
+        double temp;
 
         if(parametersToUseMap.get("temperature") != null){
-            point += pointFormula((( (double) parametersToUseMap.get("temperature"))), getTemperature(), 40);
+            temp = (double) parametersToUseMap.get("temperature");
+            point += pointFormula(temp, getTemperature(), 40);
         }
 
         if(parametersToUseMap.get("windSpeed") != null){
-            point += pointFormula((( (double) parametersToUseMap.get("windSpeed"))), getTemperature(), 20);
+            temp = (double) parametersToUseMap.get("windSpeed");
+            point += pointFormula(temp, getWindspeed(), 20);
         }
 
         if(parametersToUseMap.get("cloudCover") != null){
-            point += pointFormula((( (int) parametersToUseMap.get("cloudCover"))), getTemperature(), 9);
+            point += pointFormula((( (int) parametersToUseMap.get("cloudCover"))), getCloudCover(), 9);
         }
 
         return point;
@@ -103,7 +105,13 @@ public class WeatherParameters {
 
     @Override
     public String toString() {
-        return "[WeatherParameters, Point: " + point + "]";
+        try {
+            return "[WeatherParameters, Point: " + point + ", Temp: " + Double.toString(getTemperature())
+                    + ", WindSpeed: " + Double.toString(getWindspeed()) + ", CloudCover: " + Double.toString(getCloudCover()) + "]";
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 

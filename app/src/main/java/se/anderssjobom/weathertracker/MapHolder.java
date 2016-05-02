@@ -1,25 +1,17 @@
 package se.anderssjobom.weathertracker;
 
-import android.app.*;
 import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 
-import com.google.android.gms.common.api.BooleanResult;
-import com.google.android.gms.fitness.data.Value;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.Polyline;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,7 +27,7 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     public static TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerMapAdapter viewPagerMapAdapter;
-    HashMap<String, Object> parametersToUseList;
+    public static HashMap<String, Object> parametersToUse;
     List<WeatherParameters> resultList;
     MapActivity mapActivity;
 
@@ -43,10 +35,10 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        parametersToUseList = (HashMap<String, Object>) intent.getSerializableExtra("map");
+        parametersToUse = (HashMap<String, Object>) intent.getSerializableExtra("map");
 
-        if (parametersToUseList.containsKey("cloudCover")) {
-            Log.d("TaaAAG", parametersToUseList.get("cloudCover").toString());
+        if (parametersToUse.containsKey("cloudCover")) {
+            Log.d("TaaAAG", parametersToUse.get("cloudCover").toString());
         }
 
         setContentView(R.layout.activity_menu);
