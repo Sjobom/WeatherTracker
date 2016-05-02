@@ -69,13 +69,11 @@ public class WeatherParameters {
         double temp;
 
         if(parametersToUseMap.get("temperature") != null){
-            temp = (double) parametersToUseMap.get("temperature");
-            point += pointFormula(temp, getTemperature(), 40);
+            point += pointFormula((int) parametersToUseMap.get("temperature"), getTemperature(), 40);
         }
 
         if(parametersToUseMap.get("windSpeed") != null){
-            temp = (double) parametersToUseMap.get("windSpeed");
-            point += pointFormula(temp, getWindspeed(), 20);
+            point += pointFormula((int) parametersToUseMap.get("windSpeed"), getWindspeed(), 20);
         }
 
         if(parametersToUseMap.get("cloudCover") != null){
@@ -85,7 +83,7 @@ public class WeatherParameters {
         return point;
     }
 
-    private int pointFormula(double requested, double found, int parameterDelta){
+    private int pointFormula(int requested, double found, int parameterDelta){
         return (int) ( (1 - ( Math.abs((requested - found)) / parameterDelta ) ) * 1000 );
     }
 
