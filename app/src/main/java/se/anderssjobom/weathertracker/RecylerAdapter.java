@@ -28,7 +28,6 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
     public static PopupWindow popupWindow;
     public static Button button1;
     public static Button button2;
-    public static String ID_ACTIVITY_BTN;
 
 
 
@@ -91,7 +90,7 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
             popupWindow = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
             popupWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
             popupWindow.showAtLocation(popView, Gravity.BOTTOM,0,0);
-            popView.setAlpha((float)0.8);
+            popView.setAlpha((float)0.9);
 
             button1 = (Button)popView.findViewById(R.id.DateButton);
             button2 = (Button)popView.findViewById(R.id.DateButton2);
@@ -114,7 +113,7 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
                     Im_Activity.setImageAlpha(255);
                     Tx_Activity.setAlpha((float) 1);
                     local_pressed = false;
-                    someCode();
+
                 }
             });
 
