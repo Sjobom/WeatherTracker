@@ -18,6 +18,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Switch;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity
         switch(v.getId()){
             case R.id.button_map:
                 break;
+
             case R.id.go_to_map_button_simple:
                 SeekBar seekTemp = (SeekBar) findViewById(R.id.tempSeekBar);
                 SeekBar seekCloud = (SeekBar) findViewById(R.id.cloudSeekBar);
@@ -76,13 +78,23 @@ public class MainActivity extends AppCompatActivity
                 parametersToUseList.put("windSpeed", seekCloud.getProgress());
                 parametersToUseList.put("cloudCover", seekWind.getProgress());
                 break;
+
             case R.id.go_to_map_button_advanced:
                 SeekBar seekadvTemp = (SeekBar) findViewById(R.id.temperature_seekbar);
                 SeekBar seekadvCloud = (SeekBar) findViewById(R.id.cloud_cover_seekbar);
                 SeekBar seekadvWind = (SeekBar) findViewById(R.id.wind_strength_seekbar);
-                parametersToUseList.put("temperature", (seekadvTemp.getProgress() - 31));
-                parametersToUseList.put("cloudCover", seekadvCloud.getProgress());
-                parametersToUseList.put("windSpeed", seekadvWind.getProgress());
+                Switch switchTempAdv = (Switch) findViewById(R.id.temperature_switch);
+                Switch switchWindAdv = (Switch) findViewById(R.id.wind_strength_switch);
+                Switch switchCloudAdv = (Switch) findViewById(R.id.cloud_cover_switch);
+                if (switchTempAdv.isChecked()) {
+                    parametersToUseList.put("temperature", (seekadvTemp.getProgress() - 31));
+                }
+                if(switchWindAdv.isChecked()) {
+                    parametersToUseList.put("cloudCover", seekadvCloud.getProgress());
+                }
+                if (switchCloudAdv.isChecked()) {
+                    parametersToUseList.put("windSpeed", seekadvWind.getProgress());
+                }
                 break;
         }
 
