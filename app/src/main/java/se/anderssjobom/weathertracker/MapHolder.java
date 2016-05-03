@@ -28,7 +28,7 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     ViewPager viewPager;
     ViewPagerMapAdapter viewPagerMapAdapter;
     public static HashMap<String, Object> parametersToUse;
-    List<WeatherParameters> resultList;
+    public static List<WeatherParameters> resultList;
     MapActivity mapActivity;
 
     @Override
