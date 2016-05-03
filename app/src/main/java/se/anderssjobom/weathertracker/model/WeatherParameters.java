@@ -1,19 +1,15 @@
 package se.anderssjobom.weathertracker.model;
 
 import android.util.Log;
-import android.util.Pair;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.LocalTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,11 +19,18 @@ public class WeatherParameters {
     private JSONObject data;
     private int point;
     private LatLng latLng;
+    private LocalDate date;
+    private LocalTime foundStartTime, endStartTime;
 
-    public WeatherParameters(JSONObject data, LatLng latLng, Map<String,Object> parametersToUseMap) throws JSONException {
+    public WeatherParameters(JSONObject data, LatLng latLng, Map<String,Object> parametersToUseMap, LocalDate date) throws JSONException {
         this.data = data;
         this.latLng = latLng;
+
+        //TODO - sätt foundStartTime och endStartTime!
+        findPossibleTimes(parametersToUseMap);
+
         this.point = calculatePoints(parametersToUseMap);
+        this.date = date;
     }
 
     //DO NOT USE REGULARLY!
@@ -44,8 +47,7 @@ public class WeatherParameters {
     }
 
     public LocalDate getDate() throws JSONException {
-        //KAN VARA FELAKTIG KONSTRUKTION!!
-        return new LocalDate(data.getString("validTime"));
+        return date;
     }
 
     public int getCloudCover() throws JSONException {
@@ -91,6 +93,27 @@ public class WeatherParameters {
     private int pointFormula(int requested, int found, int parameterDelta){
         return ( (1 - ( Math.abs((requested - found)) / parameterDelta ) ) * 1000 );
     }
+
+    private void findPossibleTimes(Map<String,Object> parametersToUseMap) throws JSONException {
+        JSONArray timeSeries = data.getJSONArray("timeSeries");
+        JSONObject timeSeriesObject;
+        Boolean thisDateNotFound = true;
+        String strDate;
+        LocalDate tempDate;
+        int timeSeriesIndex = 0;
+
+        while(thisDateNotFound){
+            timeSeriesObject = timeSeries.getJSONObject(timeSeriesIndex++);
+            strDate = timeSeriesObject.getString("validTime");
+            tempDate = new LocalDate(strDate.split("T")[0]);
+            if (tempDate.isEqual(date)) {
+                thisDateNotFound = false;
+                foundStartTime = new LocalTime(strDate.split("T")[0]);
+            }
+        }
+    }
+
+
 
     public int compareTo(WeatherParameters wp){
         if(wp.getPoint() > getPoint()){

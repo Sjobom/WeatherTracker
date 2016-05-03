@@ -178,7 +178,10 @@ public class Weather {
 
 
     private void analyseResults() {
+        Boolean dayNotFound = true;
+        int timeSeriesIndex = 0;
         JSONObject obj;
+        JSONObject timeSeriesObject;
         JSONArray timeSeries;
         JSONArray ar;
         WeatherParameters tempWeather;
@@ -206,32 +209,27 @@ public class Weather {
                 tempLatLng = new LatLng(ar.getDouble(1),ar.getDouble(0));
                 timeSeries = obj.getJSONArray("timeSeries");
 
-                //Kolla varje tidspunkt på positionen
-                for (int j = 0; j < timeSeries.length(); j++) {
-                    obj = timeSeries.getJSONObject(j);
-                    strDate = obj.getString("validTime");
-                    tempDate = (strDate.split("T")[0]);
+                //Skapa ett objekt för varje dag på postionen!
+                for (int day = 0; day < days; day++) {
+                    while(dayNotFound){
+                        timeSeriesObject = timeSeries.getJSONObject(timeSeriesIndex++);
+                        strDate = timeSeriesObject.getString("validTime");
+                        tempDate = (strDate.split("T")[0]);
+                        if (fmt.print(start.plusDays(day)).equals(tempDate)) {
+                            tempWeather = new WeatherParameters(obj, tempLatLng, parametersToUseMap, new LocalDate(tempDate));
+                            Log.d(" " + tempDate, tempWeather.toString());
+                            //Är tempDates poäng bättre än någon av de tre nuvarande på tempDates dags templista?
 
-                    //Gäller tidspunkten för kl 12?
-                    if (strDate.contains("T12:00:00Z")) {
+                            tempQueues[day].offer(tempWeather);
 
-                        for (int curDay = 0; curDay < days; curDay++) {
-                            //Är tempDate med i det sökta intervallet?
-                            if (fmt.print(start.plusDays(curDay)).equals(tempDate)) {
-                                tempWeather = new WeatherParameters(obj, tempLatLng, parametersToUseMap);
-                                Log.d(" " + tempDate, tempWeather.toString());
-                                //TODO - skicka med vilka parametrar som poängen ska skapas utifrån till wp-konstruktorn!
-                                //Är tempDates poäng bättre än någon av de tre nuvarande på tempDates dags templista?
-
-                                tempQueues[curDay].offer(tempWeather);
-
-                                if(tempQueues[curDay].size() > 3){
-                                    tempQueues[curDay].poll();
-                                }
+                            if (tempQueues[day].size() > 3) {
+                                tempQueues[day].poll();
                             }
-
+                            dayNotFound = false;
                         }
                     }
+                    dayNotFound = false;
+                    timeSeriesIndex = 0;
                 }
             }
             //Skapa lista alla platser och dagar
@@ -241,7 +239,6 @@ public class Weather {
                 rList.add(tempQueues[day].poll());
                 rList.add(tempQueues[day].poll());
             }
-
 
             Collections.sort(rList, new pointComparator());
             Log.d("rList:", rList.toString());
