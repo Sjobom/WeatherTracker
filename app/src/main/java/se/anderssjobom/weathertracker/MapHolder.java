@@ -1,6 +1,7 @@
 package se.anderssjobom.weathertracker;
 
 import android.app.ListFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -35,6 +36,7 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     public static List<WeatherParameters> resultList;
     MapActivity mapActivity;
     ResultListFragment listFragment;
+    public static Context con;
 
 
 
@@ -67,6 +69,7 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         //Väljer vilken Adapter vår viewPager ska följa
         viewPager.setAdapter(viewPagerMapAdapter);
         tabLayout.setupWithViewPager(viewPager);
+        con = getApplicationContext();
 
     }
 
@@ -146,7 +149,7 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         //Visa tablayouten
         tabLayout.setVisibility(View.VISIBLE);
 
-        ArrayList<WeatherParameters> xtra = new ArrayList<>(3);
+        ArrayList<WeatherParameters> xtra = new ArrayList<>();
         int i =0;
         for (WeatherParameters point :resultList)
         {

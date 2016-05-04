@@ -411,6 +411,16 @@ public class MapActivity extends Fragment //TODO
                                       e.printStackTrace();
                                  }
                             }
+                            if (MapHolder.parametersToUse.containsKey("cloudCover")){
+                                try {
+                                    TextView tvCloud = new TextView(getActivity());
+                                    tvCloud.setText("Cloud coverage : " + Double.toString(MapHolder.resultList.get(currentMarker).getCloudCover() * 12.5) + "%");
+                                    layer.addView(tvCloud);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                           // else { holder.cloudText.setVisibility(View.GONE);}
 
                                 try {
                                     int cloud = MapHolder.resultList.get(currentMarker).getCloudCover();
