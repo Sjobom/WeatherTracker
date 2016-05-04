@@ -1,6 +1,8 @@
 package se.anderssjobom.weathertracker;
 
 
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.v7.widget.RecyclerView;
@@ -71,7 +73,7 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
        if (MapHolder.parametersToUse.containsKey("temperature")){
             try {
                 //TextView tvTemp = new TextView(MapHolder.con);
-                holder.tempText.setText("Temperature: " + Double.toString(weatherData.getTemperature()) + "°C");
+                holder.tempText.setText("Temperatur: " + Double.toString(weatherData.getTemperature()) + "°C");
                 //holder.tempText.setText(tvTemp);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -81,7 +83,7 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
             Log.d("Contains" , "Windspeed");
             try {
                 //TextView tvWind = new TextView(MapHolder.con);
-                holder.windText.setText("WindSpeed : " + Double.toString(weatherData.getWindspeed()) + " m/s");
+                holder.windText.setText("Vindhastighet: " + Double.toString(weatherData.getWindspeed()) + " m/s");
                 //holder.addView(tvWind);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -92,7 +94,7 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
         if (MapHolder.parametersToUse.containsKey("cloudCover")){
             try {
                 //TextView tvWind = new TextView(MapHolder.con);
-                holder.cloudText.setText("Cloud coverage : " + Double.toString(weatherData.getCloudCover() * 12.5) + "%");
+                holder.cloudText.setText("Molntäcke: " + Double.toString(weatherData.getCloudCover() * 12.5) + "%");
                 //holder.addView(tvWind);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -150,6 +152,8 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
         public void onClick(View v)
         {
             //När man klickar på ett card så händer något här
+
+
         }
 
     }
