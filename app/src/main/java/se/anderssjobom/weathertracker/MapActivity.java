@@ -368,7 +368,6 @@ public class MapActivity extends Fragment //TODO
                             if (latLng.equals(topResultMarkers.get(0).getPosition())){ currentMarker = 0;}
                             else if (latLng.equals(topResultMarkers.get(1).getPosition())){currentMarker = 1;}
                             else {currentMarker = 2;}
-                            Log.d("currentMarker", Integer.toString(currentMarker));
 
                             TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);
                             ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
@@ -380,11 +379,12 @@ public class MapActivity extends Fragment //TODO
                             } catch (IOException e) {     //TODO Improve the info window
                                 e.printStackTrace();
                             }
-                            Log.d("Size" , Integer.toString(list.size()));
+
                             if (list.isEmpty()){   //Ifall vi inte får någon information om området
                                 tvLocal.setText("No information");
                                 return v;
                             } else {
+                                Log.d("Size" , Integer.toString(list.size()));
                                 android.location.Address address = list.get(0);
                                 if (address.getLocality() != null) {
                                     tvLocal.setText(address.getLocality());//Vi sätter text som ska förekomma i markör-fönster
@@ -396,23 +396,22 @@ public class MapActivity extends Fragment //TODO
                                 try {
                                     TextView tvTemp = new TextView(getActivity());
                                     tvTemp.setText("Temperature: " + Double.toString(MapHolder.resultList.get(currentMarker).getTemperature()) + "°C");
-                               //     params.addRule(RelativeLayout.BELOW, R.id.layoutWindow);
                                     layer.addView(tvTemp);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
                             if (MapHolder.parametersToUse.containsKey("windSpeed")){
-                                try {
+                                Log.d("Contains" , "Windspeed");
+                                 try {
                                     TextView tvWind = new TextView(getActivity());
-                                    tvWind.setText("WindSpeed :" + Double.toString(MapHolder.resultList.get(currentMarker).getWindspeed()) + " m/s");
+                                    tvWind.setText("WindSpeed : " + Double.toString(MapHolder.resultList.get(currentMarker).getWindspeed()) + " m/s");
                                     layer.addView(tvWind);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                  } catch (JSONException e) {
+                                      e.printStackTrace();
+                                 }
                             }
 
-                            if (MapHolder.parametersToUse.containsKey("cloudCover")){
                                 try {
                                     int cloud = MapHolder.resultList.get(currentMarker).getCloudCover();
                                     if (cloud <= 2){
@@ -425,7 +424,7 @@ public class MapActivity extends Fragment //TODO
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                            }
+
                             return v;
                         }
                     });
