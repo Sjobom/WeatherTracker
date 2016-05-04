@@ -143,7 +143,7 @@ public class MapActivity extends Fragment //TODO
                 exitDrawStateButton.hide();
                 thisView.findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
 
-                MapHolder.tabLayout.setVisibility(View.VISIBLE); //TODO Maybe set global variable to visibility?
+                //Flyttade "setTablayoutVisible" till onAnalysisReady
 
                 for (Polygon poly: placePolygons){
                     poly.setVisible(false);

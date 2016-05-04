@@ -6,12 +6,16 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,8 +32,11 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     ViewPager viewPager;
     ViewPagerMapAdapter viewPagerMapAdapter;
     public static HashMap<String, Object> parametersToUse;
-    List<WeatherParameters> resultList;
+    public List<WeatherParameters> resultList;
     MapActivity mapActivity;
+    ResultListFragment listFragment;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,20 +54,22 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tabLayout.setVisibility(View.GONE);
         viewPagerMapAdapter = new ViewPagerMapAdapter(getFragmentManager());
+        viewPager.setOffscreenPageLimit(0);
 
         //Lägger till fragment
         mapActivity = new MapActivity();
+        listFragment = new ResultListFragment();
         viewPagerMapAdapter.addFragments(mapActivity, "Karta");
-        viewPagerMapAdapter.addFragments(new ListFragment(), "Lista");
+        viewPagerMapAdapter.addFragments(listFragment, "Lista");
 
         //viewPagerMapAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy"); //Make room for table
 
         //Väljer vilken Adapter vår viewPager ska följa
         viewPager.setAdapter(viewPagerMapAdapter);
-        //Sätter antal fragment viewPager håller "levande"
-        viewPager.setOffscreenPageLimit(viewPagerMapAdapter.getCount());
-
         tabLayout.setupWithViewPager(viewPager);
+        //ViewPager hållar alltid minst ett fönster bredvid sig för att kunna göra animationer
+        //viewPager.setOffscreenPageLimit(viewPagerMapAdapter.getCount());
+
 
     }
 
@@ -137,6 +146,18 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     public void onAnalysisReady(List<WeatherParameters> resultList) {
         this.resultList = resultList;
         mapActivity.createTopMarkers(resultList);
+        //Visa tablayouten
+        tabLayout.setVisibility(View.VISIBLE);
+
+        ArrayList<WeatherParameters> xtra = new ArrayList<>(3);
+        int i =0;
+        for (WeatherParameters point :resultList)
+        {
+            xtra.add(i,point);
+            i++;
+        }
+        RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter(xtra);
+        ResultListFragment.mRecyclerView.setAdapter(mAdapter);
     }
 }
 

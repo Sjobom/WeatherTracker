@@ -23,11 +23,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,6 +45,7 @@ public class Weather {
     private LocalDate start;
     private LocalDate end;
     private OnAnalysisReadyCallback callback;
+    public static boolean listReady;
 
 
     public Weather(ProgressBar pb, GoogleMap map, OnAnalysisReadyCallback callback){
@@ -117,7 +120,8 @@ public class Weather {
         String uri;
         Double lon, lat;
         final AtomicInteger workCounter = new AtomicInteger(pointsInPolygon.size());
-        DecimalFormat df = new DecimalFormat("#.######");
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
+        DecimalFormat df = new DecimalFormat("#.######", dfs);
 
         for (int i = 0; i < pointsInPolygon.size(); i++){
             tempLatLng = pointsInPolygon.get(i);
@@ -248,6 +252,9 @@ public class Weather {
             Log.d("rList size:", Integer.toString(rList.size()));
 
             jsonList = null; //Ta bort referensen för GarbageCollector
+
+
+            listReady = true;
 
         callback.onAnalysisReady(rList);
 
