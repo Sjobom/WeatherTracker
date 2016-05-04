@@ -32,7 +32,7 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     ViewPager viewPager;
     ViewPagerMapAdapter viewPagerMapAdapter;
     public static HashMap<String, Object> parametersToUse;
-    public List<WeatherParameters> resultList;
+    public static List<WeatherParameters> resultList;
     MapActivity mapActivity;
     ResultListFragment listFragment;
 
@@ -67,9 +67,6 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         //Väljer vilken Adapter vår viewPager ska följa
         viewPager.setAdapter(viewPagerMapAdapter);
         tabLayout.setupWithViewPager(viewPager);
-        //ViewPager hållar alltid minst ett fönster bredvid sig för att kunna göra animationer
-        //viewPager.setOffscreenPageLimit(viewPagerMapAdapter.getCount());
-
 
     }
 

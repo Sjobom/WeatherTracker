@@ -90,10 +90,10 @@ public class MainActivity extends AppCompatActivity
                     parametersToUseList.put("temperature", (seekadvTemp.getProgress() - 31));
                 }
                 if(switchWindAdv.isChecked()) {
-                    parametersToUseList.put("cloudCover", seekadvCloud.getProgress());
+                    parametersToUseList.put("windSpeed", seekadvCloud.getProgress());
                 }
                 if (switchCloudAdv.isChecked()) {
-                    parametersToUseList.put("windSpeed", seekadvWind.getProgress());
+                    parametersToUseList.put("cloudCover", seekadvWind.getProgress());
                 }
                 break;
         }

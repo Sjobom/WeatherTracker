@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,6 +55,8 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -356,61 +359,75 @@ public class MapActivity extends Fragment //TODO
                         public View getInfoContents(Marker marker) {
                             View v = getActivity().getLayoutInflater().inflate(R.layout.info_window, null); //TODO
 
-                            String weather = "Sunny";
-                            TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);//Länka till XML filen info_window
-                            TextView tvTemp = (TextView) v.findViewById(R.id.tvTemp);
-                            TextView tvWind = (TextView) v.findViewById(R.id.tvWind);
-                            ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
+                            LinearLayout layer = (LinearLayout) v.findViewById(R.id.layoutWindow);
+                        /*    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);*/
+                            int currentMarker;
+                            LatLng latLng = marker.getPosition();
 
-                            LatLng latLng = marker.getPosition();         //Vi tar markörerns koordinater och använder geocoder för att få
+                            if (latLng.equals(topResultMarkers.get(0).getPosition())){ currentMarker = 0;}
+                            else if (latLng.equals(topResultMarkers.get(1).getPosition())){currentMarker = 1;}
+                            else {currentMarker = 2;}
+
+                            TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);
+                            ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
+                                //Vi tar markörerns koordinater och använder geocoder för att få
                             Geocoder gc = new Geocoder(getActivity()); //namnet på staden som markören pekar på
                             List<android.location.Address> list = null;        //Få namn på område
                             try {
-                                list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                            } catch (IOException e) {
+                                list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1); //TODO Maybe implement a better way to get locality name
+                            } catch (IOException e) {     //TODO Improve the info window
                                 e.printStackTrace();
                             }
 
                             if (list.isEmpty()){   //Ifall vi inte får någon information om området
-                                tvLocal.setText("No information"); //TODO maybe improve this to make it look better
+                                tvLocal.setText("No information");
                                 return v;
+                            } else {
+                                Log.d("Size" , Integer.toString(list.size()));
+                                android.location.Address address = list.get(0);
+                                if (address.getLocality() != null) {
+                                    tvLocal.setText(address.getLocality());//Vi sätter text som ska förekomma i markör-fönster
+                                } else {
+                                    tvLocal.setText(address.getSubLocality());
+                                }
                             }
-                            android.location.Address address = list.get(0);
+                            if (MapHolder.parametersToUse.containsKey("temperature")){
+                                try {
+                                    TextView tvTemp = new TextView(getActivity());
+                                    tvTemp.setText("Temperature: " + Double.toString(MapHolder.resultList.get(currentMarker).getTemperature()) + "°C");
+                                    layer.addView(tvTemp);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (MapHolder.parametersToUse.containsKey("windSpeed")){
+                                Log.d("Contains" , "Windspeed");
+                                 try {
+                                    TextView tvWind = new TextView(getActivity());
+                                    tvWind.setText("WindSpeed : " + Double.toString(MapHolder.resultList.get(currentMarker).getWindspeed()) + " m/s");
+                                    layer.addView(tvWind);
+                                  } catch (JSONException e) {
+                                      e.printStackTrace();
+                                 }
+                            }
 
-                            switch(weather){ //Beroende på vad för väder vi har så skriver vi motsvarande ikon till markörfönstret
-                                case "Sunny":
-                                    tvImage.setImageResource(R.drawable.ic_sunny);
-                                    break;
-                                case "Cloudy":
-                                    tvImage.setImageResource(R.drawable.ic_cloudy);
-                                    break;
-                                case "Haze":
-                                    tvImage.setImageResource(R.drawable.ic_haze);
-                                    break;
-                                case "Rain":
-                                    tvImage.setImageResource(R.drawable.ic_rain);
-                                    break;
-                                case "Slight rain":
-                                    tvImage.setImageResource(R.drawable.ic_slight_rain);
-                                    break;
-                                case "Snow":
-                                    tvImage.setImageResource(R.drawable.ic_snow);
-                                    break;
-                                case "Storm":
-                                    tvImage.setImageResource(R.drawable.ic_thunderstorms);
-                                    break;
-                                case "Slight cloud":
-                                    tvImage.setImageResource(R.drawable.ic_mostly_cloudy);
-                                    break;
-                            }
-                            tvLocal.setText(address.getLocality());//Vi sätter text som ska förekomma i markör-fönster
-                            tvTemp.setText("Temperature: 5 C"); //Vill vi har mer än 4 linjer av text kan vi ändra det i XML filen
-                            tvWind.setText("WindSpeed: 5 m/s East");
+                                try {
+                                    int cloud = MapHolder.resultList.get(currentMarker).getCloudCover();
+                                    if (cloud <= 2){
+                                        tvImage.setImageResource(R.drawable.ic_sunny);
+                                    } else if (cloud > 2 && cloud <= 5){
+                                        tvImage.setImageResource(R.drawable.ic_mostly_cloudy);
+                                    } else if (cloud > 5){
+                                        tvImage.setImageResource(R.drawable.ic_cloudy);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
 
                             return v;
                         }
                     });
-                    //TODO - implementera hantering av resultat eller väder!
                     return false;
                 } else {
                     return false;
@@ -595,3 +612,30 @@ public class MapActivity extends Fragment //TODO
     }
 
 }
+
+/*                            switch(weather){ //Beroende på vad för väder vi har så skriver vi motsvarande ikon till markörfönstret
+                                case "Sunny":
+                                    tvImage.setImageResource(R.drawable.ic_sunny);
+                                    break;
+                                case "Cloudy":
+                                    tvImage.setImageResource(R.drawable.ic_cloudy);
+                                    break;
+                                case "Haze":
+                                    tvImage.setImageResource(R.drawable.ic_haze);
+                                    break;
+                                case "Rain":
+                                    tvImage.setImageResource(R.drawable.ic_rain);
+                                    break;
+                                case "Slight rain":
+                                    tvImage.setImageResource(R.drawable.ic_slight_rain);
+                                    break;
+                                case "Snow":
+                                    tvImage.setImageResource(R.drawable.ic_snow);
+                                    break;
+                                case "Storm":
+                                    tvImage.setImageResource(R.drawable.ic_thunderstorms);
+                                    break;
+                                case "Slight cloud":
+                                    tvImage.setImageResource(R.drawable.ic_mostly_cloudy);
+                                    break;
+                            }*/
