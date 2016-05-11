@@ -58,6 +58,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;
 
+import org.joda.time.LocalTime;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -113,7 +115,6 @@ public class MapActivity extends Fragment //TODO
             initDrawFrame();
             //Initialisera GPS
             if (savedInstanceState == null) {
-                Log.d(LOG, "NULL");
                 mLocationClient = new GoogleApiClient.Builder(getActivity())
                         .addApi(LocationServices.API)
                         .addConnectionCallbacks(this)
@@ -159,7 +160,10 @@ public class MapActivity extends Fragment //TODO
 
                 ProgressBar pb = (ProgressBar) getActivity().findViewById(R.id.weatherSearchProgressBar);
 
-                Log.d("PARAMETERSTOUSE", MapHolder.parametersToUse.toString());
+                Log.d("ParametersToUse", MapHolder.parametersToUse.toString());
+
+                MapHolder.parametersToUse.put("requestedStartTime", new LocalTime("10:00:00"));
+                MapHolder.parametersToUse.put("requestedEndTime", new LocalTime("14:00:00"));
 
 
                 new Weather(pb, mMap, (OnAnalysisReadyCallback) getActivity()).findWeather(MapHolder.parametersToUse, placePolygons,

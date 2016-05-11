@@ -197,24 +197,51 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/wind_direction_container"
                 android:layout_centerInParent="true">
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Start"
-                    android:id="@+id/start_date_button_advanced"
-                    android:onClick="showDateFragment"
+<!--                <com.appyvet.rangebar.RangeBar
+                    xmlns:custom="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/time_bar_advanced"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    custom:tickStart="0"
+                    custom:tickInterval="1"
+                    custom:tickEnd="9"
+                    custom:barWeight="2dp"/>-->
+
+                <com.github.channguyen.rsv.RangeSliderView
+                    xmlns:rsv="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/time_bar_advanced"
+                    android:layout_marginTop="30dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    rsv:filledColor="@color/colorAccent"
                     />
+
+               <RelativeLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:id="@+id/date_button_container_advanced"
+                   android:layout_below="@id/time_bar_advanced"
+                   android:layout_centerHorizontal="true">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Start"
+                        android:id="@+id/start_date_button_advanced"
+                        android:onClick="showDateFragment"
+                        />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Slut"
+                        android:id="@+id/end_date_button_advanced"
+                        android:layout_toRightOf="@id/start_date_button_advanced"
+                        android:layout_alignTop="@id/start_date_button_advanced"
+                        android:onClick="showDateFragment"/>
+               </RelativeLayout>
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Slut"
-                    android:id="@+id/end_date_button_advanced"
-                    android:layout_toRightOf="@id/start_date_button_advanced"
-                    android:onClick="showDateFragment"/>
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/start_date_button_advanced"
+                    android:layout_below="@id/date_button_container_advanced"
                     android:text="Välj område"
                     android:layout_centerInParent="true"
                     android:onClick="showMap"
