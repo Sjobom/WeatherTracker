@@ -112,7 +112,6 @@ public class MapActivity extends Fragment //TODO
             initDrawFrame();
             //Initialisera GPS
             if (savedInstanceState == null) {
-                Log.d(LOG, "NULL");
                 mLocationClient = new GoogleApiClient.Builder(getActivity())
                         .addApi(LocationServices.API)
                         .addConnectionCallbacks(this)

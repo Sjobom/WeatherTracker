@@ -30,6 +30,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import se.anderssjobom.weathertracker.model.WeatherParameters;
@@ -119,6 +122,8 @@ public class Weather {
         final AtomicInteger workCounter = new AtomicInteger(pointsInPolygon.size());
         DecimalFormat df = new DecimalFormat("#.######");
 
+        Executor exec = Executors.newFixedThreadPool(100);
+
         for (int i = 0; i < pointsInPolygon.size(); i++){
             tempLatLng = pointsInPolygon.get(i);
             lon = Double.valueOf(df.format(tempLatLng.longitude));
@@ -126,7 +131,7 @@ public class Weather {
 
             uri = "http://opendata-download-metfcst.smhi.se/api/category/pmp2g/version/2/" +
                     "geotype/point/lon/" + lon + "/lat/" + lat + "/data.json";
-            new Weather.WebTask(workCounter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, uri);
+            new Weather.WebTask(workCounter).executeOnExecutor(exec, uri);
         }
 
         Log.d("Weather, querys: ", Integer.toString(pointsInPolygon.size()));
@@ -211,6 +216,7 @@ public class Weather {
 
                 //Skapa ett objekt för varje dag på postionen!
                 for (int day = 0; day < days; day++) {
+                    dayNotFound = true;
                     while(dayNotFound){
                         timeSeriesObject = timeSeries.getJSONObject(timeSeriesIndex++);
                         strDate = timeSeriesObject.getString("validTime");
@@ -248,11 +254,9 @@ public class Weather {
 
         callback.onAnalysisReady(rList);
 
-
         }catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     public class pointReverseComparator implements Comparator<WeatherParameters>{
