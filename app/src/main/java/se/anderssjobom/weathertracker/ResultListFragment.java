@@ -40,7 +40,7 @@ public class ResultListFragment extends Fragment {
     public ResultListFragment() {
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
@@ -51,7 +51,7 @@ public class ResultListFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.result_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         //skapar och lägger till manager
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         return view;

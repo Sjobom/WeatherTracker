@@ -16,9 +16,12 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,25 +53,35 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
 
         Geocoder gc = new Geocoder(MapHolder.con); //namnet på staden som markören pekar på
         List<android.location.Address> list = null;        //Få namn på område
+        LatLng latLng = weatherData.getLatLng();
         try {
-            LatLng latLng = weatherData.getLatLng();
             list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1); //TODO Maybe implement a better way to get locality name
         } catch (IOException e) {     //TODO Improve the info window
             e.printStackTrace();
         }
 
         if (list.isEmpty()){   //Ifall vi inte får någon information om området
-            holder.resultText.setText("No information");
-            return;
+            DecimalFormat dec = new DecimalFormat("#.##");
+            holder.resultText.setText(dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude));
         } else {
             Log.d("Size" , Integer.toString(list.size()));
             android.location.Address address = list.get(0);
             if (address.getLocality() != null) {
                 holder.resultText.setText(address.getLocality());//Vi sätter text som ska förekomma i markör-fönster
-            } else {
+            } else if (address.getSubLocality() != null){
                 holder.resultText.setText(address.getSubLocality());
+            } else {
+                DecimalFormat dec = new DecimalFormat("#.##");
+                holder.resultText.setText(dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude));
             }
         }
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("HH:mm");
+        try {
+            holder.dateText.setText(weatherData.getDate().toString() + " " + dtf.print(weatherData.getFoundStartTime()) + "-" + dtf.print(weatherData.getFoundEndTime()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        holder.timeText.setText("Time: " + dtf.print(weatherData.getFoundStartTime())/*weatherData.getFoundStartTime().toString()*/ + "-" + dtf.print(weatherData.getFoundEndTime())/*weatherData.getFoundEndTime().toString()*/);
 
        if (MapHolder.parametersToUse.containsKey("temperature")){
             try {
@@ -130,6 +143,7 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
     public static class ResultRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         //ImageView Im_Activity;
+        TextView dateText;
         TextView resultText;
         TextView tempText;
         TextView windText;
@@ -140,6 +154,7 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
         {
             super(v);
             v.setOnClickListener(this);
+            dateText = (TextView) v.findViewById(R.id.result_date_text);
             resultText = (TextView) v.findViewById(R.id.result_list_text);
             tempText = (TextView) v.findViewById(R.id.result_list_temp);
             windText = (TextView) v.findViewById(R.id.result_list_wind);

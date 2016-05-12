@@ -56,11 +56,14 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 
 import org.joda.time.LocalTime;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -364,6 +367,7 @@ public class MapActivity extends Fragment //TODO
                             View v = getActivity().getLayoutInflater().inflate(R.layout.info_window, null); //TODO
 
                            // LinearLayout layer = (LinearLayout) v.findViewById(R.id.layoutWindow);
+                            TextView tvDate = (TextView) v.findViewById(R.id.marker_date_text);
                             TextView tvTemp= (TextView)v.findViewById(R.id.marker_temp_text);
                             TextView tvCloud= (TextView)v.findViewById(R.id.marker_cloud_text);
                             TextView tvWind= (TextView)v.findViewById(R.id.marker_wind_text);
@@ -390,17 +394,28 @@ public class MapActivity extends Fragment //TODO
                             }
 
                             if (list.isEmpty()){   //Ifall vi inte får någon information om området
-                                tvLocal.setText("No information");
-                                return v;
+                                DecimalFormat dec = new DecimalFormat("#.##");
+                                tvLocal.setText(dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude));
                             } else {
                                 Log.d("Size" , Integer.toString(list.size()));
                                 android.location.Address address = list.get(0);
                                 if (address.getLocality() != null) {
                                     tvLocal.setText(address.getLocality());//Vi sätter text som ska förekomma i markör-fönster
-                                } else {
+                                }else if (address.getSubLocality() != null){
                                     tvLocal.setText(address.getSubLocality());
+                                } else {
+                                    DecimalFormat dec = new DecimalFormat("#.##");
+                                    tvLocal.setText(dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude));
+                                 //   tvLocal.setText(address.getSubLocality());
                                 }
                             }
+                            DateTimeFormatter dtf = DateTimeFormat.forPattern("HH:mm");
+                            try {
+                                tvDate.setText(MapHolder.resultList.get(currentMarker).getDate().toString() + " " + dtf.print(MapHolder.resultList.get(currentMarker).getFoundStartTime()) + "-" + dtf.print(MapHolder.resultList.get(currentMarker).getFoundEndTime()));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                             if (MapHolder.parametersToUse.containsKey("temperature")){
                                 try {
 
