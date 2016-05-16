@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,12 +31,9 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
     public static Button button2;
     public static String ID_ACTIVITY_BTN;
 
-
-
     public RecylerAdapter(ArrayList<DataProvider> dataProviders) {
         this.arrayList = dataProviders;
     }
-
 
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -45,8 +43,6 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_layout, parent, false);
         RecyclerViewHolder recyclerViewHolder = new RecyclerViewHolder(view);
 
-
-
         return recyclerViewHolder;
     }
 
@@ -54,8 +50,17 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
     @Override
     public void onBindViewHolder(final RecyclerViewHolder holder, final int position) {
         final DataProvider dataProvider = arrayList.get(position);
+
+        //sätter in värden på varje card (denna metod loopas igenom beroende på hur många cards som finns)
         holder.Im_Activity.setImageResource(dataProvider.getImg_res());
         holder.Tx_Activity.setText(dataProvider.getA_name());
+        holder.tempVal = dataProvider.getTempValue();
+        holder.windVal = dataProvider.getWindValue();
+        holder.cloudVal = dataProvider.getCloudValue();
+        holder.rainVal = dataProvider.getRainValue();
+        holder.cardName = dataProvider.getA_name();
+
+
     }
 
     @Override
@@ -65,8 +70,14 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
+        //Varje cards innehåll
         ImageView Im_Activity;
         TextView Tx_Activity;
+        int tempVal;
+        int windVal;
+        int cloudVal;
+        String cardName;
+        double rainVal;
 
 
         public RecyclerViewHolder(View Gridview)
@@ -74,12 +85,12 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
             super(Gridview);
             Gridview.setOnClickListener(this);
 
-
+            //sätter bild och namn på rätt plats
             Tx_Activity = (TextView) Gridview.findViewById(R.id.activity_name);
             Im_Activity = (ImageView) Gridview.findViewById(R.id.activity_image);
 
-        }
 
+        }
 
         @Override
         public void onClick(View v) {
@@ -87,14 +98,24 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
             Vibrator vibrator = (Vibrator) v.getContext().getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(20);
 
+            //skriver väder-värdet från card till variabler som ska användas
+            Aktivitet_Fragment.currentTempValue = tempVal;
+            Aktivitet_Fragment.currentWindValue =windVal;
+            Aktivitet_Fragment.currentCloudValue = cloudVal;
+            Aktivitet_Fragment.currentRainValue = rainVal;
+            Log.d("onClickCard",cardName);
+            Aktivitet_Fragment.currentCard = cardName;
+
+            //popup när man klickar på ett card
             View popView = View.inflate(v.getContext(), R.layout.popup,null);
             popupWindow = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
             popupWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
             popupWindow.showAtLocation(popView, Gravity.BOTTOM,0,0);
-            popView.setAlpha((float)0.8);
+            popView.setAlpha((float)0.8); //lite transparent
 
             button1 = (Button)popView.findViewById(R.id.DateButton);
             button2 = (Button)popView.findViewById(R.id.DateButton2);
+
 
 
             //Lägg till eller ta bort denna kod om man vill ha startdatum på båda datumknappar istället för "hints" om start och slutdatum

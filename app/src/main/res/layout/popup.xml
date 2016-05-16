@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:text="Välj Område"
         android:onClick="showMap"
-        android:id="@+id/button_map"
+        android:id="@+id/go_to_map_popup_favoriter"
         android:layout_below="@+id/DateButton"
         android:layout_centerHorizontal="true"
 
