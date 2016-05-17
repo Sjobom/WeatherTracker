@@ -375,6 +375,7 @@ public class MapActivity extends Fragment //TODO
                             TextView tvCloud= (TextView)v.findViewById(R.id.marker_cloud_text);
                             TextView tvWind= (TextView)v.findViewById(R.id.marker_wind_text);
                             TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);
+                            TextView tvRain = (TextView) v.findViewById(R.id.marker_rain_text);
                             ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
 
                             int currentMarker;
@@ -410,6 +411,9 @@ public class MapActivity extends Fragment //TODO
                             if (MapHolder.parametersToUse.containsKey("cloudCover")){
                                     tvCloud.setText("Molntäcke: " + df.format(MapHolder.resultList.get(currentMarker).getCloudCover() * 12.5) + "%");
                             }else{tvCloud.setVisibility(View.GONE);}
+                            if (MapHolder.parametersToUse.containsKey("rain")){
+                                tvRain.setText("Nederbörd: " + df.format(MapHolder.resultList.get(currentMarker).getRain()));
+                            }else{tvRain.setVisibility(View.GONE);}
 
                             tvImage.setImageDrawable(MapHolder.resultList.get(currentMarker).getWeatherImage());
                             

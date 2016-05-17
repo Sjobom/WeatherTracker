@@ -57,6 +57,12 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 />
+            <TextView
+                android:id="@+id/result_list_rain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                />
 
         </LinearLayout>
 

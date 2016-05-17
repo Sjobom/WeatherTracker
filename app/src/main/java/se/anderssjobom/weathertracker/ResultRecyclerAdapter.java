@@ -82,6 +82,9 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
                 holder.cloudText.setText("Molntäcke: " + df.format(weatherData.getCloudCover() * 12.5) + "%");
         } else { holder.cloudText.setVisibility(View.GONE);}
 
+        if (MapHolder.parametersToUse.containsKey("rain")){
+            holder.rainText.setText("Nederbörd: " + df.format(weatherData.getRain()) +  " mm");
+        }else{holder.rainText.setVisibility(View.GONE);}
         holder.weatherIcon.setImageDrawable(weatherData.getWeatherImage());
         }
 
@@ -101,6 +104,7 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
         TextView tempText;
         TextView windText;
         TextView cloudText;
+        TextView rainText;
         ImageView weatherIcon;
         LatLng position;
 
@@ -113,7 +117,9 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
             tempText = (TextView) v.findViewById(R.id.result_list_temp);
             windText = (TextView) v.findViewById(R.id.result_list_wind);
             cloudText = (TextView) v.findViewById(R.id.result_list_cloud);
+            rainText = (TextView) v.findViewById(R.id.result_list_rain);
             weatherIcon = (ImageView) v.findViewById(R.id.result_list_image);
+
 
         }
 
