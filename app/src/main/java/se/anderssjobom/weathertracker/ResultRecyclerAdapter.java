@@ -34,10 +34,12 @@ import se.anderssjobom.weathertracker.model.WeatherParameters;
 class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.ResultRecyclerViewHolder> {
 
     private static ArrayList<WeatherParameters> arrayList = new ArrayList<>();
+    private static MapHolder mapHolder;
 
-    public ResultRecyclerAdapter(ArrayList<WeatherParameters> weatherParameters)
+    public ResultRecyclerAdapter(ArrayList<WeatherParameters> weatherParameters, MapHolder mapHolder)
     {
         this.arrayList = weatherParameters;
+        this.mapHolder = mapHolder;
     }
 
     @Override
@@ -54,60 +56,34 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
     @Override
     public void onBindViewHolder(final ResultRecyclerAdapter.ResultRecyclerViewHolder holder, final int position) {
         final WeatherParameters weatherData = arrayList.get(position);
+        holder.position = weatherData.getLatLng();
+
+        Geocoder gc = new Geocoder(MapHolder.con); //namnet på staden som markören pekar på
+        holder.resultText.setText(MapActivity.geocoder(weatherData.getLatLng(), gc));
+
+        DateTimeFormatter dtfDate = DateTimeFormat.forPattern("dd/M");
+        DateTimeFormatter dtfTime = DateTimeFormat.forPattern("HH:mm");
+        holder.dateText.setText(weatherData.getDate().toString() + " "
+                + dtfTime.print(weatherData.getFoundStartTime()) + "-"
+                + dtfTime.print(weatherData.getFoundEndTime()));
 
         DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
 
-        Geocoder gc = new Geocoder(MapHolder.con); //namnet på staden som markören pekar på
-        List<android.location.Address> list = null;        //Få namn på område
-        LatLng latLng = weatherData.getLatLng();
-        try {
-            list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (list.isEmpty()){   //Ifall vi inte får någon information om området
-            holder.resultText.setText("No information");
-        } else {
-            Log.d("Size" , Integer.toString(list.size()));
-            android.location.Address address = list.get(0);
-            if (address.getLocality() != null) {
-                holder.resultText.setText(address.getLocality());//Vi sätter text som ska förekomma i markör-fönster
-            } else if (address.getSubLocality() != null){
-                holder.resultText.setText(address.getSubLocality());
-            }else{
-                DecimalFormat dec = new DecimalFormat("#.##");
-                holder.resultText.setText(dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude));
-            }
-        }
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("HH:mm");
-        try {
-            holder.dateText.setText(weatherData.getDate().toString() + " " + dtf.print(weatherData.getFoundStartTime()) + "-" + dtf.print(weatherData.getFoundEndTime()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-//        holder.timeText.setText("Time: " + dtf.print(weatherData.getFoundStartTime())/*weatherData.getFoundStartTime().toString()*/ + "-" + dtf.print(weatherData.getFoundEndTime())/*weatherData.getFoundEndTime().toString()*/);
-
-
-
        if (MapHolder.parametersToUse.containsKey("temperature")){
-                //TextView tvTemp = new TextView(MapHolder.con);
-                holder.tempText.setText("Temperatur: " + df.format(weatherData.getTemperature()) + "°C");
-                //holder.tempText.setText(tvTemp);
+           holder.tempText.setText("Temperatur: " + df.format(weatherData.getTemperature()) + "°C");
         } else { holder.tempText.setVisibility(View.GONE);}
+
         if (MapHolder.parametersToUse.containsKey("windSpeed")){
-            Log.d("Contains" , "Windspeed");
-                holder.windText.setText("Vindhastighet: " + df.format(weatherData.getWindspeed()) + " m/s");
-        }
-        else { holder.windText.setVisibility(View.GONE);}
+            holder.windText.setText("Vindhastighet: " + df.format(weatherData.getWindspeed()) + " m/s");
+        } else { holder.windText.setVisibility(View.GONE);}
 
         if (MapHolder.parametersToUse.containsKey("cloudCover")){
                 holder.cloudText.setText("Molntäcke: " + df.format(weatherData.getCloudCover() * 12.5) + "%");
+        } else { holder.cloudText.setVisibility(View.GONE);}
+
+        holder.weatherIcon.setImageDrawable(weatherData.getWeatherImage());
         }
-        else { holder.cloudText.setVisibility(View.GONE);}
-                holder.weatherIcon.setImageDrawable(weatherData.getWeatherImage());
-    }
 
     @Override
     public int getItemCount() {
@@ -126,6 +102,7 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
         TextView windText;
         TextView cloudText;
         ImageView weatherIcon;
+        LatLng position;
 
         public ResultRecyclerViewHolder(View v)
         {
@@ -143,13 +120,9 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
         @Override
         public void onClick(View v)
         {
-            //När man klickar på ett card så händer något här
-
-
+            mapHolder.showDetails(v, position);
         }
 
     }
-
-
 }
 

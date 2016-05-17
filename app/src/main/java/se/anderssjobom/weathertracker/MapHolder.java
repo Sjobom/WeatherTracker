@@ -50,9 +50,9 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     public static HashMap<String, Object> parametersToUse;
     public static List<WeatherParameters> resultList;
     MapActivity mapActivity;
+    public static MapHolder mapHolder;
     ResultListFragment listFragment;
     public static Context con;
-    //public static FloatingActionButton filterButton;
 
 
 
@@ -63,6 +63,8 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         parametersToUse = (HashMap<String, Object>) intent.getSerializableExtra("map");
 
         setContentView(R.layout.activity_menu);
+
+        mapHolder = this;
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -175,11 +177,11 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         //Visa tablayouten
         tabLayout.setVisibility(View.VISIBLE);
 
-        ArrayList<WeatherParameters> topthreeList = new ArrayList<WeatherParameters>();
+        ArrayList<WeatherParameters> topthreeList = new ArrayList();
         for (int i = 0; i < 3; i++){
             topthreeList.add(resultList.get(i));
         }
-        RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter((ArrayList) topthreeList);
+        RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter(topthreeList, this);
         ResultListFragment.mRecyclerView.setAdapter(mAdapter);
         MapActivity.filterButton.setVisibility(View.VISIBLE);
     }
@@ -193,7 +195,6 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         LocalDate date2 = new LocalDate(MainActivity.buttText2);
         popup.getMenu().add("Alla datum");
         dateList.add(date1.minusDays(1));
-        Log.d("WELP", "WELP");
         LocalDate currentDate = date1;
         while (!currentDate.equals(date2.plusDays(1))){
             popup.getMenu().add(currentDate.toString());
@@ -204,41 +205,25 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                List<WeatherParameters> dayWeatherList = new ArrayList<WeatherParameters>();
+                ArrayList<WeatherParameters> weatherList = new ArrayList();
                 String dateText = (String) item.getTitle();
 
                 if (dateText.equals("Alla datum")){
-                    Log.d("Date", "All dates");
                     mapActivity.createTopMarkers(resultList);
-
-                    ArrayList<WeatherParameters> topthreeList = new ArrayList<WeatherParameters>();
                     for (int i = 0; i < 3; i++){
-                        topthreeList.add(resultList.get(i));
+                        weatherList.add(resultList.get(i));
                     }
-
-                    RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter((ArrayList) topthreeList);
-                    ResultListFragment.mRecyclerView.setAdapter(mAdapter);
                 } else {
                      LocalDate usedDate = LocalDate.parse(dateText, DateTimeFormat.forPattern("yyyy-MM-dd"));
-
-
-
-
                     for (int i = 0; i < resultList.size(); i++) {
-                        try {
-                            Log.d("ControlDate", resultList.get(i).getDate().toString());
                             if (dateText.equals(resultList.get(i).getDate().toString())) {
-                                dayWeatherList.add(resultList.get(i));
+                                weatherList.add(resultList.get(i));
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
                     }
-                    mapActivity.createTopMarkers(dayWeatherList);
-
-                    RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter((ArrayList) dayWeatherList);
-                    ResultListFragment.mRecyclerView.setAdapter(mAdapter);
+                    mapActivity.createTopMarkers(weatherList);
                 }
+                RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter(weatherList, mapHolder);
+                ResultListFragment.mRecyclerView.setAdapter(mAdapter);
                 return false;
             }
         });

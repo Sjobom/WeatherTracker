@@ -374,9 +374,9 @@ public class MapActivity extends Fragment //TODO
                             TextView tvTemp= (TextView)v.findViewById(R.id.marker_temp_text);
                             TextView tvCloud= (TextView)v.findViewById(R.id.marker_cloud_text);
                             TextView tvWind= (TextView)v.findViewById(R.id.marker_wind_text);
+                            TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);
+                            ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
 
-                        /*    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);*/
                             int currentMarker;
                             LatLng latLng = marker.getPosition();
                             currentMarker = 0;
@@ -386,39 +386,15 @@ public class MapActivity extends Fragment //TODO
                                     break;
                                 }
                             }
-                            Log.d("Marker", Integer.toString(currentMarker));
-                            /*if (latLng.equals(topResultMarkers.get(0).getPosition())){ currentMarker = 0;}
-                            else if (latLng.equals(topResultMarkers.get(1).getPosition())){currentMarker = 1;}
-                            else {currentMarker = 2;}*/
 
-
-                            TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);
-                            ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
                             Geocoder gc = new Geocoder(getActivity());
                             tvLocal.setText(geocoder(latLng, gc));
 
-                            if (list.isEmpty()){   //Ifall vi inte får någon information om området
-                                DecimalFormat dec = new DecimalFormat("#.##");
-                                tvLocal.setText(dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude));
-                            } else {
-                                Log.d("Size" , Integer.toString(list.size()));
-                                android.location.Address address = list.get(0);
-                                if (address.getLocality() != null) {
-                                    tvLocal.setText(address.getLocality());//Vi sätter text som ska förekomma i markör-fönster
-                                }else if (address.getSubLocality() != null){
-                                    tvLocal.setText(address.getSubLocality());
-                                } else {
-                                    DecimalFormat dec = new DecimalFormat("#.##");
-                                    tvLocal.setText(dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude));
-                                 //   tvLocal.setText(address.getSubLocality());
-                                }
-                            }
-                            DateTimeFormatter dtf = DateTimeFormat.forPattern("HH:mm");
-                            try {
-                                tvDate.setText(MapHolder.resultList.get(currentMarker).getDate().toString() + " " + dtf.print(MapHolder.resultList.get(currentMarker).getFoundStartTime()) + "-" + dtf.print(MapHolder.resultList.get(currentMarker).getFoundEndTime()));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            DateTimeFormatter fmtDate = DateTimeFormat.forPattern("dd/M");
+                            DateTimeFormatter fmtTime = DateTimeFormat.forPattern("HH:mm");
+                            tvDate.setText(fmtDate.print(MapHolder.resultList.get(currentMarker).getDate()) + " "
+                                    + fmtTime.print(MapHolder.resultList.get(currentMarker).getFoundStartTime()) + "-"
+                                    + fmtTime.print(MapHolder.resultList.get(currentMarker).getFoundEndTime()));
 
                             DecimalFormat df = new DecimalFormat("#.#");
                             df.setRoundingMode(RoundingMode.CEILING);
@@ -426,14 +402,17 @@ public class MapActivity extends Fragment //TODO
                             if (MapHolder.parametersToUse.containsKey("temperature")){
                                     tvTemp.setText("Temperatur: " + df.format(MapHolder.resultList.get(currentMarker).getTemperature()) + "°C");
                             }else{tvTemp.setVisibility(View.GONE);}
+
                             if (MapHolder.parametersToUse.containsKey("windSpeed")){
-                                Log.d("Contains" , "Windspeed");
                                     tvWind.setText("Vindhastighet: " + df.format(MapHolder.resultList.get(currentMarker).getWindspeed()) + " m/s");
                             }else{tvWind.setVisibility(View.GONE);}
+
                             if (MapHolder.parametersToUse.containsKey("cloudCover")){
                                     tvCloud.setText("Molntäcke: " + df.format(MapHolder.resultList.get(currentMarker).getCloudCover() * 12.5) + "%");
-                            }else{tvWind.setVisibility(View.GONE);}
-                                        tvImage.setImageDrawable(MapHolder.resultList.get(currentMarker).getWeatherImage());
+                            }else{tvCloud.setVisibility(View.GONE);}
+
+                            tvImage.setImageDrawable(MapHolder.resultList.get(currentMarker).getWeatherImage());
+                            
                             return v;
                         }
                     });
@@ -617,6 +596,7 @@ public class MapActivity extends Fragment //TODO
         if(topResultMarkers == null){
             topResultMarkers = new ArrayList<>();
         }
+
         if(topResultMarkers != null) {
             for (int i = 0; i < topResultMarkers.size(); i++) {
                 topResultMarkers.get(i).remove();
@@ -639,7 +619,8 @@ public class MapActivity extends Fragment //TODO
 
 
         if (list.isEmpty()){   //Ifall vi inte får någon information om området
-            location = "No information";
+            DecimalFormat dec = new DecimalFormat("#.##");
+            location = dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude);
         } else {
             android.location.Address address = list.get(0);
             if (address.getLocality() != null) {
@@ -650,34 +631,4 @@ public class MapActivity extends Fragment //TODO
         }
         return location;
     }
-
 }
-
-
-
-/*                            switch(weather){ //Beroende på vad för väder vi har så skriver vi motsvarande ikon till markörfönstret
-                                case "Sunny":
-                                    tvImage.setImageResource(R.drawable.ic_sunny);
-                                    break;
-                                case "Cloudy":
-                                    tvImage.setImageResource(R.drawable.ic_cloudy);
-                                    break;
-                                case "Haze":
-                                    tvImage.setImageResource(R.drawable.ic_haze);
-                                    break;
-                                case "Rain":
-                                    tvImage.setImageResource(R.drawable.ic_rain);
-                                    break;
-                                case "Slight rain":
-                                    tvImage.setImageResource(R.drawable.ic_slight_rain);
-                                    break;
-                                case "Snow":
-                                    tvImage.setImageResource(R.drawable.ic_snow);
-                                    break;
-                                case "Storm":
-                                    tvImage.setImageResource(R.drawable.ic_thunderstorms);
-                                    break;
-                                case "Slight cloud":
-                                    tvImage.setImageResource(R.drawable.ic_mostly_cloudy);
-                                    break;
-                            }*/
