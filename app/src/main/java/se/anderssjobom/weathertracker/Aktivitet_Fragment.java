@@ -1,7 +1,5 @@
 package se.anderssjobom.weathertracker;
 
-
-
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,47 +16,58 @@ import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class Aktivitet_Fragment extends Fragment implements View.OnClickListener
+public class Aktivitet_Fragment extends Fragment //implements View.OnClickListener
 {
-    Button button1;
-    Button button2;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private GridLayoutManager layoutManager;
     String[] a_name;
-    int[] img_res = {R.drawable.swimcolorsmall, R.drawable.bikecolorsmall, R.drawable.sailcolorsmall,R.drawable.hikecolorsmall, R.drawable.horsebackcolorsmall,R.drawable.potatoes,R.drawable.running,R.drawable.loningsmall};
+    int[] img_res =
+            {R.drawable.ic_sunny, R.drawable.ic_mostly_cloudy,
+            R.drawable.ic_haze,R.drawable.ic_cloudy,
+            R.drawable.ic_slight_rain,R.drawable.ic_rain,
+            R.drawable.ic_thunderstorms,R.drawable.ic_snow};
     ArrayList<DataProvider> DataArray = new ArrayList<DataProvider>();
 
+    //väderparametrar beroende på vilket card som man klickat på
+    public static int currentTempValue;
+    public static int currentWindValue;
+    public static int currentCloudValue;
+    public static double currentRainValue;
+    public static String currentCard;
+
+    //Förbestämda, tillfälliga väder-värden till varje card
+    //värde [0] i varje array tillhör "sol"-cardet osv...
+    //Ändra till listor om vi lägger till funktion för att lägga till egna cards
+    private int[] tempValues = {20,20,31,-1000,-1000,31,31,-5}; //temp i grader (-1000 är "don't care")
+    private int[] cloudValues ={ 0, 3, 6, 8, 4, 8, 4, 3}; //molnighet *1/8
+    private int[] windValues = {-1,-1,-1,-1,-1,-1, 3,-1}; //vind i m/s
+    private double[] rainValues = {0,0,1,0,20,100,50,50}; //regn 0-100mm
 
 
     public Aktivitet_Fragment() {
         // Required empty public constructor
     }
 
-    public void onClick(View v) {
-
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View thisView = inflater.inflate(R.layout.fragment_aktivitet, container, false);
 
-
-        //recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
+        //Strängar/namn till varje card finns i en string-array i Strings-xml:en
         a_name = getResources().getStringArray(R.array.activity_name);
+
+        //lägger till varje card till arrayen som sedan används av adaptern
         int i = 0;
         for(String name : a_name)
         {
-            DataProvider dataProvider = new DataProvider(img_res[i],name);
+            DataProvider dataProvider = new DataProvider(img_res[i],name, tempValues[i], windValues[i],
+                    cloudValues[i], rainValues[i]);
             DataArray.add(dataProvider);
             i++;
         }
 
+        //skapa recyclerview
         recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
         adapter = new RecylerAdapter(DataArray);
         layoutManager = new GridLayoutManager(getActivity(),2);
@@ -67,6 +76,5 @@ public class Aktivitet_Fragment extends Fragment implements View.OnClickListener
         recyclerView.setAdapter(adapter);
 
         return thisView;
-
     }
 }

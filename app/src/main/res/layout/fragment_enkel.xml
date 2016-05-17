@@ -8,8 +8,6 @@
     android:paddingRight="30dp"
 
     >
-
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,132 +18,67 @@
 
             >
 
-            <TextView
-                android:layout_width="wrap_content"
+
+            <NumberPicker
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Temperatur: "
-                android:gravity="left"
-                android:id="@+id/tempTextView"
+                android:id="@+id/parameterPicker"
+                android:solidColor="#00ffffff"
                 android:layout_alignParentTop="true"
-
-                android:layout_marginTop="120dp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="vald temp"
-                android:textColor="@color/secondary_text"
-                android:id="@+id/tempSelectText"
-                android:layout_above="@+id/tempSeekBar"
-                android:layout_toEndOf="@+id/tempTextView" />
-
-            <SeekBar
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:id="@+id/tempSeekBar"
-                android:layout_below="@+id/tempTextView"
                 android:layout_alignParentStart="true"
-
-                android:layout_alignParentEnd="true"
-                android:padding="10px" />
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Molnighet: "
-                android:gravity="left"
-                android:id="@+id/cloudTextView"
-                android:layout_below="@+id/tempSeekBar"
-                android:layout_alignStart="@+id/tempSeekBar" />
+                android:layout_marginTop="42dp"
+                android:clickable="false"
+                />
             <SeekBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/cloudSeekBar"
-
-                android:layout_below="@+id/cloudTextView"
-                android:layout_alignParentStart="true"
+                android:id="@+id/enkelSeekBar"
                 android:layout_alignParentEnd="true"
-                android:padding="10dp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Vind: "
-                android:gravity="center"
-                android:id="@+id/windTextView"
-                android:layout_below="@+id/cloudSeekBar"
-                android:layout_alignStart="@+id/windSeekBar" />
-            <SeekBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/windSeekBar"
-
-                android:layout_below="@+id/windTextView"
+                android:layout_below="@+id/paramTextView"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:padding="10dp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Nederbörd"
-                android:gravity="left"
-                android:id="@+id/nederTextView"
-                android:layout_below="@+id/windSeekBar"
-                android:paddingTop="20dp" />
-
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:id="@+id/switch1"
-                android:layout_above="@+id/relativeLayout"
-                android:layout_alignParentEnd="true" />
+                android:indeterminate="false"
+                android:layout_marginTop="10dp"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Inget"
-                android:textColor="@color/secondary_text"
-                android:id="@+id/cloudSelectText"
-                android:layout_above="@+id/cloudSeekBar"
-                android:layout_toEndOf="@+id/nederTextView" />
+                android:text="Valt värde: "
+                android:id="@+id/paramTextView"
+                android:layout_below="@+id/parameterPicker"
+                android:layout_alignParentStart="true" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Av"
-                android:id="@+id/windSelectText"
-                android:textColor="@color/secondary_text"
-                android:layout_above="@+id/windSeekBar"
-                android:layout_toEndOf="@+id/windTextView" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/valueText"
+                android:layout_above="@+id/enkelSeekBar"
+                android:layout_toEndOf="@+id/paramTextView" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/nederTextView"
+                android:layout_below="@id/enkelSeekBar"
                 android:id="@+id/relativeLayout"
                 android:paddingTop="@dimen/parameter_container_padding">
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Start"
-                        android:id="@+id/start_date_button_simple"
-                        android:onClick="showDateFragment"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start"
+                    android:id="@+id/start_date_button_simple"
+                    android:onClick="showDateFragment"/>
 
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Slut"
-                        android:id="@+id/end_date_button_simple"
-                        android:layout_toRightOf="@id/start_date_button_simple"
-                        android:onClick="showDateFragment"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Slut"
+                    android:id="@+id/end_date_button_simple"
+                    android:layout_toRightOf="@id/start_date_button_simple"
+                    android:onClick="showDateFragment"/>
 
                 <Button
                     android:layout_width="wrap_content"
@@ -156,6 +89,7 @@
                     android:onClick="showMap"
                     android:layout_centerInParent="true" />
             </RelativeLayout>
+
 
 
 

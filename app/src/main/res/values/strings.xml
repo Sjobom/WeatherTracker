@@ -11,14 +11,14 @@
     
 
     <string-array name="activity_name">
-        <item>"Bada"</item>
-        <item>"Cykla"</item>
-        <item>"Segla"</item>
-        <item>"Vandra"</item>
-        <item>"hästridning"</item>
-        <item>"potatis"</item>
-        <item>"löpning"</item>
-        <item>"löning"</item>
+        <item>"Sol"</item>
+        <item>"Sol och moln"</item>
+        <item>"Dis"</item>
+        <item>"Moln"</item>
+        <item>"Sol och regn"</item>
+        <item>"Regn"</item>
+        <item>"Åska"</item>
+        <item>"Snö"</item>
 
     </string-array>
 
