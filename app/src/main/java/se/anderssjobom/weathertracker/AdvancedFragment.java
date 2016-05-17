@@ -13,6 +13,8 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.appyvet.rangebar.RangeBar;
+
 import java.text.SimpleDateFormat;
 
 
@@ -63,7 +65,7 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private void initSeekbars(View thisView){
+    private void initSeekbars(final View thisView){
         SeekBar tempSeekBar = (SeekBar) thisView.findViewById(R.id.temperature_seekbar);
         tempSeekBar.setMax(62);
         tempSeekBar.incrementProgressBy(1);
@@ -132,6 +134,40 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
+
+        tempSeekBar = (SeekBar) thisView.findViewById(R.id.rain_seekbar);
+        tempSeekBar.setMax(100);
+        tempSeekBar.incrementProgressBy(1);
+        tempSeekBar.setEnabled(false);
+        tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                TextView rainText = (TextView) seekBar.getRootView().findViewById(R.id.rain_textview_response);
+                rainText.setText(Integer.toString(progress) + " mm");
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        RangeBar timeBarAdv = (RangeBar) thisView.findViewById(R.id.time_bar_advanced);
+
+        TextView timeBarResponse = (TextView) thisView.findViewById(R.id.time_bar_textview_response);
+        timeBarResponse.setText(timeBarAdv.getLeftIndex() + "-" + timeBarAdv.getRightIndex());
+
+        timeBarAdv.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                TextView timeBarResponse = (TextView) rangeBar.getRootView().findViewById(R.id.time_bar_textview_response);
+                timeBarResponse.setText(leftPinValue + "-" + rightPinValue);
+            }
+        });
+
     }
 
     private void initSwitches(View thisView){
@@ -178,6 +214,16 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
                     tempEditText.setEnabled(false);
                     tempEditText2.setEnabled(false);
                 }
+            }
+        });
+
+        tempSwitch = (Switch) thisView.findViewById(R.id.rain_switch);
+        tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SeekBar tempSeekBar = (SeekBar) buttonView.getRootView().findViewById(R.id.rain_seekbar);
+                if (isChecked) {tempSeekBar.setEnabled(true);}
+                else {tempSeekBar.setEnabled(false);}
             }
         });
 

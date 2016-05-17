@@ -36,7 +36,6 @@
             android:background="@color/primary_dark"
             app:tabSelectedTextColor="#FFFFFF"
             app:tabIndicatorColor="#f7f7f7"
-
             >
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>

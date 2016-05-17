@@ -19,8 +19,12 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import se.anderssjobom.weathertracker.model.WeatherParameters;
 
@@ -59,7 +63,6 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
 
         if (list.isEmpty()){   //Ifall vi inte får någon information om området
             holder.resultText.setText("No information");
-            return;
         } else {
             Log.d("Size" , Integer.toString(list.size()));
             android.location.Address address = list.get(0);
@@ -70,53 +73,25 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
             }
         }
 
+        DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+
        if (MapHolder.parametersToUse.containsKey("temperature")){
-            try {
                 //TextView tvTemp = new TextView(MapHolder.con);
-                holder.tempText.setText("Temperatur: " + Double.toString(weatherData.getTemperature()) + "°C");
+                holder.tempText.setText("Temperatur: " + df.format(weatherData.getTemperature()) + "°C");
                 //holder.tempText.setText(tvTemp);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         } else { holder.tempText.setVisibility(View.GONE);}
         if (MapHolder.parametersToUse.containsKey("windSpeed")){
             Log.d("Contains" , "Windspeed");
-            try {
-                //TextView tvWind = new TextView(MapHolder.con);
-                holder.windText.setText("Vindhastighet: " + Double.toString(weatherData.getWindspeed()) + " m/s");
-                //holder.addView(tvWind);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                holder.windText.setText("Vindhastighet: " + df.format(weatherData.getWindspeed()) + " m/s");
         }
         else { holder.windText.setVisibility(View.GONE);}
 
         if (MapHolder.parametersToUse.containsKey("cloudCover")){
-            try {
-                //TextView tvWind = new TextView(MapHolder.con);
-                holder.cloudText.setText("Molntäcke: " + Double.toString(weatherData.getCloudCover() * 12.5) + "%");
-                //holder.addView(tvWind);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                holder.cloudText.setText("Molntäcke: " + df.format(weatherData.getCloudCover() * 12.5) + "%");
         }
         else { holder.cloudText.setVisibility(View.GONE);}
-        try {
-            int cloud = weatherData.getCloudCover();
-            if (cloud <= 2){
-                holder.weatherIcon.setImageResource(R.drawable.ic_sunny);
-            } else if (cloud > 2 && cloud <= 5){
-                holder.weatherIcon.setImageResource(R.drawable.ic_mostly_cloudy);
-            } else if (cloud > 5){
-                holder.weatherIcon.setImageResource(R.drawable.ic_cloudy);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        //testar skriver ut poängen
-        //holder.resultText.setText(Integer.toString(dataProvider.getPoint()));
+                holder.weatherIcon.setImageDrawable(weatherData.getWeatherImage());
     }
 
     @Override

@@ -12,7 +12,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
 
@@ -45,10 +47,6 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         parametersToUse = (HashMap<String, Object>) intent.getSerializableExtra("map");
-
-        if (parametersToUse.containsKey("cloudCover")) {
-            Log.d("TaaAAG", parametersToUse.get("cloudCover").toString());
-        }
 
         setContentView(R.layout.activity_menu);
 
@@ -140,6 +138,19 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
             MapActivity.onResultScreen = false;
         }
 
+    }
+
+    public void showDetails(View v, LatLng latLng){
+        WeatherParameters wp = new WeatherParameters();
+        Intent intent = new Intent(MapHolder.this, DetailActivity.class);
+        for(int i = 0; i < resultList.size(); i++){
+            if(resultList.get(i).getLatLng().equals(latLng)){
+                wp = resultList.get(i);
+            }
+        }
+        intent.putExtra("weatherParameter", wp);
+        Log.d(LOG,intent.toString() );
+        startActivity(intent);
     }
 
     @Override
