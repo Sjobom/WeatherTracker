@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showMap(View v){ //TODO Make different cases depending on which of the tab buttons user pressed
-        HashMap<String, Object> parametersToUseList = new HashMap<String, Object>();
+        HashMap<String, Object> parametersToUse = new HashMap<String, Object>();
 
         View popupView = View.inflate(v.getContext(), R.layout.checkdatepopup,null);
         PopupWindow checkDateWindow =  new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
@@ -111,10 +111,10 @@ public class MainActivity extends AppCompatActivity
                 int pickerData = Enkel_Fragment.picker.getValue();
                 switch (pickerData) {
                     case 0:
-                        parametersToUseList.put("temperature", -100 + 200 * enkelParameter.getProgress());
+                        parametersToUse.put("temperature", -100 + 200 * enkelParameter.getProgress());
                         break;
                     case 1:
-                        int windSpeed;
+                        int windSpeed = 0;
                         switch (enkelParameter.getProgress()){
                             case 0:
                                 windSpeed = 0;
@@ -129,13 +129,13 @@ public class MainActivity extends AppCompatActivity
                                 windSpeed = 10;
                                 break;
                         }
-                        parametersToUseList.put("windSpeed", windSpeed);
+                        parametersToUse.put("windSpeed", windSpeed);
                         break;
                     case 2:
-                        parametersToUseList.put("cloudCover",  enkelParameter.getProgress() * 4);
+                        parametersToUse.put("cloudCover",  enkelParameter.getProgress() * 4);
                         break;
                     case 3:
-                        parametersToUseList.put("rain", 100 * enkelParameter.getProgress()); //LÄGG TILL NEDERBÖRD HÄR
+                        parametersToUse.put("rain", 100 * enkelParameter.getProgress()); //LÄGG TILL NEDERBÖRD HÄR
                         break;
                 }
                 break;
@@ -154,10 +154,10 @@ public class MainActivity extends AppCompatActivity
                     parametersToUse.put("temperature", (seekadvTemp.getProgress() - 31));
                 }
                 if (switchWindAdv.isChecked()) {
-                    parametersToUseList.put("windSpeed", seekadvWind.getProgress());
+                    parametersToUse.put("windSpeed", seekadvWind.getProgress());
                 }
                 if (switchCloudAdv.isChecked()) {
-                    parametersToUseList.put("cloudCover", seekadvCloud.getProgress());
+                    parametersToUse.put("cloudCover", seekadvCloud.getProgress());
                 }
                 if (switchRainAdv.isChecked()) {
                     parametersToUse.put("rain", seekadvRain.getProgress());
@@ -172,53 +172,53 @@ public class MainActivity extends AppCompatActivity
                     case "Sol":
                         Log.d("VALT CARD", "Sol");
                         //parametersToUseList.put("temperature", Aktivitet_Fragment.currentTempValue);
-                        parametersToUseList.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
-                        parametersToUseList.put("rain",Aktivitet_Fragment.currentRainValue);
+                        parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
+                        parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
                         break;
                     case "Sol och moln":
                         Log.d("VALT CARD", "Sol och moln");
-                        parametersToUseList.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
+                        parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
                         //parametersToUseList.put("temperature", Aktivitet_Fragment.currentTempValue);
                         //parametersToUseList.put("windSpeed", Aktivitet_Fragment.currentWindValue);
                         break;
                     case "Dis":
                         Log.d("VALT CARD", "Dis");
-                        parametersToUseList.put("rain",Aktivitet_Fragment.currentRainValue);
-                        parametersToUseList.put("temperature", Aktivitet_Fragment.currentTempValue);
-                        parametersToUseList.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
+                        parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
+                        parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
+                        parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
                         //parametersToUseList.put("windSpeed", Aktivitet_Fragment.currentWindValue);
                         break;
                     case "Moln":
                         Log.d("VALT CARD", "Moln");
-                        parametersToUseList.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
+                        parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
                         break;
                     case "Sol och regn":
                         Log.d("VALT CARD", "Sol och regn");
-                        parametersToUseList.put("rain",Aktivitet_Fragment.currentRainValue);
-                        parametersToUseList.put("temperature", Aktivitet_Fragment.currentTempValue);
-                        parametersToUseList.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
+                        parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
+                        parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
+                        parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
                         //parametersToUseList.put("windSpeed", Aktivitet_Fragment.currentWindValue);
                         break;
                     case "Regn":
                         Log.d("VALT CARD", "Regn");
-                        parametersToUseList.put("rain",Aktivitet_Fragment.currentRainValue);
-                        parametersToUseList.put("temperature", Aktivitet_Fragment.currentTempValue);
-                        parametersToUseList.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
+                        parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
+                        parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
+                        parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
                         //parametersToUseList.put("windSpeed", Aktivitet_Fragment.currentWindValue);
                         break;
                     case "Åska":
                         Log.d("VALT CARD", "Åska");
-                        parametersToUseList.put("rain",Aktivitet_Fragment.currentRainValue);
-                        parametersToUseList.put("temperature", Aktivitet_Fragment.currentTempValue);
-                        parametersToUseList.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
-                        parametersToUseList.put("windSpeed", Aktivitet_Fragment.currentWindValue);
+                        parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
+                        parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
+                        parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
+                        parametersToUse.put("windSpeed", Aktivitet_Fragment.currentWindValue);
 
                         break;
                     case "Snö":
                         Log.d("VALT CARD", "Snö");
-                        parametersToUseList.put("rain",Aktivitet_Fragment.currentRainValue);
-                        parametersToUseList.put("temperature", Aktivitet_Fragment.currentTempValue);
-                        parametersToUseList.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
+                        parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
+                        parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
+                        parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
                         //parametersToUseList.put("windSpeed", Aktivitet_Fragment.currentWindValue);
                         break;
                     /*
