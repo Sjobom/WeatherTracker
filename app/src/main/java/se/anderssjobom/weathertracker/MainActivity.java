@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -18,8 +20,10 @@ import static android.support.v4.app.ActivityCompat.startActivity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -67,6 +71,30 @@ public class MainActivity extends AppCompatActivity
 
     public void showMap(View v){ //TODO Make different cases depending on which of the tab buttons user pressed
         HashMap<String, Object> parametersToUseList = new HashMap<String, Object>();
+
+        View popupView = View.inflate(v.getContext(), R.layout.checkdatepopup,null);
+        PopupWindow checkDateWindow =  new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
+        checkDateWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
+        TextView tw = (TextView) popupView.findViewById(R.id.checkDateText);
+
+
+        Switch switchTempAdv = (Switch) findViewById(R.id.temperature_switch);
+        Switch switchWindAdv = (Switch) findViewById(R.id.wind_strength_switch);
+        Switch switchCloudAdv = (Switch) findViewById(R.id.cloud_cover_switch);
+
+        if (buttText1.getTimeInMillis() > buttText2.getTimeInMillis())
+        {
+            tw.setText("Slutdatum kan inte vara före startdatum!");
+            checkDateWindow.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL,0,0);
+            return;
+        }
+        if(!switchTempAdv.isChecked() && !switchCloudAdv.isChecked() && !switchWindAdv.isChecked() && v.getId() == R.id.go_to_map_button_advanced)
+        {
+            tw.setText("Välj minst en parameter!");
+            checkDateWindow.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL,0,0);
+            return;
+        }
+
         switch(v.getId()) {
             /*case R.id.button_map:
                 break;*/
@@ -95,9 +123,7 @@ public class MainActivity extends AppCompatActivity
                 SeekBar seekadvTemp = (SeekBar) findViewById(R.id.temperature_seekbar);
                 SeekBar seekadvCloud = (SeekBar) findViewById(R.id.cloud_cover_seekbar);
                 SeekBar seekadvWind = (SeekBar) findViewById(R.id.wind_strength_seekbar);
-                Switch switchTempAdv = (Switch) findViewById(R.id.temperature_switch);
-                Switch switchWindAdv = (Switch) findViewById(R.id.wind_strength_switch);
-                Switch switchCloudAdv = (Switch) findViewById(R.id.cloud_cover_switch);
+
                 if (switchTempAdv.isChecked()) {
                     parametersToUseList.put("temperature", (seekadvTemp.getProgress() - 31));
                 }

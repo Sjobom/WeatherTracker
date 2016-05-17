@@ -1,6 +1,9 @@
 package se.anderssjobom.weathertracker;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
@@ -107,10 +110,22 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
             Aktivitet_Fragment.currentCard = cardName;
 
             //popup när man klickar på ett card
+            Resources resources = v.getContext().getResources();
+            int size = 0;
+            int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                size = resources.getDimensionPixelSize(resourceId);
+            }
             View popView = View.inflate(v.getContext(), R.layout.popup,null);
-            popupWindow = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
+            popupWindow = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT,true);
             popupWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
-            popupWindow.showAtLocation(popView, Gravity.BOTTOM,0,0);
+            
+            popupWindow.setBackgroundDrawable(new ShapeDrawable());
+
+            popupWindow.showAtLocation(popView, Gravity.BOTTOM,0,size);
+
+
+
             popView.setAlpha((float)0.8); //lite transparent
 
             button1 = (Button)popView.findViewById(R.id.DateButton);
@@ -132,13 +147,14 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
             popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
+                    Log.d("SNELL", "HEEEEEEST");
                     Im_Activity.setImageAlpha(255);
                     Tx_Activity.setAlpha((float) 1);
                     local_pressed = false;
                     someCode();
                 }
             });
-
+            //Log.d("Ramiiiii", "asd");
 
         }
 
