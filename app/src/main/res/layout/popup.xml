@@ -2,17 +2,53 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
+    android:background="@color/primary"
     android:id="@+id/popupView">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Tid på dagen:"
+        android:id="@+id/time_bar_textview_favourites"
+        android:paddingTop="@dimen/parameter_padding"
+        android:paddingBottom="@dimen/parameter_padding"
+        android:layout_alignParentLeft="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/secondary_text"
+        android:id="@+id/time_bar_textview_response_favourites"
+        android:paddingLeft="@dimen/parameter_padding"
+        android:paddingTop="@dimen/parameter_padding"
+        android:paddingBottom="@dimen/parameter_padding"
+        android:layout_toRightOf="@id/time_bar_textview_favourites"/>
+
+    <com.appyvet.rangebar.RangeBar
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/time_bar_favourites"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        custom:connectingLineColor="@color/accent"
+        custom:selectorColor="@color/accent"
+        custom:pinColor="@color/accent"
+        custom:tickStart="0"
+        custom:tickInterval="1"
+        custom:tickEnd="23"
+        custom:barWeight="2dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Start"
+
         android:onClick="showDateFragment"
         android:id="@+id/DateButton"
         android:layout_marginStart="120dp"
-        android:layout_below="@+id/recycler_view"
+        android:layout_below="@+id/time_bar_favourites"
 
         />
 
@@ -23,7 +59,7 @@
         android:onClick="showDateFragment"
         android:id="@+id/DateButton2"
         android:layout_toEndOf="@+id/DateButton"
-        android:layout_below="@+id/recycler_view"
+        android:layout_below="@+id/time_bar_favourites"
 
         />
 

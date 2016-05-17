@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity
     public static View view;
     public static Calendar buttText1 = GregorianCalendar.getInstance();
     public static Calendar buttText2 = GregorianCalendar.getInstance();
+    public static int leftIndex = 0;
+    public static int rightIndex = 23;
     TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;

@@ -165,6 +165,8 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
                 TextView timeBarResponse = (TextView) rangeBar.getRootView().findViewById(R.id.time_bar_textview_response);
                 timeBarResponse.setText(leftPinValue + "-" + rightPinValue);
+                MainActivity.leftIndex = leftPinIndex;
+                MainActivity.rightIndex = rightPinIndex;
             }
         });
 
@@ -244,6 +246,9 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
     private void writeDate(){
         String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
         String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
+        //RangeBar bar = (RangeBar) getActivity().findViewById(R.id.time_bar_advanced);
+        //bar.setLeft(MainActivity.leftIndex);
+        //bar.setRight(MainActivity.rightIndex);
         start_date_button.setText(df1);
         end_date_button.setText(df2);
     }
