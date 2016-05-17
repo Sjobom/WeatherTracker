@@ -55,12 +55,12 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
         List<android.location.Address> list = null;        //Få namn på område
         LatLng latLng = weatherData.getLatLng();
         try {
-            list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1); //TODO Maybe implement a better way to get locality name
-        } catch (IOException e) {     //TODO Improve the info window
+            list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if (list.isEmpty()){   //Ifall vi inte får någon information om området
+        if (list.isEmpty()){   //Ifall vi inte får någon information om området //TODO Some error came here!!!!
             DecimalFormat dec = new DecimalFormat("#.##");
             holder.resultText.setText(dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude));
         } else {
@@ -169,6 +169,7 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
             //När man klickar på ett card så händer något här
 
 
+            Log.d("CardClick", "Death to americans");
         }
 
     }

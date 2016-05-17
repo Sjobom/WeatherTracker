@@ -96,6 +96,7 @@ public class MapActivity extends Fragment //TODO
     private FrameLayout fram_map;
     public static FloatingActionButton enterDrawStateButton;
     private FloatingActionButton exitDrawStateButton;
+    public static FloatingActionButton filterButton;
     public static FloatingActionButton doneButton;
     private Boolean isMapMoveable = true; // to detect map is movable
     public static ArrayList<Marker> markers = new ArrayList<Marker>(3);
@@ -376,10 +377,17 @@ public class MapActivity extends Fragment //TODO
                                     RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);*/
                             int currentMarker;
                             LatLng latLng = marker.getPosition();
-
-                            if (latLng.equals(topResultMarkers.get(0).getPosition())){ currentMarker = 0;}
+                            currentMarker = 0;
+                            for (int i = 0; i < MapHolder.resultList.size(); i++){
+                                if(latLng.equals(MapHolder.resultList.get(i).getLatLng())){
+                                    currentMarker = i;
+                                    break;
+                                }
+                            }
+                            Log.d("Marker", Integer.toString(currentMarker));
+                            /*if (latLng.equals(topResultMarkers.get(0).getPosition())){ currentMarker = 0;}
                             else if (latLng.equals(topResultMarkers.get(1).getPosition())){currentMarker = 1;}
-                            else {currentMarker = 2;}
+                            else {currentMarker = 2;}*/
 
 
                             TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);
@@ -468,6 +476,8 @@ public class MapActivity extends Fragment //TODO
         enterDrawStateButton = (FloatingActionButton) thisView.findViewById(R.id.enter_draw_state_button);
         exitDrawStateButton = (FloatingActionButton) thisView.findViewById(R.id.exit_draw_state_button);
         doneButton = (FloatingActionButton) thisView.findViewById(R.id.done_button);
+        filterButton = (FloatingActionButton) thisView.findViewById(R.id.filter1_button);
+       // MapHolder.filterButton = (FloatingActionButton) thisView.findViewById(R.id.filter_button);
         tempPolylines = new ArrayList<Polyline>();
         placePolygons = new ArrayList<Polygon>();
         polygonTrashbins = new ArrayList<Marker>();
@@ -637,6 +647,7 @@ public class MapActivity extends Fragment //TODO
             topResultMarkers.add(createMarker(resultList.get(i).getLatLng()));
         }
     }
+
 
 }
 

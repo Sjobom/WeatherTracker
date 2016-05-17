@@ -1,18 +1,51 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MapActivity"
+    android:background="#FFFFFF"
+    android:id="@+id/relativeResultLayout"
+    android:layout_centerHorizontal="true">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MapActivity"
     android:background="#FFFFFF"
     android:id="@+id/result_fragment"
-    android:layout_centerHorizontal="true"
-    >
+    android:layout_centerHorizontal="true">
+
+
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/result_recycler_view"
-        android:scrollbars="vertical"
-        >
+        android:scrollbars="vertical">
     </android.support.v7.widget.RecyclerView>
+
 </LinearLayout>
+    </ScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/filter2_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:elevation="6dp"
+        android:onClick="filter"
+        app:pressedTranslationZ="12dp"
+        android:src="@drawable/ic_filter_white_24dp"
+        android:layout_gravity="left|bottom"
+        app:backgroundTint="@color/accent_material_light"
+        android:layout_marginRight="24dp"
+        android:padding="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="24dp" />
+
+</RelativeLayout>

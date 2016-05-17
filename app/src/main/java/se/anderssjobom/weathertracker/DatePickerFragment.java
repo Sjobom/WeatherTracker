@@ -27,7 +27,7 @@ public class DatePickerFragment extends DialogFragment
         long currentDate = c.getTimeInMillis();
 
         dp.setMinDate(currentDate);  //Sätt mindatum till nuvarande datum
-        dp.setMaxDate(currentDate + 864000000); //Sätt maxdatum till 10 dagar framåt
+        dp.setMaxDate(currentDate + 777600000); //Sätt maxdatum till 10 dagar framåt
         return d;
     }
 
