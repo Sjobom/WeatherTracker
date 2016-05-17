@@ -19,8 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
 
@@ -60,10 +62,6 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         Intent intent = getIntent();
         parametersToUse = (HashMap<String, Object>) intent.getSerializableExtra("map");
 
-        if (parametersToUse.containsKey("cloudCover")) {
-            Log.d("TaaAAG", parametersToUse.get("cloudCover").toString());
-        }
-
         setContentView(R.layout.activity_menu);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
@@ -71,8 +69,6 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         tabLayout.setVisibility(View.GONE);
         viewPagerMapAdapter = new ViewPagerMapAdapter(getFragmentManager());
         viewPager.setOffscreenPageLimit(0);
-        //filterButton = (FloatingActionButton) this.findViewById(R.id.filter_button);
-        //Log.d("IDER" , Integer.toString(findViewById(R.id.filter_button).getId()));
 
         //Lägger till fragment
         mapActivity = new MapActivity();
@@ -157,6 +153,19 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
             MapActivity.onResultScreen = false;
         }
 
+    }
+
+    public void showDetails(View v, LatLng latLng){
+        WeatherParameters wp = new WeatherParameters();
+        Intent intent = new Intent(MapHolder.this, DetailActivity.class);
+        for(int i = 0; i < resultList.size(); i++){
+            if(resultList.get(i).getLatLng().equals(latLng)){
+                wp = resultList.get(i);
+            }
+        }
+        intent.putExtra("weatherParameter", wp);
+        Log.d(LOG,intent.toString() );
+        startActivity(intent);
     }
 
     @Override

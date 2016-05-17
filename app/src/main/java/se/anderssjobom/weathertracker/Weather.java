@@ -227,7 +227,7 @@ public class Weather {
                         tempDate = (strDate.split("T")[0]);
                         if (fmt.print(start.plusDays(day)).equals(tempDate)) {
                             tempWeather = new WeatherParameters(obj, tempLatLng, parametersToUseMap, new LocalDate(tempDate));
-                            Log.d(" " + tempDate, tempWeather.toString());
+                            Log.d(" Weather: " + tempDate, tempWeather.toString());
                             //Är tempDates poäng bättre än någon av de tre nuvarande på tempDates dags templista?
 
                             tempQueues[day].offer(tempWeather);

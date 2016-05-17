@@ -63,12 +63,15 @@ import org.json.JSONException;
 import org.joda.time.LocalTime;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -102,6 +105,7 @@ public class MapActivity extends Fragment //TODO
     public static ArrayList<Marker> markers = new ArrayList<Marker>(3);
     public static boolean onResultScreen = false;
     private View thisView;
+    MapHolder mapHolder;
   //  private PopupWindow resultPopup;
 
 
@@ -113,6 +117,7 @@ public class MapActivity extends Fragment //TODO
                              Bundle savedInstanceState){
     //    if (servicesOK()) {
             thisView = inflater.inflate(R.layout.activity_map, container, false);
+            mapHolder = (MapHolder) getActivity();
             //Initialisera kartan
             initMap();
             //Initialisera ritfunktionen
@@ -165,9 +170,6 @@ public class MapActivity extends Fragment //TODO
                 ProgressBar pb = (ProgressBar) getActivity().findViewById(R.id.weatherSearchProgressBar);
 
                 Log.d("ParametersToUse", MapHolder.parametersToUse.toString());
-
-                MapHolder.parametersToUse.put("requestedStartTime", new LocalTime("10:00:00"));
-                MapHolder.parametersToUse.put("requestedEndTime", new LocalTime("14:00:00"));
 
 
                 new Weather(pb, mMap, (OnAnalysisReadyCallback) getActivity()).findWeather(MapHolder.parametersToUse, placePolygons,
@@ -294,7 +296,7 @@ public class MapActivity extends Fragment //TODO
                     currentLocation.getLatitude(),
                     currentLocation.getLongitude()
             );
-            zoomLevel = 12;
+            zoomLevel = 9;
         } else {
             latLng = new LatLng(62.386504, 16.320447);
             zoomLevel = 5;
@@ -392,14 +394,8 @@ public class MapActivity extends Fragment //TODO
 
                             TextView tvLocal = (TextView) v.findViewById(R.id.tvLocality);
                             ImageView tvImage = (ImageView) v.findViewById(R.id.imageView1);
-                                //Vi tar markörerns koordinater och använder geocoder för att få
-                            Geocoder gc = new Geocoder(getActivity()); //namnet på staden som markören pekar på
-                            List<android.location.Address> list = null;        //Få namn på område
-                            try {
-                                list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1); //TODO Maybe implement a better way to get locality name
-                            } catch (IOException e) {     //TODO Improve the info window
-                                e.printStackTrace();
-                            }
+                            Geocoder gc = new Geocoder(getActivity());
+                            tvLocal.setText(geocoder(latLng, gc));
 
                             if (list.isEmpty()){   //Ifall vi inte får någon information om området
                                 DecimalFormat dec = new DecimalFormat("#.##");
@@ -424,42 +420,20 @@ public class MapActivity extends Fragment //TODO
                                 e.printStackTrace();
                             }
 
-                            if (MapHolder.parametersToUse.containsKey("temperature")){
-                                try {
+                            DecimalFormat df = new DecimalFormat("#.#");
+                            df.setRoundingMode(RoundingMode.CEILING);
 
-                                    tvTemp.setText("Temperatur: " + Double.toString(MapHolder.resultList.get(currentMarker).getTemperature()) + "°C");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                            if (MapHolder.parametersToUse.containsKey("temperature")){
+                                    tvTemp.setText("Temperatur: " + df.format(MapHolder.resultList.get(currentMarker).getTemperature()) + "°C");
                             }else{tvTemp.setVisibility(View.GONE);}
                             if (MapHolder.parametersToUse.containsKey("windSpeed")){
                                 Log.d("Contains" , "Windspeed");
-                                 try {
-                                    tvWind.setText("Vindhastighet: " + Double.toString(MapHolder.resultList.get(currentMarker).getWindspeed()) + " m/s");
-                                  } catch (JSONException e) {
-                                      e.printStackTrace();
-                                 }
+                                    tvWind.setText("Vindhastighet: " + df.format(MapHolder.resultList.get(currentMarker).getWindspeed()) + " m/s");
                             }else{tvWind.setVisibility(View.GONE);}
                             if (MapHolder.parametersToUse.containsKey("cloudCover")){
-                                try {
-                                    tvCloud.setText("Molntäcke: " + Double.toString(MapHolder.resultList.get(currentMarker).getCloudCover() * 12.5) + "%");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                    tvCloud.setText("Molntäcke: " + df.format(MapHolder.resultList.get(currentMarker).getCloudCover() * 12.5) + "%");
                             }else{tvWind.setVisibility(View.GONE);}
-
-                                try {
-                                    int cloud = MapHolder.resultList.get(currentMarker).getCloudCover();
-                                    if (cloud <= 2){
-                                        tvImage.setImageResource(R.drawable.ic_sunny);
-                                    } else if (cloud > 2 && cloud <= 5){
-                                        tvImage.setImageResource(R.drawable.ic_mostly_cloudy);
-                                    } else if (cloud > 5){
-                                        tvImage.setImageResource(R.drawable.ic_cloudy);
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                        tvImage.setImageDrawable(MapHolder.resultList.get(currentMarker).getWeatherImage());
                             return v;
                         }
                     });
@@ -467,6 +441,13 @@ public class MapActivity extends Fragment //TODO
                 } else {
                     return false;
                 }
+            }
+        });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker){
+                mapHolder.showDetails(thisView, marker.getPosition());
             }
         });
     }
@@ -647,9 +628,32 @@ public class MapActivity extends Fragment //TODO
             topResultMarkers.add(createMarker(resultList.get(i).getLatLng()));
         }
     }
+    public static String geocoder(LatLng latLng, Geocoder gc){
+        List<android.location.Address> list = null;        //Få namn på område
+        try {
+            list = gc.getFromLocation(latLng.latitude, latLng.longitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String location;
 
+
+        if (list.isEmpty()){   //Ifall vi inte får någon information om området
+            location = "No information";
+        } else {
+            android.location.Address address = list.get(0);
+            if (address.getLocality() != null) {
+                location = address.getLocality();//Vi sätter text som ska förekomma i markör-fönster
+            } else {
+                location = address.getSubLocality();
+            }
+        }
+        return location;
+    }
 
 }
+
+
 
 /*                            switch(weather){ //Beroende på vad för väder vi har så skriver vi motsvarande ikon till markörfönstret
                                 case "Sunny":

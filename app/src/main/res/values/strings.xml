@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">WeatherTracker</string>
+    <string name="weather_type">Vädertyp</string>
+    <string name="temperature">Temperatur</string>
+    <string name="wind_speed">Vindstyrka</string>
+    <string name="wind_direction">Vindriktning</string>
+    <string name="cloud_cover">Molnighet</string>
+    <string name="rain">Nederbörd</string>
+    <string name="air_pressure">Lufttryck</string>
+    <string name="relative_humidity">Luftfuktighet</string>
+    
 
     <string-array name="activity_name">
         <item>"Bada"</item>
