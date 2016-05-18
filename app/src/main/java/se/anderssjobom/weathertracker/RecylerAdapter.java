@@ -120,12 +120,8 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
             View popView = View.inflate(v.getContext(), R.layout.popup,null);
             popupWindow = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT,true);
             popupWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
-            
             popupWindow.setBackgroundDrawable(new ShapeDrawable());
-
             popupWindow.showAtLocation(popView, Gravity.BOTTOM,0,size);
-
-
 
             popView.setAlpha((float)0.8); //lite transparent
 

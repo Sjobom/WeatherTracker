@@ -3,6 +3,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary"
+    android:paddingStart="30dp"
+    android:paddingEnd="30dp"
     android:id="@+id/popupView">
 
     <TextView
@@ -32,6 +34,8 @@
         android:id="@+id/time_bar_favourites"
         android:layout_width="match_parent"
         android:layout_height="72dp"
+        android:paddingStart="@dimen/parameter_padding"
+        android:paddingEnd="@dimen/parameter_padding"
         custom:connectingLineColor="@color/accent"
         custom:selectorColor="@color/accent"
         custom:pinColor="@color/accent"
@@ -39,17 +43,35 @@
         custom:tickInterval="1"
         custom:tickEnd="23"
         custom:barWeight="2dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Datum: "
+        android:id="@+id/popup_date_textview"
+        android:paddingTop="@dimen/parameter_padding"
+        android:layout_below="@id/time_bar_favourites"
+        android:layout_alignParentLeft="true"
+        />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Start"
-
         android:onClick="showDateFragment"
         android:id="@+id/DateButton"
-        android:layout_marginStart="120dp"
+        android:layout_toRightOf="@id/popup_date_textview"
         android:layout_below="@+id/time_bar_favourites"
-
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="-"
+        android:id="@+id/popup_date_hyphen"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/DateButton"
+       android:paddingTop="20dp"
         />
 
     <Button
@@ -58,11 +80,9 @@
         android:hint="Slut"
         android:onClick="showDateFragment"
         android:id="@+id/DateButton2"
-        android:layout_toEndOf="@+id/DateButton"
+        android:layout_toRightOf="@id/popup_date_hyphen"
         android:layout_below="@+id/time_bar_favourites"
-
         />
-
 
     <Button
         android:layout_width="wrap_content"
@@ -72,10 +92,5 @@
         android:id="@+id/go_to_map_popup_favoriter"
         android:layout_below="@+id/DateButton"
         android:layout_centerHorizontal="true"
-
-
         />
-
-
-
 </RelativeLayout>

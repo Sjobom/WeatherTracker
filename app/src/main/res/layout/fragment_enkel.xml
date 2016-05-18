@@ -100,13 +100,37 @@
                     custom:tickInterval="1"
                     custom:tickEnd="23"
                     custom:barWeight="2dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Datum: "
+                    android:id="@+id/simple_date_textview"
+                    android:paddingTop="5dp"
+
+                    android:layout_below="@id/time_bar_simple"
+                    android:layout_alignParentLeft="true"
+
+                    />
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start"
                     android:layout_below="@id/time_bar_simple"
                     android:id="@+id/start_date_button_simple"
-                    android:onClick="showDateFragment"/>
+                    android:onClick="showDateFragment"
+                    android:layout_toRightOf="@id/simple_date_textview"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="-"
+                    android:id="@+id/simple_date_hyphen"
+                    android:layout_centerVertical="true"
+                    android:layout_below="@id/time_bar_simple"
+                    android:layout_toRightOf="@id/start_date_button_simple"
+                    android:paddingTop="10dp"
+                    />
 
                 <Button
                     android:layout_width="wrap_content"
@@ -114,17 +138,9 @@
                     android:text="Slut"
                     android:layout_below="@id/time_bar_simple"
                     android:id="@+id/end_date_button_simple"
-                    android:layout_toRightOf="@id/start_date_button_simple"
+                    android:layout_toRightOf="@id/simple_date_hyphen"
                     android:onClick="showDateFragment"/>
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Välj område"
-                    android:id="@+id/go_to_map_button_simple"
-                    android:layout_below="@+id/start_date_button_simple"
-                    android:onClick="showMap"
-                    android:layout_centerInParent="true" />
             </RelativeLayout>
 
 
@@ -134,5 +150,14 @@
 
 
     </ScrollView>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Välj område"
+        android:id="@+id/go_to_map_button_simple"
+        android:onClick="showMap"
+        android:layout_below="@+id/scrollView"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

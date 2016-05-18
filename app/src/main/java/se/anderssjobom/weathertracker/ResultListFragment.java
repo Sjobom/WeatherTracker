@@ -28,12 +28,6 @@ import java.util.ListIterator;
 
 public class ResultListFragment extends Fragment {
 
-    public static RecyclerView recyclerView ;
-    public static RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-    public static ArrayList<WeatherParameters> wp = new ArrayList<>();
-    String[] str;
-    public static RecyclerView.Adapter mAdapter;
     public static RecyclerView mRecyclerView;
 
 
@@ -46,6 +40,7 @@ public class ResultListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         Log.d("ResultListFragment", "onCreateView");
+
 
         //Skapar recyclerView
         mRecyclerView = (RecyclerView) view.findViewById(R.id.result_recycler_view);

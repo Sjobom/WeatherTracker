@@ -158,6 +158,7 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     }
 
     public void showDetails(View v, LatLng latLng){
+
         WeatherParameters wp = new WeatherParameters();
         Intent intent = new Intent(MapHolder.this, DetailActivity.class);
         for(int i = 0; i < resultList.size(); i++){

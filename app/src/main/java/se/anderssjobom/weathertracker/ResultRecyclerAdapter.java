@@ -1,6 +1,9 @@
 package se.anderssjobom.weathertracker;
 
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Address;
@@ -94,8 +97,6 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
     }
 
 
-
-
     public static class ResultRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         //ImageView Im_Activity;
@@ -126,9 +127,11 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
         @Override
         public void onClick(View v)
         {
+
             mapHolder.showDetails(v, position);
         }
 
     }
+
 }
 

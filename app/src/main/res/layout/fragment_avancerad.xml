@@ -284,7 +284,7 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textAppearance="?android:attr/textAppearanceLarge"
-                       android:text="Datum:"
+                       android:text="Datum: "
                        android:id="@+id/date_textview"
                        android:paddingTop="@dimen/parameter_padding"
                        android:paddingBottom="@dimen/parameter_padding"
