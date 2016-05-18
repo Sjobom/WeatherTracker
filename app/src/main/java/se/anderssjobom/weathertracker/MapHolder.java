@@ -53,8 +53,7 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     public static MapHolder mapHolder;
     ResultListFragment listFragment;
     public static Context con;
-
-
+    public static ArrayList<WeatherParameters> topResultParam;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,15 +172,15 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     @Override
     public void onAnalysisReady(List<WeatherParameters> resultList) {
         this.resultList = resultList;
-        mapActivity.createTopMarkers(resultList);
+        topResultParam = new ArrayList<WeatherParameters>();
+        for (int i = 0; i < 3; i++){
+            topResultParam.add(resultList.get(i));
+        }
+        mapActivity.createTopMarkers(topResultParam);
         //Visa tablayouten
         tabLayout.setVisibility(View.VISIBLE);
 
-        ArrayList<WeatherParameters> topthreeList = new ArrayList();
-        for (int i = 0; i < 3; i++){
-            topthreeList.add(resultList.get(i));
-        }
-        RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter(topthreeList, this);
+        RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter(topResultParam, this);
         ResultListFragment.mRecyclerView.setAdapter(mAdapter);
         MapActivity.filterButton.setVisibility(View.VISIBLE);
     }
@@ -205,24 +204,31 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ArrayList<WeatherParameters> weatherList = new ArrayList();
+      //          ArrayList<WeatherParameters> weatherList = new ArrayList();
                 String dateText = (String) item.getTitle();
 
+                if (!topResultParam.isEmpty()){
+                    topResultParam.clear();
+                }
+
                 if (dateText.equals("Alla datum")){
+
                     mapActivity.createTopMarkers(resultList);
                     for (int i = 0; i < 3; i++){
-                        weatherList.add(resultList.get(i));
+                        topResultParam.add(resultList.get(i));
+                       //weatherList.add(resultList.get(i));
                     }
                 } else {
-                     LocalDate usedDate = LocalDate.parse(dateText, DateTimeFormat.forPattern("yyyy-MM-dd"));
+                   //  LocalDate usedDate = LocalDate.parse(dateText, DateTimeFormat.forPattern("yyyy-MM-dd"));
                     for (int i = 0; i < resultList.size(); i++) {
                             if (dateText.equals(resultList.get(i).getDate().toString())) {
-                                weatherList.add(resultList.get(i));
+                                topResultParam.add(resultList.get(i));
+                                //weatherList.add(resultList.get(i));
                             }
                     }
-                    mapActivity.createTopMarkers(weatherList);
+                    mapActivity.createTopMarkers(topResultParam);
                 }
-                RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter(weatherList, mapHolder);
+                RecyclerView.Adapter mAdapter = new ResultRecyclerAdapter(topResultParam, mapHolder);
                 ResultListFragment.mRecyclerView.setAdapter(mAdapter);
                 return false;
             }
