@@ -4,14 +4,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@color/icons"
-    android:paddingLeft="30dp"
-    android:paddingRight="30dp"
+
 
     >
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView">
+        android:id="@+id/scrollView"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -159,5 +161,13 @@
         android:onClick="showMap"
         android:layout_below="@+id/scrollView"
         android:layout_centerHorizontal="true" />
+
+    <RelativeLayout
+        android:id="@+id/bac_dim_layout_simple"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foreground="#dc3d3c3c"
+        android:visibility="gone" >
+    </RelativeLayout>
 
 </RelativeLayout>

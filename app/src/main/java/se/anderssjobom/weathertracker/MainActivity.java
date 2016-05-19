@@ -25,6 +25,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -85,27 +86,48 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, Object> parametersToUse = new HashMap<String, Object>();
 
         View popupView = View.inflate(v.getContext(), R.layout.checkdatepopup,null);
-        PopupWindow checkDateWindow =  new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
+        final PopupWindow checkDateWindow =  new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
+
+        Button butt = (Button) popupView.findViewById(R.id.changeDatePopButton);
         checkDateWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
         TextView tw = (TextView) popupView.findViewById(R.id.checkDateText);
-
-        RangeBar timeBarFav = (RangeBar) findViewById(R.id.time_bar_favourites);
-
+        final RelativeLayout back_dim_layout = (RelativeLayout) findViewById(R.id.bac_dim_layout);
         Switch switchTempAdv = (Switch) findViewById(R.id.temperature_switch);
         Switch switchWindAdv = (Switch) findViewById(R.id.wind_strength_switch);
         Switch switchCloudAdv = (Switch) findViewById(R.id.cloud_cover_switch);
         Switch switchRainAdv = (Switch) findViewById(R.id.rain_switch);
+        final RelativeLayout back_dim_layout_simp = (RelativeLayout) findViewById(R.id.bac_dim_layout_simple);
+        //Aktivitet_Fragment.popButton = pop
+        butt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkDateWindow.dismiss();
+            }
+        });
+        checkDateWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                back_dim_layout.setVisibility(View.GONE);
+                back_dim_layout_simp.setVisibility(View.GONE);
+            }
+        });
 
         if (buttText1.getTimeInMillis() > buttText2.getTimeInMillis())
         {
             tw.setText("Slutdatum kan inte vara före startdatum!");
             checkDateWindow.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL,0,0);
+            back_dim_layout.setVisibility(View.VISIBLE);
+            back_dim_layout_simp.setVisibility(View.VISIBLE);
+           // if(v.getId() == R.id.go_to_map_button_simple)
+
+
             return;
         }
         if(!switchTempAdv.isChecked() && !switchCloudAdv.isChecked() && !switchWindAdv.isChecked() && !switchRainAdv.isChecked() && v.getId() == R.id.go_to_map_button_advanced)
         {
             tw.setText("Välj minst en parameter!");
             checkDateWindow.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL,0,0);
+            back_dim_layout.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -121,7 +143,7 @@ public class MainActivity extends AppCompatActivity
                 int pickerData = Enkel_Fragment.picker.getValue();
                 switch (pickerData) {
                     case 0:
-                        parametersToUse.put("temperature", -100 + 200 * enkelParameter.getProgress());
+                        parametersToUse.put("temperature", -100 +200* enkelParameter.getProgress());
                         break;
                     case 1:
                         int windSpeed = 0;
@@ -176,18 +198,19 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.go_to_map_popup_favoriter:
 
-                Log.d("TIMEBAR", timeBarFav.toString());
-                parametersToUse.put("requestedStartTime", new LocalTime(timeBarFav.getLeftIndex(), 0));
-                parametersToUse.put("requestedEndTime", new LocalTime(timeBarFav.getRightIndex(), 0));
+
+                //Log.d("TIMEBAR", timeBarFav.toString());
+                parametersToUse.put("requestedStartTime", new LocalTime(Aktivitet_Fragment.timeBarFav.getLeftIndex(), 0));
+                parametersToUse.put("requestedEndTime", new LocalTime(Aktivitet_Fragment.timeBarFav.getRightIndex(), 0));
 
                 //Beroende på vilket card man valt lägger man till olika parametrar till parametersToUseList
                 switch (Aktivitet_Fragment.currentCard)
                 {
                     case "Sol":
                         Log.d("VALT CARD", "Sol");
-                        //parametersToUseList.put("temperature", Aktivitet_Fragment.currentTempValue);
+                        //parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
                         parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
-                        parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
+                        //parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
                         break;
                     case "Sol och moln":
                         Log.d("VALT CARD", "Sol och moln");
@@ -209,14 +232,14 @@ public class MainActivity extends AppCompatActivity
                     case "Sol och regn":
                         Log.d("VALT CARD", "Sol och regn");
                         parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
-                        parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
+                        //parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
                         parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
                         //parametersToUseList.put("windSpeed", Aktivitet_Fragment.currentWindValue);
                         break;
                     case "Regn":
                         Log.d("VALT CARD", "Regn");
                         parametersToUse.put("rain",Aktivitet_Fragment.currentRainValue);
-                        parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
+                        //parametersToUse.put("temperature", Aktivitet_Fragment.currentTempValue);
                         parametersToUse.put("cloudCover", Aktivitet_Fragment.currentCloudValue);
                         //parametersToUseList.put("windSpeed", Aktivitet_Fragment.currentWindValue);
                         break;

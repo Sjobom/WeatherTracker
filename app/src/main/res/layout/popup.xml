@@ -31,7 +31,7 @@
 
     <com.appyvet.rangebar.RangeBar
         xmlns:custom="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/time_bar_favourites"
+        android:id="@+id/time_bar_favourites_x"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:paddingStart="@dimen/parameter_padding"
@@ -50,7 +50,7 @@
         android:text="Datum: "
         android:id="@+id/popup_date_textview"
         android:paddingTop="@dimen/parameter_padding"
-        android:layout_below="@id/time_bar_favourites"
+        android:layout_below="@id/time_bar_favourites_x"
         android:layout_alignParentLeft="true"
         />
 
@@ -61,7 +61,7 @@
         android:onClick="showDateFragment"
         android:id="@+id/DateButton"
         android:layout_toRightOf="@id/popup_date_textview"
-        android:layout_below="@+id/time_bar_favourites"
+        android:layout_below="@+id/time_bar_favourites_x"
         />
     <TextView
         android:layout_width="wrap_content"
@@ -81,7 +81,7 @@
         android:onClick="showDateFragment"
         android:id="@+id/DateButton2"
         android:layout_toRightOf="@id/popup_date_hyphen"
-        android:layout_below="@+id/time_bar_favourites"
+        android:layout_below="@+id/time_bar_favourites_x"
         />
 
     <Button

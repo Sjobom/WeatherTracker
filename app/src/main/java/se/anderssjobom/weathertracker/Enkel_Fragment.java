@@ -67,26 +67,13 @@ public class Enkel_Fragment extends Fragment{
         parameterSeekBar.setMax(1);
         parameterSeekBar.setProgress(0);
 
-        //Rangebar till tid-väljarN
-        RangeBar timeBarSimple = (RangeBar) thisView.findViewById(R.id.time_bar_simple);
 
-        TextView timeBarResponse = (TextView) thisView.findViewById(R.id.time_bar_textview_simple_response);
-        timeBarResponse.setText(timeBarSimple.getLeftIndex() + "-" + timeBarSimple.getRightIndex());
-
-        timeBarSimple.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
-            @Override
-            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
-                TextView timeBarResponse = (TextView) rangeBar.getRootView().findViewById(R.id.time_bar_textview_simple_response);
-                timeBarResponse.setText(leftPinValue + "-" + rightPinValue);
-                MainActivity.leftIndex = leftPinIndex;
-                MainActivity.rightIndex = rightPinIndex;
-            }
-        });
 
         //skapar numberpicker
         picker = (NumberPicker) thisView.findViewById(R.id.parameterPicker);
         picker.setMinValue(0);
         picker.setMaxValue(3);
+        picker.setValue(0);
         picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);//ta bort keyboard
         picker.setDisplayedValues( new String[] { "Temperatur", "Vindhastighet", "Molnighet", "Nederbörd" } );
         picker.setWrapSelectorWheel(false); //hindra alternativen från att loopa runt på pickern
@@ -123,6 +110,23 @@ public class Enkel_Fragment extends Fragment{
                 }
             }
         });
+
+        //Rangebar till tid-väljarN
+        RangeBar timeBarSimple = (RangeBar) thisView.findViewById(R.id.time_bar_simple);
+
+        TextView timeBarResponse = (TextView) thisView.findViewById(R.id.time_bar_textview_simple_response);
+        timeBarResponse.setText(timeBarSimple.getLeftIndex() + "-" + timeBarSimple.getRightIndex());
+
+        timeBarSimple.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                TextView timeBarResponse = (TextView) rangeBar.getRootView().findViewById(R.id.time_bar_textview_simple_response);
+                timeBarResponse.setText(leftPinValue + "-" + rightPinValue);
+                MainActivity.leftIndex = leftPinIndex;
+                MainActivity.rightIndex = rightPinIndex;
+            }
+        });
+
         //Ändrar värden på valueText beroende på seeBarProgress
         parameterSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

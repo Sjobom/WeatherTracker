@@ -9,7 +9,7 @@ public class DataProvider {
     private int tempValue;
     private int windValue;
     private int cloudValue;
-    public double rainValue;
+    public int rainValue;
 
     public DataProvider(int img_res, String a_name)
     {
@@ -40,7 +40,7 @@ public class DataProvider {
         this.cloudValue = cloud;
 
     }
-    public DataProvider(int img_res, String a_name, int temp, int wind, int cloud, double rain)
+    public DataProvider(int img_res, String a_name, int temp, int wind, int cloud, int rain)
     {
         this.tempValue = temp;
         this.a_name = a_name;
@@ -94,7 +94,7 @@ public class DataProvider {
         return cloudValue;
     }
 
-    public double getRainValue() {
+    public int getRainValue() {
         return rainValue;
     }
 
