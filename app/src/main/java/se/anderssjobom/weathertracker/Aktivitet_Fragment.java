@@ -36,7 +36,7 @@ public class Aktivitet_Fragment extends Fragment //implements View.OnClickListen
     public static int currentTempValue;
     public static int currentWindValue;
     public static int currentCloudValue;
-    public static double currentRainValue;
+    public static int currentRainValue;
     public static String currentCard;
 
     //Förbestämda, tillfälliga väder-värden till varje card
@@ -45,8 +45,9 @@ public class Aktivitet_Fragment extends Fragment //implements View.OnClickListen
     private int[] tempValues = {20,20,31,-1000,-1000,31,31,-5}; //temp i grader (-1000 är "don't care")
     private int[] cloudValues ={ 0, 3, 6, 8, 4, 8, 4, 3}; //molnighet *1/8
     private int[] windValues = {-1,-1,-1,-1,-1,-1, 3,-1}; //vind i m/s
-    private double[] rainValues = {0,0,1,0,20,100,50,50}; //regn 0-100mm
-
+    private int[] rainValues = {0,0,1,0,20,100,50,50}; //regn 0-100mm
+    public static View pop;
+    public static RangeBar timeBarFav ;
 
     public Aktivitet_Fragment() {
         // Required empty public constructor
@@ -56,6 +57,22 @@ public class Aktivitet_Fragment extends Fragment //implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View thisView = inflater.inflate(R.layout.fragment_aktivitet, container, false);
+        pop= View.inflate(getActivity(), R.layout.popup,null);
+        timeBarFav = (RangeBar) pop.findViewById(R.id.time_bar_favourites_x);
+
+        TextView timeBarResponse = (TextView) pop.findViewById(R.id.time_bar_textview_response_favourites);
+        timeBarResponse.setText(timeBarFav.getLeftIndex() + "-" + timeBarFav.getRightIndex());
+
+        timeBarFav.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                TextView timeBarResponse = (TextView) rangeBar.getRootView().findViewById(R.id.time_bar_textview_response_favourites);
+                timeBarResponse.setText(leftPinValue + "-" + rightPinValue);
+                MainActivity.leftIndex = leftPinIndex;
+                MainActivity.rightIndex = rightPinIndex;
+
+            }
+        });
 
         //Strängar/namn till varje card finns i en string-array i Strings-xml:en
         a_name = getResources().getStringArray(R.array.activity_name);

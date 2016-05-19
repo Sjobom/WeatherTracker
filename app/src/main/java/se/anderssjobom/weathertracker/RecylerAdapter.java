@@ -81,7 +81,7 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
         int windVal;
         int cloudVal;
         String cardName;
-        double rainVal;
+        int rainVal;
 
 
         public RecyclerViewHolder(View Gridview)
@@ -117,38 +117,19 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
             if (resourceId > 0) {
                 size = resources.getDimensionPixelSize(resourceId);
             }
-            View popView = View.inflate(v.getContext(), R.layout.popup,null);
-            popupWindow = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT,true);
+
+            popupWindow = new PopupWindow(Aktivitet_Fragment.pop, ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT,true);
             popupWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
             popupWindow.setBackgroundDrawable(new ShapeDrawable());
-            popupWindow.showAtLocation(popView, Gravity.BOTTOM,0,size);
+            popupWindow.showAtLocation(Aktivitet_Fragment.pop, Gravity.BOTTOM,0,size);
 
-            popView.setAlpha((float)0.8); //lite transparent
+            Aktivitet_Fragment.pop.setAlpha((float)0.8); //lite transparent
 
-            RangeBar timeBarFav = (RangeBar) popView.findViewById(R.id.time_bar_favourites);
-
-            TextView timeBarResponse = (TextView) popView.findViewById(R.id.time_bar_textview_response_favourites);
-            timeBarResponse.setText(timeBarFav.getLeftIndex() + "-" + timeBarFav.getRightIndex());
-
-            timeBarFav.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
-                @Override
-                public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
-                    TextView timeBarResponse = (TextView) rangeBar.getRootView().findViewById(R.id.time_bar_textview_response_favourites);
-                    timeBarResponse.setText(leftPinValue + "-" + rightPinValue);
-                    MainActivity.leftIndex = leftPinIndex;
-                    MainActivity.rightIndex = rightPinIndex;
-
-                }
-            });
-
-            button1 = (Button)popView.findViewById(R.id.DateButton);
-            button2 = (Button)popView.findViewById(R.id.DateButton2);
-
-
+            button1 = (Button)Aktivitet_Fragment.pop.findViewById(R.id.DateButton);
+            button2 = (Button)Aktivitet_Fragment.pop.findViewById(R.id.DateButton2);
 
             //Lägg till eller ta bort denna kod om man vill ha startdatum på båda datumknappar istället för "hints" om start och slutdatum
             someCode();
-
 
             //om tryckt - ändra alpha
             if (!local_pressed) {

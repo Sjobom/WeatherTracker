@@ -336,4 +336,12 @@
         </RelativeLayout>
     </ScrollView>
 
+    <RelativeLayout
+        android:id="@+id/bac_dim_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foreground="#dc3d3c3c"
+        android:visibility="gone" >
+    </RelativeLayout>
+
 </RelativeLayout>
