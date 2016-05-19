@@ -21,6 +21,8 @@ import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.appyvet.rangebar.RangeBar;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -64,6 +66,22 @@ public class Enkel_Fragment extends Fragment{
         parameterSeekBar = (SeekBar) thisView.findViewById(R.id.enkelSeekBar);
         parameterSeekBar.setMax(1);
         parameterSeekBar.setProgress(0);
+
+        //Rangebar till tid-väljarN
+        RangeBar timeBarSimple = (RangeBar) thisView.findViewById(R.id.time_bar_simple);
+
+        TextView timeBarResponse = (TextView) thisView.findViewById(R.id.time_bar_textview_simple_response);
+        timeBarResponse.setText(timeBarSimple.getLeftIndex() + "-" + timeBarSimple.getRightIndex());
+
+        timeBarSimple.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                TextView timeBarResponse = (TextView) rangeBar.getRootView().findViewById(R.id.time_bar_textview_simple_response);
+                timeBarResponse.setText(leftPinValue + "-" + rightPinValue);
+                MainActivity.leftIndex = leftPinIndex;
+                MainActivity.rightIndex = rightPinIndex;
+            }
+        });
 
         //skapar numberpicker
         picker = (NumberPicker) thisView.findViewById(R.id.parameterPicker);

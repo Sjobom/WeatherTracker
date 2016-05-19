@@ -65,29 +65,82 @@
                 android:layout_below="@id/enkelSeekBar"
                 android:id="@+id/relativeLayout"
                 android:paddingTop="@dimen/parameter_container_padding">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Tid på dagen:"
+                    android:id="@+id/time_bar_simple_textview"
+                    android:paddingTop="@dimen/parameter_padding"
+                    android:paddingBottom="@dimen/parameter_padding"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/secondary_text"
+                    android:id="@+id/time_bar_textview_simple_response"
+                    android:paddingLeft="@dimen/parameter_padding"
+                    android:paddingTop="@dimen/parameter_padding"
+                    android:paddingBottom="@dimen/parameter_padding"
+                    android:layout_toRightOf="@id/time_bar_simple_textview"/>
+
+                <com.appyvet.rangebar.RangeBar
+                    xmlns:custom="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/time_bar_simple"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    custom:connectingLineColor="@color/accent"
+                    custom:selectorColor="@color/accent"
+                    custom:pinColor="@color/accent"
+                    custom:tickStart="0"
+                    custom:tickInterval="1"
+                    custom:tickEnd="23"
+                    custom:barWeight="2dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Datum: "
+                    android:id="@+id/simple_date_textview"
+                    android:paddingTop="5dp"
+
+                    android:layout_below="@id/time_bar_simple"
+                    android:layout_alignParentLeft="true"
+
+                    />
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start"
+                    android:layout_below="@id/time_bar_simple"
                     android:id="@+id/start_date_button_simple"
-                    android:onClick="showDateFragment"/>
+                    android:onClick="showDateFragment"
+                    android:layout_toRightOf="@id/simple_date_textview"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="-"
+                    android:id="@+id/simple_date_hyphen"
+                    android:layout_centerVertical="true"
+                    android:layout_below="@id/time_bar_simple"
+                    android:layout_toRightOf="@id/start_date_button_simple"
+                    android:paddingTop="10dp"
+                    />
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Slut"
+                    android:layout_below="@id/time_bar_simple"
                     android:id="@+id/end_date_button_simple"
-                    android:layout_toRightOf="@id/start_date_button_simple"
+                    android:layout_toRightOf="@id/simple_date_hyphen"
                     android:onClick="showDateFragment"/>
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Välj område"
-                    android:id="@+id/go_to_map_button_simple"
-                    android:layout_below="@+id/start_date_button_simple"
-                    android:onClick="showMap"
-                    android:layout_centerInParent="true" />
             </RelativeLayout>
 
 
@@ -97,5 +150,14 @@
 
 
     </ScrollView>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Välj område"
+        android:id="@+id/go_to_map_button_simple"
+        android:onClick="showMap"
+        android:layout_below="@+id/scrollView"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

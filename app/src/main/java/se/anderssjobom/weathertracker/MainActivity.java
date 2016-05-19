@@ -2,6 +2,8 @@ package se.anderssjobom.weathertracker;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity
     public static View view;
     public static Calendar buttText1 = GregorianCalendar.getInstance();
     public static Calendar buttText2 = GregorianCalendar.getInstance();
+    public static int leftIndex = 0;
+    public static int rightIndex = 23;
     TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
@@ -77,6 +81,7 @@ public class MainActivity extends AppCompatActivity
         checkDateWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
         TextView tw = (TextView) popupView.findViewById(R.id.checkDateText);
 
+        RangeBar timeBarFav = (RangeBar) findViewById(R.id.time_bar_favourites);
 
         Switch switchTempAdv = (Switch) findViewById(R.id.temperature_switch);
         Switch switchWindAdv = (Switch) findViewById(R.id.wind_strength_switch);
@@ -97,7 +102,12 @@ public class MainActivity extends AppCompatActivity
         }
 
         switch(v.getId()) {
+
             case R.id.go_to_map_button_simple:
+                RangeBar timeBarSimple = (RangeBar) findViewById(R.id.time_bar_simple);
+
+                parametersToUse.put("requestedStartTime", new LocalTime(timeBarSimple.getLeftIndex(), 0));
+                parametersToUse.put("requestedEndTime", new LocalTime(timeBarSimple.getRightIndex(), 0));
 
                 SeekBar enkelParameter = (SeekBar) findViewById(R.id.enkelSeekBar);
                 int pickerData = Enkel_Fragment.picker.getValue();
@@ -157,6 +167,10 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.go_to_map_popup_favoriter:
+
+                Log.d("TIMEBAR", timeBarFav.toString());
+                parametersToUse.put("requestedStartTime", new LocalTime(timeBarFav.getLeftIndex(), 0));
+                parametersToUse.put("requestedEndTime", new LocalTime(timeBarFav.getRightIndex(), 0));
 
                 //Beroende på vilket card man valt lägger man till olika parametrar till parametersToUseList
                 switch (Aktivitet_Fragment.currentCard)

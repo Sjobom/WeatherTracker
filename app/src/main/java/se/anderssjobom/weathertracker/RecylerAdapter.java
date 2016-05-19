@@ -18,6 +18,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 
+import com.appyvet.rangebar.RangeBar;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -119,14 +120,26 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
             View popView = View.inflate(v.getContext(), R.layout.popup,null);
             popupWindow = new PopupWindow(popView, ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT,true);
             popupWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
-            
             popupWindow.setBackgroundDrawable(new ShapeDrawable());
-
             popupWindow.showAtLocation(popView, Gravity.BOTTOM,0,size);
 
-
-
             popView.setAlpha((float)0.8); //lite transparent
+
+            RangeBar timeBarFav = (RangeBar) popView.findViewById(R.id.time_bar_favourites);
+
+            TextView timeBarResponse = (TextView) popView.findViewById(R.id.time_bar_textview_response_favourites);
+            timeBarResponse.setText(timeBarFav.getLeftIndex() + "-" + timeBarFav.getRightIndex());
+
+            timeBarFav.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+                @Override
+                public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                    TextView timeBarResponse = (TextView) rangeBar.getRootView().findViewById(R.id.time_bar_textview_response_favourites);
+                    timeBarResponse.setText(leftPinValue + "-" + rightPinValue);
+                    MainActivity.leftIndex = leftPinIndex;
+                    MainActivity.rightIndex = rightPinIndex;
+
+                }
+            });
 
             button1 = (Button)popView.findViewById(R.id.DateButton);
             button2 = (Button)popView.findViewById(R.id.DateButton2);
