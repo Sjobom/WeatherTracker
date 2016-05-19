@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
+import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity
     public void showMap(View v){
         HashMap<String, Object> parametersToUse = new HashMap<String, Object>();
 
-        View popupView = View.inflate(v.getContext(), R.layout.checkdatepopup,null);
+        View popupView = View.inflate(v.getContext(), R.layout.check_popup,null);
         final PopupWindow checkDateWindow =  new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
 
         Button butt = (Button) popupView.findViewById(R.id.changeDatePopButton);
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity
         Switch switchCloudAdv = (Switch) findViewById(R.id.cloud_cover_switch);
         Switch switchRainAdv = (Switch) findViewById(R.id.rain_switch);
         final RelativeLayout back_dim_layout_simp = (RelativeLayout) findViewById(R.id.bac_dim_layout_simple);
+        final RelativeLayout back_dim_layout_fav = (RelativeLayout) findViewById(R.id.back_dim_layout_favorit);
         //Aktivitet_Fragment.popButton = pop
         butt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity
             public void onDismiss() {
                 back_dim_layout.setVisibility(View.GONE);
                 back_dim_layout_simp.setVisibility(View.GONE);
+                back_dim_layout_fav.setVisibility(View.GONE);
             }
         });
 
@@ -110,6 +113,7 @@ public class MainActivity extends AppCompatActivity
             checkDateWindow.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL,0,0);
             back_dim_layout.setVisibility(View.VISIBLE);
             back_dim_layout_simp.setVisibility(View.VISIBLE);
+            back_dim_layout_fav.setVisibility(View.VISIBLE);
            // if(v.getId() == R.id.go_to_map_button_simple)
 
 
@@ -120,6 +124,8 @@ public class MainActivity extends AppCompatActivity
             tw.setText("Välj minst en parameter!");
             checkDateWindow.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL,0,0);
             back_dim_layout.setVisibility(View.VISIBLE);
+            back_dim_layout_simp.setVisibility(View.VISIBLE);
+            back_dim_layout_fav.setVisibility(View.VISIBLE);
             return;
         }
 

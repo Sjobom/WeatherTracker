@@ -325,7 +325,7 @@ public class WeatherParameters implements Parcelable {
         Log.d("Point after windspeed", Integer.toString(point));
 
         if(parametersToUseMap.get("cloudCover") != null){
-            point += pointFormula((( (int) parametersToUseMap.get("cloudCover"))), getCloudCover(), 9);
+            point += pointFormula((( (int) parametersToUseMap.get("cloudCover"))), (double) getCloudCover(), 9);
         }
         Log.d("Point after cloudCover", Integer.toString(point));
 
@@ -346,17 +346,22 @@ public class WeatherParameters implements Parcelable {
     }
 
     private int pointFormula(int requested, double found, int parameterDelta){
-        Double grade = Math.abs((requested - found) / parameterDelta);
+        double grade = Math.abs((requested - found) / parameterDelta);
         if(grade > 1){ grade = 1.0;}
         return (int) ( (1 - grade) * 1000 );
     }
 
 
-    private int pointFormula(int requested, int found, int parameterDelta){
-        double grade = Math.abs((requested - found) / parameterDelta);
+/*    private int pointFormula(int requested, int found, int parameterDelta){
+        double grade = (double) (Math.abs(requested - found) / parameterDelta);
+*//*        Log.d("abs", Double.toString(Math.abs(requested - found)));
+        Log.d("pd", Integer.toString(parameterDelta));
+        Log.d("requested", Integer.toString(requested));
+        Log.d("found", Integer.toString(found));
+        Log.d("grade", Double.toString(grade));*//*
         if(grade > 1){ grade = 1;}
         return (int) ( (1 - grade) * 1000 );
-    }
+    }*/
 
     private void findPossibleTimes(Map<String,Object> parametersToUseMap) throws JSONException {
 

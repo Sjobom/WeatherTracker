@@ -22,7 +22,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/secondary_text"
         android:id="@+id/time_bar_textview_response_favourites"
         android:paddingLeft="@dimen/parameter_padding"
         android:paddingTop="@dimen/parameter_padding"

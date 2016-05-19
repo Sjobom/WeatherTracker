@@ -19,7 +19,13 @@
 
     </android.support.v7.widget.RecyclerView>
 
-
+    <RelativeLayout
+        android:id="@+id/back_dim_layout_favorit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foreground="#dc3d3c3c"
+        android:visibility="gone" >
+    </RelativeLayout>
 
 
 </RelativeLayout>

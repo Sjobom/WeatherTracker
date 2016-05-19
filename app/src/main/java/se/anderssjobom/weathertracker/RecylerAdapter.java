@@ -141,14 +141,12 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
             popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
-                    Log.d("SNELL", "HEEEEEEST");
                     Im_Activity.setImageAlpha(255);
                     Tx_Activity.setAlpha((float) 1);
                     local_pressed = false;
                     someCode();
                 }
             });
-            //Log.d("Ramiiiii", "asd");
 
         }
 
