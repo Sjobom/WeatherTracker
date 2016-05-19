@@ -46,7 +46,6 @@ public class WeatherParameters implements Parcelable {
         this.latLng = latLng;
         this.date = date;
 
-        //TODO - sätt foundStartTime och endStartTime!
         findPossibleTimes(parametersToUseMap);
 
         this.point = calculatePoints(parametersToUseMap);
@@ -318,39 +317,45 @@ public class WeatherParameters implements Parcelable {
         if(parametersToUseMap.get("temperature") != null){
             point += pointFormula((int) parametersToUseMap.get("temperature"), getTemperature(), 40);
         }
+        Log.d("Point after temp", Integer.toString(point));
 
         if(parametersToUseMap.get("windSpeed") != null){
             point += pointFormula((int) parametersToUseMap.get("windSpeed"), getWindspeed(), 20);
         }
+        Log.d("Point after windspeed", Integer.toString(point));
 
         if(parametersToUseMap.get("cloudCover") != null){
             point += pointFormula((( (int) parametersToUseMap.get("cloudCover"))), getCloudCover(), 9);
         }
+        Log.d("Point after cloudCover", Integer.toString(point));
+
         if(parametersToUseMap.get("rain") != null){
 
             // Om vi inte vill ha regn men det kommer regna, ge 0 poäng, annars addera som vanligt
             // TODO - kanske ändra så att det får vara lite regn trots att användaren inte vill ha något...
-            if (!((int)(parametersToUseMap.get("rain")) == 0 && getRain() != 0)){
+            if (((int)(parametersToUseMap.get("rain")) == 0 && getRain() != 0)){
+
+            } else {
                 point += pointFormula((( (int) parametersToUseMap.get("rain"))), getRain(),
-                        Math.abs(Hours.hoursBetween(foundStartTime, foundEndTime).getHours()) + 6);;
+                        Math.abs(Hours.hoursBetween(foundStartTime, foundEndTime).getHours()) + 6);
             }
         }
+        Log.d("Point after rain", Integer.toString(point));
 
         return point;
     }
 
     private int pointFormula(int requested, double found, int parameterDelta){
-        Double grade = Math.abs((requested - found));
-        if(grade < 0){ grade = 0.0;}
-
-        return (int) ( (1 - ( grade / parameterDelta ) ) * 1000 );
+        Double grade = Math.abs((requested - found) / parameterDelta);
+        if(grade > 1){ grade = 1.0;}
+        return (int) ( (1 - grade) * 1000 );
     }
 
 
     private int pointFormula(int requested, int found, int parameterDelta){
-        int grade = Math.abs((requested - found));
-        if(grade < 0){ grade = 0;}
-        return ( (1 - ( grade / parameterDelta ) ) * 1000 );
+        double grade = Math.abs((requested - found) / parameterDelta);
+        if(grade > 1){ grade = 1;}
+        return (int) ( (1 - grade) * 1000 );
     }
 
     private void findPossibleTimes(Map<String,Object> parametersToUseMap) throws JSONException {
@@ -378,29 +383,45 @@ public class WeatherParameters implements Parcelable {
                 foundStartTime = new LocalTime(strDate.split("T")[1].split("Z")[0]);
                 foundEndTime = foundStartTime;
                 lookingAtDay = true;
-                while(lookingAtDay){
+                while(lookingAtDay) {
                     timeSeriesObject = timeSeries.getJSONObject(timeSeriesIndex++);
                     strDate = timeSeriesObject.getString("validTime");
                     tempTime = new LocalTime(strDate.split("T")[1].split("Z")[0]);
                     startHourDiff = Hours.hoursBetween(requestedStartTime, tempTime);
                     endHourDiff = Hours.hoursBetween(requestedEndTime, tempTime);
 
-                    if (Math.abs(startHourDiff.getHours()) < Math.abs(Hours.hoursBetween(requestedStartTime, foundStartTime).getHours())){
+                    if (Math.abs(startHourDiff.getHours()) < Math.abs(Hours.hoursBetween(requestedStartTime, foundStartTime).getHours())) {
                         foundStartTime = tempTime;
                     }
-                    if (Math.abs(endHourDiff.getHours()) < Math.abs((Hours.hoursBetween(requestedEndTime, foundEndTime)).getHours())){
+                    if (Math.abs(endHourDiff.getHours()) < Math.abs((Hours.hoursBetween(requestedEndTime, foundEndTime)).getHours())) {
                         foundEndTime = tempTime;
                     }
 
-                    // Om nästa dag, sluta jämför tider!
-                    if(!new LocalDate(timeSeries.getJSONObject((timeSeriesIndex)).getString("validTime").split("T")[0]).isEqual(date)){
-                        while(lookingAtDay) {
+                // Om nästa dag, sluta jämför tider!
+                    try {
+                        if (!new LocalDate(timeSeries.getJSONObject((timeSeriesIndex)).getString("validTime").split("T")[0]).isEqual(date)) {
+                            while (lookingAtDay) {
+                                timeSeriesObject = timeSeries.getJSONObject(--timeSeriesIndex);
+                                strDate = timeSeriesObject.getString("validTime");
+                                tempTime = new LocalTime(strDate.split("T")[1].split("Z")[0]);
+                                // Lägg till den data som finns mellan tidsspannet!
+                                if (tempTime.isEqual(foundEndTime) || tempTime.isBefore(foundEndTime)
+                                        && tempTime.isEqual(foundStartTime) || tempTime.isAfter(foundStartTime)) {
+                                    dataInFoundTimeSpan.add(timeSeriesObject.getJSONArray("parameters"));
+                                    if (tempTime.isEqual(foundStartTime)) {
+                                        lookingAtDay = false;
+                                    }
+                                }
+                            }
+                        }
+                    }catch(JSONException e){
+                        while (lookingAtDay) {
                             timeSeriesObject = timeSeries.getJSONObject(--timeSeriesIndex);
                             strDate = timeSeriesObject.getString("validTime");
                             tempTime = new LocalTime(strDate.split("T")[1].split("Z")[0]);
                             // Lägg till den data som finns mellan tidsspannet!
                             if (tempTime.isEqual(foundEndTime) || tempTime.isBefore(foundEndTime)
-                                    && tempTime.isEqual(foundStartTime) || tempTime.isAfter(foundStartTime)){
+                                    && tempTime.isEqual(foundStartTime) || tempTime.isAfter(foundStartTime)) {
                                 dataInFoundTimeSpan.add(timeSeriesObject.getJSONArray("parameters"));
                                 if (tempTime.isEqual(foundStartTime)) {
                                     lookingAtDay = false;
@@ -409,8 +430,8 @@ public class WeatherParameters implements Parcelable {
                         }
                     }
                 }
-
             }
+
         }
         Log.d("Found times: ", foundStartTime.toString() + "-" +  foundEndTime.toString());
     }

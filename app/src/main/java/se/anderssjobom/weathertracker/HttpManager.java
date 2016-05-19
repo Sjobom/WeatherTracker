@@ -17,12 +17,10 @@ public class HttpManager {
         try {
             URL url = new URL(uri);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            //TODO - Kanske lägga in att acceptera gzip-encoding?
-
             StringBuilder sb = new StringBuilder();
-            //Log.d("BEFORE", "STREAM");
+            Log.d("BEFORE", "STREAM");
             reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            //Log.d("AFTER", "STREAM");
+            Log.d("AFTER", "STREAM");
 
 
             String line;

@@ -41,10 +41,10 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
         View thisView = inflater.inflate(R.layout.fragment_avancerad, container, false);
         start_date_button = (Button) thisView.findViewById(R.id.start_date_button_advanced);
         end_date_button = (Button) thisView.findViewById(R.id.end_date_button_advanced);
-        EditText tempEditText = (EditText) thisView.findViewById(R.id.wind_direction_from_edittext);
+/*        EditText tempEditText = (EditText) thisView.findViewById(R.id.wind_direction_from_edittext);
         tempEditText.setEnabled(false);
         tempEditText = (EditText) thisView.findViewById(R.id.wind_direction_to_edittext);
-        tempEditText.setEnabled(false);
+        tempEditText.setEnabled(false);*/
 
         initSeekbars(thisView);
         initSwitches(thisView);
@@ -67,22 +67,16 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
 
     private void initSeekbars(final View thisView){
         SeekBar tempSeekBar = (SeekBar) thisView.findViewById(R.id.temperature_seekbar);
-        tempSeekBar.setMax(62);
+        tempSeekBar.setMax(60);
         tempSeekBar.incrementProgressBy(1);
         tempSeekBar.setEnabled(false);
+        tempSeekBar.setProgress(0);
         tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 TextView tempText = (TextView) seekBar.getRootView().findViewById(R.id.temperatur_textview_response);
-                if (progress == 0) {
-                    tempText.setText("minimal");
-                } else if(progress == 62){
-                    tempText.setText("maximal");
-                }
-                else {
                     tempText.setText(Integer.toString(progress - 31) + "°C");
-                }
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -96,16 +90,13 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
         tempSeekBar.setMax(20);
         tempSeekBar.incrementProgressBy(1);
         tempSeekBar.setEnabled(false);
+        tempSeekBar.setProgress(0);
         tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 TextView windText = (TextView) seekBar.getRootView().findViewById(R.id.wind_strength_textview_response);
-                if (progress == 6) {
-                    windText.setText("maximal");
-                } else {
-                    windText.setText(Integer.toString(progress) + " m/s");
-                }
+                windText.setText(Integer.toString(progress) + " m/s");
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -119,10 +110,10 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
         tempSeekBar.setMax(8);
         tempSeekBar.incrementProgressBy(1);
         tempSeekBar.setEnabled(false);
+        tempSeekBar.setProgress(0);
         tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
                 TextView cloudText = (TextView) seekBar.getRootView().findViewById(R.id.cloud_cover_textview_response);
                 double result = progress * 12.5;
                 cloudText.setText(Double.toString(result) + "%");
@@ -139,6 +130,7 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
         tempSeekBar.setMax(100);
         tempSeekBar.incrementProgressBy(1);
         tempSeekBar.setEnabled(false);
+        tempSeekBar.setProgress(0);
         tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -167,17 +159,23 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
                 timeBarResponse.setText(leftPinValue + "-" + rightPinValue);
             }
         });
-
     }
 
-    private void initSwitches(View thisView){
+    private void initSwitches(final View thisView){
         Switch tempSwitch = (Switch) thisView.findViewById(R.id.temperature_switch);
         tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SeekBar tempSeekBar = (SeekBar) buttonView.getRootView().findViewById(R.id.temperature_seekbar);
-                if(isChecked){tempSeekBar.setEnabled(true);}
-                else{tempSeekBar.setEnabled(false);}
+                TextView tempText = (TextView) buttonView.getRootView().findViewById(R.id.temperatur_textview_response);
+                if(isChecked){
+                    tempSeekBar.setEnabled(true);
+                    tempText.setText(Integer.toString(tempSeekBar.getProgress() - 31) + "°C");
+                }
+                else{
+                    tempSeekBar.setEnabled(false);
+                    tempText.setText("av");
+                }
             }
         });
 
@@ -186,8 +184,15 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SeekBar tempSeekBar = (SeekBar) buttonView.getRootView().findViewById(R.id.wind_strength_seekbar);
-                if(isChecked){tempSeekBar.setEnabled(true);}
-                else{tempSeekBar.setEnabled(false);}
+                TextView tempText = (TextView) buttonView.getRootView().findViewById(R.id.wind_strength_textview_response);
+                if(isChecked){
+                    tempSeekBar.setEnabled(true);
+                    tempText.setText(Integer.toString(tempSeekBar.getProgress()) + " m/s");
+                }
+                else{
+                    tempSeekBar.setEnabled(false);
+                    tempText.setText("av");
+                }
             }
         });
 
@@ -196,12 +201,16 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SeekBar tempSeekBar = (SeekBar) buttonView.getRootView().findViewById(R.id.cloud_cover_seekbar);
-                if(isChecked){tempSeekBar.setEnabled(true);}
+                TextView tempText = (TextView) buttonView.getRootView().findViewById(R.id.cloud_cover_textview_response);
+                if(isChecked){
+                    tempSeekBar.setEnabled(true);
+                    tempText.setText(Double.toString(tempSeekBar.getProgress() * 12.5) + "%");
+                }
                 else{tempSeekBar.setEnabled(false);}
             }
         });
 
-        tempSwitch = (Switch) thisView.findViewById(R.id.wind_direction_switch);
+/*        tempSwitch = (Switch) thisView.findViewById(R.id.wind_direction_switch);
         tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -215,14 +224,18 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
                     tempEditText2.setEnabled(false);
                 }
             }
-        });
+        });*/
 
         tempSwitch = (Switch) thisView.findViewById(R.id.rain_switch);
         tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SeekBar tempSeekBar = (SeekBar) buttonView.getRootView().findViewById(R.id.rain_seekbar);
-                if (isChecked) {tempSeekBar.setEnabled(true);}
+                TextView tempText = (TextView) buttonView.getRootView().findViewById(R.id.rain_textview_response);
+                if (isChecked) {
+                    tempSeekBar.setEnabled(true);
+                    tempText.setText(Integer.toString(new Double(tempSeekBar.getProgress()).intValue()) + " mm");
+                }
                 else {tempSeekBar.setEnabled(false);}
             }
         });

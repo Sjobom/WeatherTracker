@@ -63,7 +63,7 @@ class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAdapter.R
 
         DateTimeFormatter dtfDate = DateTimeFormat.forPattern("dd/M");
         DateTimeFormatter dtfTime = DateTimeFormat.forPattern("HH:mm");
-        holder.dateText.setText(weatherData.getDate().toString() + " "
+        holder.dateText.setText(dtfDate.print(weatherData.getDate()) + " "
                 + dtfTime.print(weatherData.getFoundStartTime()) + "-"
                 + dtfTime.print(weatherData.getFoundEndTime()));
 

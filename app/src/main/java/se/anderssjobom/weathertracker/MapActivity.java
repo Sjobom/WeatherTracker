@@ -3,30 +3,31 @@ package se.anderssjobom.weathertracker;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.content.Intent;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.AsyncTask;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,9 +46,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -55,29 +54,22 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.json.JSONException;
-
-import org.joda.time.LocalTime;
 
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import se.anderssjobom.weathertracker.model.WeatherParameters;
 
-public class MapActivity extends Fragment //TODO
+public class MapActivity extends Fragment
         implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -90,7 +82,6 @@ public class MapActivity extends Fragment //TODO
     private GoogleApiClient mLocationClient; //För GPS
     private GoogleApiClient mGoogleApiClient; //För AutoCompleteLocationSearch
     private List<Marker> topResultMarkers;
-    private Circle placeCircle;
     public static List<Polygon> placePolygons;
     public static List<Marker> polygonTrashbins;
     private List<Polyline> tempPolylines;
@@ -151,29 +142,45 @@ public class MapActivity extends Fragment //TODO
                 //Intent intent = new Intent(MapActivity.this, MainActivity.class);
                 //startActivity(intent);
 
-                doneButton.hide();
-                enterDrawStateButton.hide();
-                exitDrawStateButton.hide();
-                thisView.findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
+                View popupView = View.inflate(v.getContext(), R.layout.check_popup,null);
+                PopupWindow checkPopUp =  new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
+                checkPopUp.setAnimationStyle(android.R.style.Animation_InputMethod);
+                TextView tw = (TextView) popupView.findViewById(R.id.checkDateText);
 
-                //Flyttade "setTablayoutVisible" till onAnalysisReady
-
-                for (Polygon poly: placePolygons){
-                    poly.setVisible(false);
+                if(!isNetworkAvailable()){
+                    tw.setText("Ingen nätverksanslutning");
+                    checkPopUp.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL,0,0);
+                }else if(!isPolygonWithinConstraint(placePolygons.get(0))){
+                    tw.setText("Utanför den valbar ytan (rita ej på det röda)");
+                    checkPopUp.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL,0,0);
                 }
-                for (Marker marker : polygonTrashbins){
-                    marker.setVisible(false);
+                else {
+
+
+                    doneButton.hide();
+                    enterDrawStateButton.hide();
+                    exitDrawStateButton.hide();
+                    thisView.findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
+
+                    //Flyttade "setTablayoutVisible" till onAnalysisReady
+
+                    for (Polygon poly : placePolygons) {
+                        poly.setVisible(false);
+                    }
+                    for (Marker marker : polygonTrashbins) {
+                        marker.setVisible(false);
+                    }
+                    onResultScreen = true;
+                    //               View popView = View.inflate(v.getContext(), R.layout.resultpopup,null);
+
+                    ProgressBar pb = (ProgressBar) getActivity().findViewById(R.id.weatherSearchProgressBar);
+
+                    Log.d("ParametersToUse", MapHolder.parametersToUse.toString());
+
+
+                    new Weather(pb, mMap, (OnAnalysisReadyCallback) getActivity()).findWeather(MapHolder.parametersToUse, placePolygons,
+                            MainActivity.buttText1, MainActivity.buttText2);
                 }
-               onResultScreen = true;
- //               View popView = View.inflate(v.getContext(), R.layout.resultpopup,null);
-
-                ProgressBar pb = (ProgressBar) getActivity().findViewById(R.id.weatherSearchProgressBar);
-
-                Log.d("ParametersToUse", MapHolder.parametersToUse.toString());
-
-
-                new Weather(pb, mMap, (OnAnalysisReadyCallback) getActivity()).findWeather(MapHolder.parametersToUse, placePolygons,
-                        MainActivity.buttText1, MainActivity.buttText2);
             }
         });
 
@@ -181,77 +188,29 @@ public class MapActivity extends Fragment //TODO
         return thisView;
     }
 
-/*    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private boolean isPolygonWithinConstraint(Polygon polygon) {
+        List<LatLng> constraintList = new ArrayList<>();
+        constraintList.add(new LatLng(52.500440, 2.250475));
+        constraintList.add(new LatLng(52.542473, 27.392184));
+        constraintList.add(new LatLng(70.742227, 37.934697));
+        constraintList.add(new LatLng(70.666011, -8.553029));
+        constraintList.add(new LatLng(52.500440, 2.250475));
+/*        PolygonOptions constraintOptions = new PolygonOptions();
+        constraintOptions.addAll(latLngList);
+        constraintOptions.visible(false);
+        Polygon constraint = mMap.addPolygon(constraintOptions);*/
 
-        Log.d(LOG, "onCreate");
+        List<LatLng> polygonList = polygon.getPoints();
 
-        if (servicesOK()) {
-            setContentView(R.layout.activity_map);
-            //Initialisera kartan
-            initMap();
-            //Initialisera ritfunktionen
-            initDrawFrame();
-            //Initialisera GPS
-            if (savedInstanceState == null) {
-                Log.d(LOG, "NULL");
-                mLocationClient = new GoogleApiClient.Builder(this)
-                        .addApi(LocationServices.API)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(AppIndex.API).build();
-                mLocationClient.connect();
-                //Initialisera sökfunktionen
-                initSearch();
-            } else{
-                Log.d(LOG, Thread.currentThread().getStackTrace().toString());
-                String s = savedInstanceState.getString("STRING");
-                Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
-                CameraPosition position = savedInstanceState.getParcelable("MAP_POSITION");
-                CameraUpdate update = CameraUpdateFactory.newCameraPosition(position);
-                mMap.moveCamera(update);
+        for(int i = 0; i < polygonList.size(); i++){
+            if(!PolyUtil.containsLocation(polygonList.get(i), constraintList, true)){
+                return false;
             }
-
         }
-        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.done_button);
-        button.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
+        return true;
+    }
 
-                //Intent intent = new Intent(MapActivity.this, MainActivity.class);
-                //startActivity(intent);
-
-                doneButton.hide();
-                enterDrawStateButton.hide();
-                exitDrawStateButton.hide();
-                findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
-
-                for (Polygon poly: placePolygons){
-                    poly.setVisible(false);
-                }
-                for (Marker marker : polygonTrashbins){
-                    marker.setVisible(false);
-                }
-
-                onResultScreen = true;
-
-                ProgressBar pb = (ProgressBar) findViewById(R.id.weatherSearchProgressBar);
-                pb.setVisibility(View.INVISIBLE);
-
-                Map<String, Object> parametersToUse = new HashMap<String, Object>();
-
-                parametersToUse.put("temperature", 10.0);
-                parametersToUse.put("windSpeed", 20.0);
-                parametersToUse.put("cloudCover", 8);
-
-                new Weather(pb, mMap).findWeather(parametersToUse, placePolygons,
-                        MainActivity.buttText1, MainActivity.buttText2);
-
-            }
-        });
-}*/
 
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
         //TODO - återställ kartans nuvarande position
@@ -344,6 +303,28 @@ public class MapActivity extends Fragment //TODO
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        List<LatLng> latLngList = new ArrayList<>();
+        latLngList.add(new LatLng(52.500440, 2.250475));
+        latLngList.add(new LatLng(52.542473, 27.392184));
+        latLngList.add(new LatLng(70.742227, 37.934697));
+        latLngList.add(new LatLng(70.666011, -8.553029));
+        latLngList.add(new LatLng(52.500440, 2.250475));
+
+        float delta = 0.1f;
+        List points = Arrays.asList(new LatLng(90, -180),
+        new LatLng(-90+delta, -180+delta),
+        new LatLng(-90+delta, 0),
+        new LatLng(-90+delta, 180-delta),
+        new LatLng(0, 180-delta),
+        new LatLng(90-delta, 180-delta),
+        new LatLng(90-delta, 0),
+        new LatLng(90-delta, -180+delta),
+        new LatLng(0,-180+delta));
+        PolygonOptions options = new PolygonOptions();
+        options.addAll(points);
+        options.fillColor(0x80FF0000); // 50% opacity red, for example
+        options.addHole(latLngList);
+        mMap.addPolygon(options);
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -416,7 +397,7 @@ public class MapActivity extends Fragment //TODO
                             }else{tvRain.setVisibility(View.GONE);}
 
                             tvImage.setImageDrawable(MapHolder.resultList.get(currentMarker).getWeatherImage());
-                            
+
                             return v;
                         }
                     });
@@ -625,14 +606,21 @@ public class MapActivity extends Fragment //TODO
         if (list.isEmpty()){   //Ifall vi inte får någon information om området
             DecimalFormat dec = new DecimalFormat("#.##");
             location = dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude);
-        } else {
-            android.location.Address address = list.get(0);
-            if (address.getLocality() != null) {
-                location = address.getLocality();//Vi sätter text som ska förekomma i markör-fönster
-            } else {
-                location = address.getSubLocality();
-            }
+        } else if (list.get(0).getLocality() != null) {
+            location = list.get(0).getLocality();//Vi sätter text som ska förekomma i markör-fönster
+        } else if (list.get(0).getSubLocality() != null){
+            location = list.get(0).getSubLocality();
+        } else{
+            DecimalFormat dec = new DecimalFormat("#.##");
+            location = dec.format(latLng.latitude) + ", " + dec.format(latLng.longitude);
         }
         return location;
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) mapHolder.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

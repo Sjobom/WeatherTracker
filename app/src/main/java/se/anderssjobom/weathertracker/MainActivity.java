@@ -1,6 +1,5 @@
 package se.anderssjobom.weathertracker;
 
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,20 +7,13 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.util.Range;
 import android.view.View;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Map;
 
-import static android.support.v4.app.ActivityCompat.startActivity;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -61,8 +53,8 @@ public class MainActivity extends AppCompatActivity
 
         //Lägger till fragment
         viewPagerAdapter.addFragments(new Aktivitet_Fragment(), "Favoriter");
-        viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel Vy");
-        viewPagerAdapter.addFragments(new AdvancedFragment(), "Avancerad Vy");
+        viewPagerAdapter.addFragments(new Enkel_Fragment(), "Enkel");
+        viewPagerAdapter.addFragments(new AdvancedFragment(), "Avancerad");
 
         //Väljer vilken Adapter vår viewPager ska följa
         viewPager.setAdapter(viewPagerAdapter);
@@ -77,10 +69,10 @@ public class MainActivity extends AppCompatActivity
         showDatePickerDialog();
     }
 
-    public void showMap(View v){ //TODO Make different cases depending on which of the tab buttons user pressed
+    public void showMap(View v){
         HashMap<String, Object> parametersToUse = new HashMap<String, Object>();
 
-        View popupView = View.inflate(v.getContext(), R.layout.checkdatepopup,null);
+        View popupView = View.inflate(v.getContext(), R.layout.check_popup,null);
         PopupWindow checkDateWindow =  new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
         checkDateWindow.setAnimationStyle(android.R.style.Animation_InputMethod);
         TextView tw = (TextView) popupView.findViewById(R.id.checkDateText);

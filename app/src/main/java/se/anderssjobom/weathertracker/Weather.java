@@ -132,7 +132,7 @@ public class Weather {
             tempLatLng = pointsInPolygon.get(i);
             lon = Double.valueOf(df.format(tempLatLng.longitude));
             lat = Double.valueOf(df.format(tempLatLng.latitude));
-
+            Log.d("Start URL: ", Integer.toString(i));
             uri = "http://opendata-download-metfcst.smhi.se/api/category/pmp2g/version/2/" +
                     "geotype/point/lon/" + lon + "/lat/" + lat + "/data.json";
             new Weather.WebTask(workCounter).executeOnExecutor(exec, uri);
