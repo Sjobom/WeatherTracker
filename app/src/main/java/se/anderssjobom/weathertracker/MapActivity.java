@@ -202,31 +202,14 @@ public class MapActivity extends Fragment
 
         List<LatLng> polygonList = polygon.getPoints();
 
-        for(int i = 0; i < polygonList.size(); i++){
-            if(!PolyUtil.containsLocation(polygonList.get(i), constraintList, true)){
+        for (int i = 0; i < polygonList.size(); i++) {
+            if (!PolyUtil.containsLocation(polygonList.get(i), constraintList, true)) {
                 return false;
             }
         }
-        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.done_button);
-        button.setOnClickListener(new View.OnClickListener() {
+        return true;
+    }
 
-            @Override
-            public void onClick(View v) {
-
-                //Intent intent = new Intent(MapActivity.this, MainActivity.class);
-                //startActivity(intent);
-
-                doneButton.hide();
-                enterDrawStateButton.hide();
-                exitDrawStateButton.hide();
-                findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
-
-                for (Polygon poly: placePolygons){
-                    poly.setVisible(false);
-                }
-                for (Marker marker : polygonTrashbins){
-                    marker.setVisible(false);
-                }
 
 
     protected void onRestoreInstanceState (Bundle savedInstanceState) {

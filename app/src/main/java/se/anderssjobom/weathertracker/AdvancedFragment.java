@@ -206,7 +206,10 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
                     tempSeekBar.setEnabled(true);
                     tempText.setText(Double.toString(tempSeekBar.getProgress() * 12.5) + "%");
                 }
-                else{tempSeekBar.setEnabled(false);}
+                else{
+                    tempSeekBar.setEnabled(false);
+                    tempText.setText("av");
+                }
             }
         });
 
@@ -236,7 +239,10 @@ public class AdvancedFragment extends Fragment implements View.OnClickListener {
                     tempSeekBar.setEnabled(true);
                     tempText.setText(Integer.toString(new Double(tempSeekBar.getProgress()).intValue()) + " mm");
                 }
-                else {tempSeekBar.setEnabled(false);}
+                else {
+                    tempSeekBar.setEnabled(false);
+                    tempText.setText("av");
+                }
             }
         });
 
