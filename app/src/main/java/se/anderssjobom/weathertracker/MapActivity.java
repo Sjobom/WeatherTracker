@@ -207,9 +207,26 @@ public class MapActivity extends Fragment
                 return false;
             }
         }
+        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.done_button);
+        button.setOnClickListener(new View.OnClickListener() {
 
-        return true;
-    }
+            @Override
+            public void onClick(View v) {
+
+                //Intent intent = new Intent(MapActivity.this, MainActivity.class);
+                //startActivity(intent);
+
+                doneButton.hide();
+                enterDrawStateButton.hide();
+                exitDrawStateButton.hide();
+                findViewById(R.id.card_view).setVisibility(View.INVISIBLE);
+
+                for (Polygon poly: placePolygons){
+                    poly.setVisible(false);
+                }
+                for (Marker marker : polygonTrashbins){
+                    marker.setVisible(false);
+                }
 
 
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
@@ -362,8 +379,8 @@ public class MapActivity extends Fragment
                             int currentMarker;
                             LatLng latLng = marker.getPosition();
                             currentMarker = 0;
-                            for (int i = 0; i < MapHolder.resultList.size(); i++){
-                                if(latLng.equals(MapHolder.resultList.get(i).getLatLng())){
+                            for (int i = 0; i < MapHolder.topResultParam.size(); i++){
+                                if(latLng.equals(MapHolder.topResultParam.get(i).getLatLng())){
                                     currentMarker = i;
                                     break;
                                 }
@@ -374,30 +391,30 @@ public class MapActivity extends Fragment
 
                             DateTimeFormatter fmtDate = DateTimeFormat.forPattern("dd/M");
                             DateTimeFormatter fmtTime = DateTimeFormat.forPattern("HH:mm");
-                            tvDate.setText(fmtDate.print(MapHolder.resultList.get(currentMarker).getDate()) + " "
-                                    + fmtTime.print(MapHolder.resultList.get(currentMarker).getFoundStartTime()) + "-"
-                                    + fmtTime.print(MapHolder.resultList.get(currentMarker).getFoundEndTime()));
+                            tvDate.setText(fmtDate.print(MapHolder.topResultParam.get(currentMarker).getDate()) + " "
+                                    + fmtTime.print(MapHolder.topResultParam.get(currentMarker).getFoundStartTime()) + "-"
+                                    + fmtTime.print(MapHolder.topResultParam.get(currentMarker).getFoundEndTime()));
 
                             DecimalFormat df = new DecimalFormat("#.#");
                             df.setRoundingMode(RoundingMode.CEILING);
 
                             if (MapHolder.parametersToUse.containsKey("temperature")){
-                                    tvTemp.setText("Temperatur: " + df.format(MapHolder.resultList.get(currentMarker).getTemperature()) + "°C");
+                                    tvTemp.setText("Temperatur: " + df.format(MapHolder.topResultParam.get(currentMarker).getTemperature()) + "°C");
                             }else{tvTemp.setVisibility(View.GONE);}
 
                             if (MapHolder.parametersToUse.containsKey("windSpeed")){
-                                    tvWind.setText("Vindhastighet: " + df.format(MapHolder.resultList.get(currentMarker).getWindspeed()) + " m/s");
+                                    tvWind.setText("Vindhastighet: " + df.format(MapHolder.topResultParam.get(currentMarker).getWindspeed()) + " m/s");
                             }else{tvWind.setVisibility(View.GONE);}
 
                             if (MapHolder.parametersToUse.containsKey("cloudCover")){
-                                    tvCloud.setText("Molntäcke: " + df.format(MapHolder.resultList.get(currentMarker).getCloudCover() * 12.5) + "%");
+                                    tvCloud.setText("Molntäcke: " + df.format(MapHolder.topResultParam.get(currentMarker).getCloudCover() * 12.5) + "%");
                             }else{tvCloud.setVisibility(View.GONE);}
                             if (MapHolder.parametersToUse.containsKey("rain")){
-                                tvRain.setText("Nederbörd: " + df.format(MapHolder.resultList.get(currentMarker).getRain()));
+                                tvRain.setText("Nederbörd: " + df.format(MapHolder.topResultParam.get(currentMarker).getRain()));
                             }else{tvRain.setVisibility(View.GONE);}
 
-                            tvImage.setImageDrawable(MapHolder.resultList.get(currentMarker).getWeatherImage());
-
+                            tvImage.setImageDrawable(MapHolder.topResultParam.get(currentMarker).getWeatherImage());
+                            
                             return v;
                         }
                     });
