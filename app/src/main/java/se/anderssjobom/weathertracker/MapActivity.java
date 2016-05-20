@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -143,9 +144,17 @@ public class MapActivity extends Fragment
                 //startActivity(intent);
 
                 View popupView = View.inflate(v.getContext(), R.layout.check_popup,null);
-                PopupWindow checkPopUp =  new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
+                final PopupWindow checkPopUp =  new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
                 checkPopUp.setAnimationStyle(android.R.style.Animation_InputMethod);
                 TextView tw = (TextView) popupView.findViewById(R.id.checkDateText);
+
+                Button popupButton = (Button) popupView.findViewById(R.id.changeDatePopButton);
+                popupButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        checkPopUp.dismiss();
+                    }
+                });
 
                 if(!isNetworkAvailable()){
                     tw.setText("Ingen nätverksanslutning");
