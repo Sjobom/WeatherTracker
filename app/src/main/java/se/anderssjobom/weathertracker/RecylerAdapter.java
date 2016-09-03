@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import com.appyvet.rangebar.RangeBar;
 
+import org.joda.time.format.DateTimeFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -153,8 +155,10 @@ public class RecylerAdapter extends RecyclerView.Adapter<RecylerAdapter.Recycler
     }
 
     public static void someCode(){
-        String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
-        String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
+        String df1 = MainActivity.buttonDate1.toString(); //DateTimeFormat.forPattern("yyyy-MM-dd").print(MainActivity.buttonDate1);
+        String df2 = MainActivity.buttonDate2.toString(); //DateTimeFormat.forPattern("yyyy-MM-dd").print(MainActivity.buttonDate2);
+       /* String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
+        String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());*/
         button1.setText(df1);
         button2.setText(df2);
     }

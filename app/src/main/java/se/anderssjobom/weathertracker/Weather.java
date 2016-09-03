@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.maps.android.PolyUtil;
 
+import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -57,8 +58,8 @@ public class Weather {
         this.callback = callback;
     }
 
-    public void findWeather(Map<String,Object> parametersToUseMap, List<Polygon> pList, Calendar startDate, Calendar endDate){
-
+    public void findWeather(Map<String,Object> parametersToUseMap, List<Polygon> pList, LocalDate startDate, LocalDate endDate){
+                                                                                        //Calendar
         this.parametersToUseMap = parametersToUseMap;
 
         start = new LocalDate(startDate);

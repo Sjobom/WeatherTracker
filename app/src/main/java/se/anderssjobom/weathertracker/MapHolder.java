@@ -192,8 +192,10 @@ public class MapHolder extends AppCompatActivity implements OnAnalysisReadyCallb
     public void filter (View v){
         PopupMenu popup = new PopupMenu(this, v);
         final List<LocalDate> dateList = new ArrayList<LocalDate>();
-        LocalDate date1 = new LocalDate(MainActivity.buttText1);
-        LocalDate date2 = new LocalDate(MainActivity.buttText2);
+        LocalDate date1 = new LocalDate(MainActivity.buttonDate1); //Used to be buttText
+        LocalDate date2 = new LocalDate(MainActivity.buttonDate2); //Used to be buttText
+        Log.d("LocalDate", date1.toString());
+        Log.d("LocalDate1", date2.toString());
         popup.getMenu().add("Alla datum");
         dateList.add(date1.minusDays(1));
         LocalDate currentDate = date1;
