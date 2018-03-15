@@ -49,7 +49,7 @@ public class Weather {
     private LocalDate start;
     private LocalDate end;
     private OnAnalysisReadyCallback callback;
-    public static boolean listReady;
+    private Executor exec = Executors.newFixedThreadPool(8);
 
 
     public Weather(ProgressBar pb, GoogleMap map, OnAnalysisReadyCallback callback){
@@ -127,8 +127,6 @@ public class Weather {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
         DecimalFormat df = new DecimalFormat("#.######", dfs);
 
-        Executor exec = Executors.newFixedThreadPool(100);
-
         for (int i = 0; i < pointsInPolygon.size(); i++){
             tempLatLng = pointsInPolygon.get(i);
             lon = Double.valueOf(df.format(tempLatLng.longitude));
@@ -177,7 +175,7 @@ public class Weather {
             if (tasksLeft == 0){
                 Log.d("Fetching", "Done");
                 //TODO - skapa tråd för analys!
-                analyseResults();
+                new AnalyseResultsTask().executeOnExecutor(exec, jsonList);
                 pb.setVisibility(View.INVISIBLE);
             }
             else {
@@ -186,84 +184,93 @@ public class Weather {
         }
     }
 
+    /**
+     * This Task
+     */
+    class AnalyseResultsTask extends AsyncTask<List<JSONObject>, String, List<WeatherParameters>> {
 
-    private void analyseResults() {
-        Boolean dayNotFound = true;
-        int timeSeriesIndex = 0;
-        JSONObject obj;
-        JSONObject timeSeriesObject;
-        JSONArray timeSeries;
-        JSONArray ar;
-        WeatherParameters tempWeather;
-        String strDate;
-        String tempDate;
-        LatLng tempLatLng;
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("y-MM-dd");
-
-        int days = Days.daysBetween(start, end).getDays() + 1;
-
-        PriorityQueue<WeatherParameters>[] tempQueues = new PriorityQueue[days+1];
-
-        for (int i = 0; i < days; i++) {
-            tempQueues[i] = new PriorityQueue<>(3, new pointReverseComparator());
-            tempQueues[i].offer(new WeatherParameters());
-            tempQueues[i].offer(new WeatherParameters());
-            tempQueues[i].offer(new WeatherParameters());
-        }
-
-        try {
-            //Kolla varje hämtat JSON-objekt (Position)
-            for (int i = 0; i < jsonList.size(); i++) {
-                obj = jsonList.get(i);
-                ar = obj.getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
-                tempLatLng = new LatLng(ar.getDouble(1),ar.getDouble(0));
-                timeSeries = obj.getJSONArray("timeSeries");
-
-                //Skapa ett objekt för varje dag på postionen!
-                for (int day = 0; day < days; day++) {
-                    dayNotFound = true;
-                    while(dayNotFound){
-                        timeSeriesObject = timeSeries.getJSONObject(timeSeriesIndex++);
-                        strDate = timeSeriesObject.getString("validTime");
-                        tempDate = (strDate.split("T")[0]);
-                        if (fmt.print(start.plusDays(day)).equals(tempDate)) {
-                            tempWeather = new WeatherParameters(obj, tempLatLng, parametersToUseMap, new LocalDate(tempDate));
-                            Log.d(" Weather: " + tempDate, tempWeather.toString());
-                            //Är tempDates poäng bättre än någon av de tre nuvarande på tempDates dags templista?
-
-                            tempQueues[day].offer(tempWeather);
-
-                            if (tempQueues[day].size() > 3) {
-                                tempQueues[day].poll();
-                            }
-                            dayNotFound = false;
-                        }
-                    }
-                    dayNotFound = false;
-                    timeSeriesIndex = 0;
-                }
-            }
+        @Override
+        protected final List<WeatherParameters> doInBackground(List<JSONObject>... params) {
+            Boolean dayNotFound = true;
+            int timeSeriesIndex = 0;
+            JSONObject obj;
+            JSONObject timeSeriesObject;
+            JSONArray timeSeries;
+            JSONArray ar;
+            WeatherParameters tempWeather;
+            String strDate;
+            String tempDate;
+            LatLng tempLatLng;
+            DateTimeFormatter fmt = DateTimeFormat.forPattern("y-MM-dd");
             //Skapa lista alla platser och dagar
             List<WeatherParameters> rList = new ArrayList<>();
-            for (int day = 0; day < days; day++){
-                rList.add(tempQueues[day].poll());
-                rList.add(tempQueues[day].poll());
-                rList.add(tempQueues[day].poll());
+
+            int days = Days.daysBetween(start, end).getDays() + 1;
+
+            PriorityQueue<WeatherParameters>[] tempQueues = new PriorityQueue[days+1];
+
+            for (int i = 0; i < days; i++) {
+                tempQueues[i] = new PriorityQueue<>(3, new pointReverseComparator());
+                tempQueues[i].offer(new WeatherParameters());
+                tempQueues[i].offer(new WeatherParameters());
+                tempQueues[i].offer(new WeatherParameters());
             }
 
-            Collections.sort(rList, new pointComparator());
-            Log.d("rList:", rList.toString());
-            Log.d("rList size:", Integer.toString(rList.size()));
+            try {
+                //Kolla varje hämtat JSON-objekt (Position)
+                for (int i = 0; i < jsonList.size(); i++) {
+                    obj = jsonList.get(i);
+                    ar = obj.getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0);
+                    tempLatLng = new LatLng(ar.getDouble(1),ar.getDouble(0));
+                    timeSeries = obj.getJSONArray("timeSeries");
 
-            jsonList = null; //Ta bort referensen för GarbageCollector
+                    //Skapa ett objekt för varje dag på postionen!
+                    for (int day = 0; day < days; day++) {
+                        dayNotFound = true;
+                        while(dayNotFound){
+                            timeSeriesObject = timeSeries.getJSONObject(timeSeriesIndex++);
+                            strDate = timeSeriesObject.getString("validTime");
+                            tempDate = (strDate.split("T")[0]);
+                            if (fmt.print(start.plusDays(day)).equals(tempDate)) {
+                                tempWeather = new WeatherParameters(obj, tempLatLng, parametersToUseMap, new LocalDate(tempDate));
+                                Log.d(" Weather: " + tempDate, tempWeather.toString());
+                                //Är tempDates poäng bättre än någon av de tre nuvarande på tempDates dags templista?
 
+                                tempQueues[day].offer(tempWeather);
 
-            listReady = true;
+                                if (tempQueues[day].size() > 3) {
+                                    tempQueues[day].poll();
+                                }
+                                dayNotFound = false;
+                            }
+                        }
+                        dayNotFound = false;
+                        timeSeriesIndex = 0;
+                    }
+                }
 
-        callback.onAnalysisReady(rList);
+                for (int day = 0; day < days; day++){
+                    rList.add(tempQueues[day].poll());
+                    rList.add(tempQueues[day].poll());
+                    rList.add(tempQueues[day].poll());
+                }
 
-        }catch (JSONException e) {
-            e.printStackTrace();
+                Collections.sort(rList, new pointComparator());
+                Log.d("rList:", rList.toString());
+                Log.d("rList size:", Integer.toString(rList.size()));
+
+                jsonList = null; //Ta bort referensen för GarbageCollector
+
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return rList;
+        }
+
+        @Override
+        protected void onPostExecute(List<WeatherParameters> weatherParameters_list) {
+            callback.onAnalysisReady(weatherParameters_list);
         }
     }
 
