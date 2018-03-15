@@ -27,6 +27,8 @@ import com.appyvet.rangebar.RangeBar;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 /**
@@ -35,6 +37,8 @@ import org.joda.time.LocalTime;
 public class MainActivity extends AppCompatActivity
 {
     public static View view;
+    public static LocalDate buttonDate1 = LocalDate.now();
+    public static LocalDate buttonDate2 = LocalDate.now();
     public static Calendar buttText1 = GregorianCalendar.getInstance();
     public static Calendar buttText2 = GregorianCalendar.getInstance();
     public static int leftIndex = 0;
@@ -106,8 +110,8 @@ public class MainActivity extends AppCompatActivity
                 back_dim_layout_fav.setVisibility(View.GONE);
             }
         });
-
-        if (buttText1.getTimeInMillis() > buttText2.getTimeInMillis())
+        if (buttonDate1.isAfter(buttonDate2))
+        //if (buttText1.getTimeInMillis() > buttText2.getTimeInMillis()) //TODO Byt till buttonDate
         {
             tw.setText("Slutdatum kan inte vara före startdatum!");
             checkDateWindow.showAtLocation(popupView, Gravity.CENTER_HORIZONTAL,0,0);

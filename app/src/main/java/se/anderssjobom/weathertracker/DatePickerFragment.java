@@ -4,8 +4,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.DatePicker;
+
+import org.joda.time.LocalDate;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,27 +38,35 @@ public class DatePickerFragment extends DialogFragment
     public void onDateSet(DatePicker view, int year, int month, int day) {// När användaren har valt datum och tryckt på OK, kommer denna metod att anropas
         Button butt = (Button) MainActivity.view; //Hämtar knappen som användaren tryckte på
 
-        Calendar cal = new GregorianCalendar();      //Skapar ett datumobjekt för datumet som användaren har valt
-        cal.set(year, month, day);
-
-        String df = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());//Formatet för datum blir yyyy-MM-dd
+     //   Calendar cal = new GregorianCalendar();      //Skapar ett datumobjekt för datumet som användaren har valt
+     //   cal.set(year, month, day);
+        String df = new LocalDate(year, month + 1, day).toString();
+       // String df = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());//Formatet för datum blir yyyy-MM-dd
         int temp = butt.getId();
         if (temp == R.id.DateButton || temp == R.id.start_date_button_advanced || temp == R.id.start_date_button_simple){
-            MainActivity.buttText1.set(year, month, day);
+           // MainActivity.buttonDate1.withDate(year, month, day);
+            MainActivity.buttonDate1 = MainActivity.buttonDate1.withYear(year);
+            MainActivity.buttonDate1 = MainActivity.buttonDate1.withMonthOfYear(month + 1);
+            MainActivity.buttonDate1 = MainActivity.buttonDate1.withDayOfMonth(day);
+         /*   MainActivity.buttText1.set(year, month, day);
             MainActivity.buttText1.clear(Calendar.HOUR_OF_DAY);
             MainActivity.buttText1.clear(Calendar.MINUTE);
             MainActivity.buttText1.clear(Calendar.SECOND);
-            MainActivity.buttText1.clear(Calendar.MILLISECOND);
+            MainActivity.buttText1.clear(Calendar.MILLISECOND);*/
            /* MainActivity.buttText1.set(Calendar.HOUR_OF_DAY, 0);
             MainActivity.buttText1.set(Calendar.MINUTE, 0);
             MainActivity.buttText1.set(Calendar.SECOND, 0);
             MainActivity.buttText1.set(Calendar.MILLISECOND, 0);*/
         } else if (temp == R.id.DateButton2 || temp == R.id.end_date_button_advanced || temp == R.id.end_date_button_simple) {
-            MainActivity.buttText2.set(year, month, day);
+         //   MainActivity.buttonDate2.withDate(year, month, day);
+            MainActivity.buttonDate2 = MainActivity.buttonDate2.withYear(year);
+            MainActivity.buttonDate2 = MainActivity.buttonDate2.withMonthOfYear(month + 1);
+            MainActivity.buttonDate2 = MainActivity.buttonDate2.withDayOfMonth(day);
+         /*   MainActivity.buttText2.set(year, month, day);
             MainActivity.buttText2.set(Calendar.HOUR_OF_DAY, 0);
             MainActivity.buttText2.set(Calendar.MINUTE, 0);
             MainActivity.buttText2.set(Calendar.SECOND, 0);
-            MainActivity.buttText2.set(Calendar.MILLISECOND, 0);
+            MainActivity.buttText2.set(Calendar.MILLISECOND, 0);*/
         }
    /*     switch(butt.getId()){  //Vi skriver ner datumet till en global variabel, för att kunna begränsa datum (se ovan)
             case R.id.DateButton:

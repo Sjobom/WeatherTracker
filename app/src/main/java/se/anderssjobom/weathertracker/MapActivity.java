@@ -188,7 +188,7 @@ public class MapActivity extends Fragment
 
 
                     new Weather(pb, mMap, (OnAnalysisReadyCallback) getActivity()).findWeather(MapHolder.parametersToUse, placePolygons,
-                            MainActivity.buttText1, MainActivity.buttText2);
+                            MainActivity.buttonDate1, MainActivity.buttonDate2);
                 }
             }
         });

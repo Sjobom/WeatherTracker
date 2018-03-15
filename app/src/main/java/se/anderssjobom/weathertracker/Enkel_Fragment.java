@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import com.appyvet.rangebar.RangeBar;
 
+import org.joda.time.format.DateTimeFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -188,11 +190,13 @@ public class Enkel_Fragment extends Fragment{
     }
 
     private void writeDate(){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String df1 = MainActivity.buttonDate1.toString(); //DateTimeFormat.forPattern("yyyy-MM-dd").print(MainActivity.buttonDate1);
+        String df2 = MainActivity.buttonDate2.toString(); //DateTimeFormat.forPattern("yyyy-MM-dd").print(MainActivity.buttonDate2);
+       /* SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String df1 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText1.getTime());
         Log.d("Toime", sdf.format(MainActivity.buttText1.getTime()));
         Log.d("Toime", Long.toString(MainActivity.buttText1.getTimeInMillis()));
-        String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());
+        String df2 = new SimpleDateFormat("yyyy-MM-dd").format(MainActivity.buttText2.getTime());*/
         start_date_button.setText(df1);
         end_date_button.setText(df2);
     }
