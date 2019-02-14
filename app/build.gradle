@@ -6,10 +6,11 @@ android {
 
     defaultConfig {
         applicationId "se.anderssjobom.weathertracker"
-        minSdkVersion 19
-        targetSdkVersion 23
+        minSdkVersion 21
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
